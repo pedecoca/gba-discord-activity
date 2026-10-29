@@ -15,7 +15,7 @@
 
     * { box-sizing: border-box; }
 
-    body { margin: 0; min-height: 100vh; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; }
 
     main {
       width: min(100% - 24px, 1000px);
@@ -62,18 +62,171 @@
 
     #status { min-height: 1.5em; color: #c7cbea; }
 
+    .gba-console {
+      width: min(100%, 780px);
+      margin: 0 auto;
+      padding: 18px 18px 22px;
+      border: 1px solid #555e70;
+      border-radius: 26px 26px 48px 48px;
+      background: linear-gradient(145deg, #596477, #303847 72%);
+      box-shadow: inset 0 5px 12px #ffffff22, 0 14px 32px #0008;
+    }
+
+    .gba-screen-frame {
+      padding: 12px 12px 16px;
+      border: 1px solid #171b25;
+      border-radius: 18px 18px 30px 30px;
+      background: linear-gradient(145deg, #262c38, #151922);
+      box-shadow: inset 0 2px 8px #000a, 0 2px 4px #ffffff10;
+    }
+
+    .screen-label {
+      margin: 0 0 9px;
+      color: #aeb8c9;
+      font-size: .72rem;
+      font-weight: 750;
+      letter-spacing: .22em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
     #game {
+      position: relative;
       width: 100%;
-      min-height: 320px;
+      aspect-ratio: 3 / 2;
       overflow: hidden;
-      border-radius: 12px;
+      border: 3px solid #080a0e;
+      border-radius: 5px;
       background: #000;
+      box-shadow: 0 0 0 2px #7f8a9b, inset 0 0 14px #000;
+    }
+
+    #game .ejs_virtualGamepad_parent { display: none !important; }
+
+    .gba-controls {
+      display: grid;
+      grid-template-columns: minmax(100px, 1fr) minmax(90px, .7fr) minmax(130px, 1fr);
+      grid-template-areas:
+        "shoulders shoulders shoulders"
+        "dpad system actions";
+      align-items: center;
+      gap: 12px;
+      padding: 18px 8px 0;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .gba-shoulders {
+      grid-area: shoulders;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 5px;
+    }
+
+    .gba-dpad {
+      grid-area: dpad;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(30px, 48px));
+      grid-template-rows: repeat(3, minmax(30px, 48px));
+      justify-content: start;
+      touch-action: none;
+    }
+
+    .gba-dpad [data-input="4"] { grid-area: 1 / 2; border-radius: 10px 10px 3px 3px; }
+    .gba-dpad [data-input="6"] { grid-area: 2 / 1; border-radius: 10px 3px 3px 10px; }
+    .gba-dpad [data-input="7"] { grid-area: 2 / 3; border-radius: 3px 10px 10px 3px; }
+    .gba-dpad [data-input="5"] { grid-area: 3 / 2; border-radius: 3px 3px 10px 10px; }
+
+    .gba-control {
+      display: grid;
+      place-items: center;
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0;
+      border: 1px solid #b2bdcc;
+      background: linear-gradient(145deg, #758197, #414b5d);
+      box-shadow: inset 0 2px 4px #ffffff30, 0 3px 5px #0009;
+      color: #f5f6fa;
+      font-size: 1.15rem;
+      font-weight: 800;
+      line-height: 1;
+      touch-action: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .gba-control:disabled { opacity: .48; cursor: not-allowed; }
+
+    .gba-control.is-pressed {
+      filter: brightness(1.35);
+      transform: translateY(2px);
+    }
+
+    .gba-shoulder {
+      width: 72px;
+      min-height: 34px;
+      border-radius: 12px;
+      font-size: .95rem;
+    }
+
+    .gba-system {
+      grid-area: system;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      transform: rotate(-25deg);
+    }
+
+    .gba-system .gba-control {
+      min-width: 58px;
+      min-height: 27px;
+      border-radius: 16px;
+      font-size: .68rem;
+      letter-spacing: .04em;
+    }
+
+    .gba-actions {
+      grid-area: actions;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      transform: rotate(-25deg);
+    }
+
+    .gba-action {
+      width: clamp(48px, 13vw, 64px);
+      height: clamp(48px, 13vw, 64px);
+      border-radius: 50%;
+      font-size: 1.25rem;
+    }
+
+    .gba-action[data-input="8"] {
+      border-color: #ffc0d0;
+      background: linear-gradient(145deg, #ed7899, #a52e56);
+    }
+
+    .gba-action[data-input="0"] {
+      border-color: #c2ceff;
+      background: linear-gradient(145deg, #8299f0, #354b9e);
+    }
+
+    .control-hint {
+      grid-column: 1 / -1;
+      margin: 0;
+      color: #c7cbea;
+      font-size: .78rem;
+      text-align: center;
     }
 
     @media (max-width: 600px) {
       main { width: min(100% - 16px, 1000px); padding-top: 10px; }
       .panel { padding: 12px; }
-      #game { min-height: 240px; }
+      .gba-console { padding: 12px 10px 18px; border-radius: 22px 22px 34px 34px; }
+      .gba-screen-frame { padding: 9px 9px 12px; }
+      .gba-controls { grid-template-columns: minmax(94px, 1fr) minmax(80px, .7fr) minmax(112px, 1fr); gap: 8px; padding: 14px 2px 0; }
+      .gba-dpad { grid-template-columns: repeat(3, minmax(28px, 40px)); grid-template-rows: repeat(3, minmax(28px, 40px)); }
+      .gba-shoulder { width: 62px; }
+      .gba-actions { gap: 8px; }
     }
   </style>
 </head>
@@ -88,7 +241,33 @@
       <button id="start" type="button" disabled>Iniciar jogo</button>
       <p id="status" role="status">Conectando à Activity do Discord…</p>
     </section>
-    <section id="game" aria-label="Tela do emulador"></section>
+    <section class="gba-console" aria-label="Console Game Boy Advance">
+      <div class="gba-screen-frame">
+        <p class="screen-label">Game Boy Advance</p>
+        <div id="game" aria-label="Tela do emulador"></div>
+      </div>
+      <div class="gba-controls" id="controls" aria-label="Controles do jogo" aria-disabled="true">
+        <div class="gba-shoulders">
+          <button class="gba-control gba-shoulder" type="button" data-input="10" aria-label="Botão L" disabled>L</button>
+          <button class="gba-control gba-shoulder" type="button" data-input="11" aria-label="Botão R" disabled>R</button>
+        </div>
+        <div class="gba-dpad" aria-label="Direcional">
+          <button class="gba-control" type="button" data-input="4" aria-label="Cima" disabled>▲</button>
+          <button class="gba-control" type="button" data-input="6" aria-label="Esquerda" disabled>◀</button>
+          <button class="gba-control" type="button" data-input="7" aria-label="Direita" disabled>▶</button>
+          <button class="gba-control" type="button" data-input="5" aria-label="Baixo" disabled>▼</button>
+        </div>
+        <div class="gba-system">
+          <button class="gba-control" type="button" data-input="2" aria-label="Select" disabled>SELECT</button>
+          <button class="gba-control" type="button" data-input="3" aria-label="Start" disabled>START</button>
+        </div>
+        <div class="gba-actions" aria-label="Botões de ação">
+          <button class="gba-control gba-action" type="button" data-input="0" aria-label="Botão B" disabled>B</button>
+          <button class="gba-control gba-action" type="button" data-input="8" aria-label="Botão A" disabled>A</button>
+        </div>
+        <p class="control-hint" id="control-hint">Inicie um jogo para ativar os controles.</p>
+      </div>
+    </section>
   </main>
 
   <script type="module">
@@ -99,11 +278,78 @@
     const startButton = document.querySelector("#start");
     const status = document.querySelector("#status");
     const game = document.querySelector("#game");
+    const controls = document.querySelector("#controls");
+    const controlHint = document.querySelector("#control-hint");
     let discordReady = false;
     let roms = [];
+    let resizeScheduled = false;
+    let emulatorReady = false;
+    const activePointers = new Map();
+
+    function atualizarControles(disponiveis) {
+      emulatorReady = disponiveis;
+      controls.setAttribute("aria-disabled", String(!disponiveis));
+      controls.querySelectorAll("[data-input]").forEach((button) => {
+        button.disabled = !disponiveis;
+      });
+      controlHint.textContent = disponiveis
+        ? "Toque ou segure os botões para jogar."
+        : "Inicie um jogo para ativar os controles.";
+    }
+
+    function enviarEntrada(input, pressed) {
+      const emulator = window.EJS_emulator;
+      if (!emulatorReady || !emulator?.gameManager) return;
+      emulator.gameManager.simulateInput(0, input, pressed ? 1 : 0);
+    }
+
+    function soltarPonteiro(pointerId) {
+      if (!activePointers.has(pointerId)) return;
+      const input = activePointers.get(pointerId);
+      activePointers.delete(pointerId);
+      if (![...activePointers.values()].includes(input)) enviarEntrada(input, false);
+      controls
+        .querySelector(`[data-input="${input}"]`)
+        ?.classList.toggle(
+          "is-pressed",
+          [...activePointers.values()].includes(input),
+        );
+    }
+
+    controls.addEventListener("pointerdown", (event) => {
+      const button = event.target.closest("[data-input]");
+      if (!button || button.disabled) return;
+      event.preventDefault();
+      const input = Number(button.dataset.input);
+      if (activePointers.has(event.pointerId)) soltarPonteiro(event.pointerId);
+      if (![...activePointers.values()].includes(input)) enviarEntrada(input, true);
+      activePointers.set(event.pointerId, input);
+      button.classList.add("is-pressed");
+      button.setPointerCapture(event.pointerId);
+    });
+
+    for (const eventName of ["pointerup", "pointercancel", "lostpointercapture"]) {
+      controls.addEventListener(eventName, (event) => soltarPonteiro(event.pointerId));
+    }
+
+    function soltarTodosOsControles() {
+      for (const pointerId of activePointers.keys()) soltarPonteiro(pointerId);
+    }
 
     function atualizarBotao() {
       startButton.disabled = !discordReady || !romInput.value;
+    }
+
+    function atualizarTamanhoEmulador() {
+      if (resizeScheduled) return;
+      resizeScheduled = true;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          resizeScheduled = false;
+          if (game.clientWidth === 0 || game.clientHeight === 0) return;
+          window.dispatchEvent(new Event("resize"));
+        });
+      });
     }
 
     async function carregarRoms() {
@@ -168,11 +414,21 @@
       window.EJS_gameName = rom.name;
       window.EJS_gameUrl = rom.url;
       window.EJS_core = "gba";
+      window.EJS_controlScheme = "gba";
       window.EJS_pathtodata = EJS_DATA_PATH;
       window.EJS_startOnLoaded = true;
 
       const loader = document.createElement("script");
       loader.src = `${EJS_DATA_PATH}loader.js`;
+      loader.onload = () => {
+        const emulator = window.EJS_emulator;
+        if (!emulator) {
+          status.textContent = "O emulador não foi inicializado corretamente.";
+          return;
+        }
+        emulator.on("start", () => atualizarControles(true));
+        emulator.on("exit", () => atualizarControles(false));
+      };
       loader.onerror = () => {
         status.textContent =
           "Não foi possível carregar o EmulatorJS. Confira sua conexão e tente atualizar.";
@@ -181,6 +437,27 @@
       };
       document.body.appendChild(loader);
     });
+
+    if ("ResizeObserver" in window) {
+      const resizeObserver = new ResizeObserver((entries) => {
+        if (entries.some(({ contentRect }) => contentRect.width > 0 && contentRect.height > 0)) {
+          atualizarTamanhoEmulador();
+        }
+      });
+      resizeObserver.observe(game);
+    } else {
+      window.addEventListener("resize", atualizarTamanhoEmulador);
+    }
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        atualizarTamanhoEmulador();
+      } else {
+        soltarTodosOsControles();
+      }
+    });
+    document.addEventListener("fullscreenchange", atualizarTamanhoEmulador);
+    window.addEventListener("pageshow", atualizarTamanhoEmulador);
 
     carregarRoms();
     connectToDiscord();
