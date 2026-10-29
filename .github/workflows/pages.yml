@@ -98,6 +98,27 @@ jobs:
               raise SystemExit("A required site configuration value was not replaced.")
           page_path.write_text(page, encoding="utf-8")
 
+          runtime_data = Path("dist/emulatorjs/data")
+          runtime_headers = {
+              "Accept": "*/*",
+              "User-Agent": (
+                  "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                  "(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+              ),
+          }
+          for asset_name in ("emulator.min.js", "emulator.min.css"):
+              with urllib.request.urlopen(
+                  urllib.request.Request(
+                      "https://cdn.emulatorjs.org/stable/data/" + asset_name,
+                      headers=runtime_headers,
+                  ),
+                  timeout=60,
+              ) as response:
+                  asset_path = runtime_data / asset_name
+                  asset_path.write_bytes(response.read())
+              if asset_path.stat().st_size == 0:
+                  raise SystemExit(f"Downloaded EmulatorJS runtime asset is empty: {asset_name}")
+
           with urllib.request.urlopen(
               urllib.request.Request(
                   "https://api.github.com/repos/pedecoca/EmulatorJS/contents/rom?ref=main",
