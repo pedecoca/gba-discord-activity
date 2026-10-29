@@ -1,0 +1,242 @@
+[
+  {
+    "id": "a5200",
+    "name": "Atari 5200",
+    "extensions": [".a52"]
+  },
+  {
+    "id": "beetle_vb",
+    "name": "Nintendo Virtual Boy",
+    "extensions": [".vb"]
+  },
+  {
+    "id": "cap32",
+    "name": "Amstrad CPC (Caprice32)",
+    "extensions": [".dsk", ".cpr", ".sna", ".tap"]
+  },
+  {
+    "id": "crocods",
+    "name": "Amstrad CPC (CrocoDS)",
+    "extensions": [".dsk", ".cpr", ".sna", ".tap"]
+  },
+  {
+    "id": "desmume",
+    "name": "Nintendo DS (DeSmuME)",
+    "extensions": [".nds"]
+  },
+  {
+    "id": "desmume2015",
+    "name": "Nintendo DS (DeSmuME 2015)",
+    "extensions": [".nds"]
+  },
+  {
+    "id": "dosbox_pure",
+    "name": "PC (DOSBox Pure)",
+    "extensions": [".zip", ".dosz"]
+  },
+  {
+    "id": "fbalpha2012_cps1",
+    "name": "Arcade (CPS-1)",
+    "extensions": [".zip"]
+  },
+  {
+    "id": "fbalpha2012_cps2",
+    "name": "Arcade (CPS-2)",
+    "extensions": [".zip"]
+  },
+  {
+    "id": "fbneo",
+    "name": "Arcade (FinalBurn Neo)",
+    "extensions": [".zip"]
+  },
+  {
+    "id": "fceumm",
+    "name": "Nintendo NES/Famicom (FCEUmm)",
+    "extensions": [".nes", ".fds"]
+  },
+  {
+    "id": "fuse",
+    "name": "ZX Spectrum (Fuse)",
+    "extensions": [".z80", ".sna", ".tap", ".tzx", ".dsk", ".rom"]
+  },
+  {
+    "id": "gambatte",
+    "name": "Game Boy / Game Boy Color",
+    "extensions": [".gb", ".gbc", ".dmg", ".sgb"]
+  },
+  {
+    "id": "gearcoleco",
+    "name": "ColecoVision",
+    "extensions": [".col"]
+  },
+  {
+    "id": "genesis_plus_gx",
+    "name": "Sega Genesis / Mega Drive",
+    "extensions": [".md", ".gen", ".smd", ".bin", ".sms", ".gg", ".sg", ".cue", ".chd"]
+  },
+  {
+    "id": "handy",
+    "name": "Atari Lynx",
+    "extensions": [".lnx"]
+  },
+  {
+    "id": "mame2003",
+    "name": "Arcade (MAME 2003)",
+    "extensions": [".zip"]
+  },
+  {
+    "id": "mame2003_plus",
+    "name": "Arcade (MAME 2003 Plus)",
+    "extensions": [".zip"]
+  },
+  {
+    "id": "mednafen_ngp",
+    "name": "Neo Geo Pocket / Color",
+    "extensions": [".ngp", ".ngc"]
+  },
+  {
+    "id": "mednafen_pcfx",
+    "name": "NEC PC-FX",
+    "extensions": [".cue", ".chd"]
+  },
+  {
+    "id": "mednafen_pce",
+    "name": "NEC PC Engine / TurboGrafx-16",
+    "extensions": [".pce", ".cue", ".chd"]
+  },
+  {
+    "id": "mednafen_psx_hw",
+    "name": "Sony PlayStation (Beetle PSX HW)",
+    "extensions": [".cue", ".chd", ".pbp", ".iso", ".bin"]
+  },
+  {
+    "id": "mednafen_wswan",
+    "name": "WonderSwan / WonderSwan Color",
+    "extensions": [".ws", ".wsc"]
+  },
+  {
+    "id": "melonds",
+    "name": "Nintendo DS (melonDS)",
+    "extensions": [".nds"]
+  },
+  {
+    "id": "mgba",
+    "name": "Nintendo Game Boy Advance",
+    "extensions": [".gba", ".agb"]
+  },
+  {
+    "id": "mupen64plus_next",
+    "name": "Nintendo 64 (Mupen64Plus)",
+    "extensions": [".n64", ".z64", ".v64"]
+  },
+  {
+    "id": "nestopia",
+    "name": "Nintendo NES/Famicom (Nestopia)",
+    "extensions": [".nes", ".fds"]
+  },
+  {
+    "id": "opera",
+    "name": "3DO",
+    "extensions": [".cue", ".chd", ".iso", ".bin"]
+  },
+  {
+    "id": "parallel_n64",
+    "name": "Nintendo 64 (Parallel N64)",
+    "extensions": [".n64", ".z64", ".v64"]
+  },
+  {
+    "id": "pcsx_rearmed",
+    "name": "Sony PlayStation (PCSX ReARMed)",
+    "extensions": [".cue", ".chd", ".pbp", ".iso", ".bin"]
+  },
+  {
+    "id": "picodrive",
+    "name": "Sega Genesis / Mega Drive (PicoDrive)",
+    "extensions": [".md", ".gen", ".smd", ".bin", ".cue", ".chd"]
+  },
+  {
+    "id": "ppsspp",
+    "name": "Sony PlayStation Portable",
+    "extensions": [".iso", ".cso", ".pbp"]
+  },
+  {
+    "id": "prboom",
+    "name": "Doom (PrBoom)",
+    "extensions": [".wad"]
+  },
+  {
+    "id": "prosystem",
+    "name": "Atari 7800",
+    "extensions": [".a78"]
+  },
+  {
+    "id": "puae",
+    "name": "Commodore Amiga (PUAE)",
+    "extensions": [".adf", ".adz", ".dms", ".ipf", ".lha", ".zip"]
+  },
+  {
+    "id": "same_cdi",
+    "name": "Philips CD-i",
+    "extensions": [".chd", ".cue"]
+  },
+  {
+    "id": "smsplus",
+    "name": "Sega Master System / Game Gear",
+    "extensions": [".sms", ".gg", ".sg"]
+  },
+  {
+    "id": "snes9x",
+    "name": "Super Nintendo / Super Famicom",
+    "extensions": [".sfc", ".smc"]
+  },
+  {
+    "id": "stella2014",
+    "name": "Atari 2600",
+    "extensions": [".a26", ".bin"]
+  },
+  {
+    "id": "vice_x128",
+    "name": "Commodore 128",
+    "extensions": [".d64", ".d71", ".d81", ".tap", ".prg", ".crt"]
+  },
+  {
+    "id": "vice_x64",
+    "name": "Commodore 64 (VICE)",
+    "extensions": [".d64", ".g64", ".t64", ".tap", ".prg", ".crt"]
+  },
+  {
+    "id": "vice_x64sc",
+    "name": "Commodore 64 (VICE accurate)",
+    "extensions": [".d64", ".g64", ".t64", ".tap", ".prg", ".crt"]
+  },
+  {
+    "id": "vice_xpet",
+    "name": "Commodore PET",
+    "extensions": [".d64", ".prg", ".tap"]
+  },
+  {
+    "id": "vice_xplus4",
+    "name": "Commodore Plus/4",
+    "extensions": [".d64", ".d71", ".d81", ".tap", ".prg", ".crt"]
+  },
+  {
+    "id": "vice_xvic",
+    "name": "Commodore VIC-20",
+    "extensions": [".d64", ".prg", ".tap"]
+  },
+  {
+    "id": "virtualjaguar",
+    "name": "Atari Jaguar",
+    "extensions": [".j64", ".jag", ".rom"]
+  },
+  {
+    "id": "yabause",
+    "name": "Sega Saturn",
+    "extensions": [".cue", ".chd", ".iso", ".bin"]
+  },
+  {
+    "id": "81",
+    "name": "Sinclair ZX81",
+    "extensions": [".p", ".81"]
+  }
+]
