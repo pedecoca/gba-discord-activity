@@ -2,7 +2,10 @@
 
 Este site hospeda os arquivos do EmulatorJS, o core mGBA e o SDK do Discord no
 GitHub Pages. O fluxo baixa somente os arquivos necessários; não inclui ROMs
-nem arquivos do bot.
+nem arquivos do bot no repositório da Activity. Durante a publicação, ele
+obtém os arquivos `.gba` da pasta `rom` do repositório
+[pedecoca/EmulatorJS](https://github.com/pedecoca/EmulatorJS/tree/main/rom) e
+os publica junto do site para aparecerem no seletor de jogos.
 
 ## Publicar
 
@@ -30,6 +33,7 @@ git push -u origin main
 ```
 
 O workflow fixa EmulatorJS e o core mGBA na versão `4.2.3` e o SDK do Discord
-na `2.5.0`. Ele inclui as licenças GPL-3.0 e MIT no site publicado, e usa o
-Application ID configurado nas variáveis do repositório. A ROM é escolhida no
-navegador de cada participante; ela não é enviada ao GitHub nem ao servidor.
+na `2.5.0`. Ele inclui as licenças GPL-3.0 e MIT no site publicado, usa o
+Application ID configurado nas variáveis do repositório e atualiza o catálogo
+de jogos a partir da pasta `rom` do repositório EmulatorJS em cada publicação.
+Os arquivos `.gba` copiados ficam disponíveis publicamente no GitHub Pages.
