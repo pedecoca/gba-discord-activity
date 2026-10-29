@@ -65,6 +65,8 @@ jobs:
           import json
           import os
           import re
+          import urllib.parse
+          import urllib.request
           from pathlib import Path
 
           client_id = os.environ["DISCORD_CLIENT_ID"]
@@ -95,6 +97,65 @@ jobs:
           ):
               raise SystemExit("A required site configuration value was not replaced.")
           page_path.write_text(page, encoding="utf-8")
+
+          with urllib.request.urlopen(
+              urllib.request.Request(
+                  "https://api.github.com/repos/pedecoca/EmulatorJS/contents/rom?ref=main",
+                  headers={
+                      "Accept": "application/vnd.github+json",
+                      "User-Agent": "gba-discord-activity-pages",
+                  },
+              ),
+              timeout=30,
+          ) as response:
+              rom_files = json.load(response)
+          if not isinstance(rom_files, list):
+              raise SystemExit("GitHub did not return a ROM directory listing.")
+
+          rom_dir = Path("dist/roms")
+          rom_dir.mkdir(parents=True, exist_ok=True)
+          games = []
+          for rom in sorted(rom_files, key=lambda item: item.get("name", "").casefold()):
+              name = rom.get("name", "")
+              if rom.get("type") != "file" or not name.lower().endswith(".gba"):
+                  continue
+              if Path(name).name != name or "\\" in name:
+                  raise SystemExit(f"Invalid ROM filename in source repository: {name!r}")
+
+              download_url = rom.get("download_url", "")
+              parsed_url = urllib.parse.urlparse(download_url)
+              url_parts = parsed_url.path.split("/")
+              if (
+                  parsed_url.scheme != "https"
+                  or parsed_url.hostname != "raw.githubusercontent.com"
+                  or url_parts[1:3] != ["pedecoca", "EmulatorJS"]
+                  or len(url_parts) != 6
+                  or url_parts[4] != "rom"
+              ):
+                  raise SystemExit(f"Unexpected ROM download URL for {name!r}.")
+
+              with urllib.request.urlopen(
+                  urllib.request.Request(
+                      download_url,
+                      headers={"User-Agent": "gba-discord-activity-pages"},
+                  ),
+                  timeout=120,
+              ) as response:
+                  (rom_dir / name).write_bytes(response.read())
+
+              games.append(
+                  {
+                      "name": name[:-4],
+                      "url": "./roms/" + urllib.parse.quote(name, safe=""),
+                  }
+              )
+
+          if not games:
+              raise SystemExit("No .gba ROMs found in pedecoca/EmulatorJS/rom.")
+          Path("dist/roms.json").write_text(
+              json.dumps({"games": games}, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
           PY
 
       - name: Upload Pages artifact
