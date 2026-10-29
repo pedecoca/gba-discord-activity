@@ -45,11 +45,11 @@ jobs:
             dist/discord-sdk \
             dist/emulatorjs/data/cores/reports
 
-          tar -xzf "$RUNNER_TEMP/emulatorjs-4.2.3.tgz" \
+          tar -xzf "$RUNNER_TEMP/emulatorjs-emulatorjs-4.2.3.tgz" \
             -C "$RUNNER_TEMP/emulatorjs-package" --strip-components=1
-          tar -xzf "$RUNNER_TEMP/core-mgba-4.2.3.tgz" \
+          tar -xzf "$RUNNER_TEMP/emulatorjs-core-mgba-4.2.3.tgz" \
             -C "$RUNNER_TEMP/mgba-package" --strip-components=1
-          tar -xzf "$RUNNER_TEMP/embedded-app-sdk-2.5.0.tgz" \
+          tar -xzf "$RUNNER_TEMP/discord-embedded-app-sdk-2.5.0.tgz" \
             -C "$RUNNER_TEMP/discord-sdk-package" --strip-components=1
 
           cp -R "$RUNNER_TEMP/emulatorjs-package/data/." dist/emulatorjs/data/
