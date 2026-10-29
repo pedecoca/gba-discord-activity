@@ -40,12 +40,13 @@
       font: inherit;
     }
 
-    input[type="file"] {
+    select {
       width: 100%;
       padding: 12px;
-      border: 1px dashed #737d9c;
+      border: 1px solid #737d9c;
       border-radius: 10px;
       background: #141724;
+      color: inherit;
     }
 
     button {
@@ -69,8 +70,6 @@
       background: #000;
     }
 
-    .notice { color: #c7cbea; font-size: .92rem; }
-
     @media (max-width: 600px) {
       main { width: min(100% - 16px, 1000px); padding-top: 10px; }
       .panel { padding: 12px; }
@@ -82,13 +81,10 @@
   <main>
     <h1>EmulatorJS — Game Boy Advance</h1>
     <section class="panel" id="setup">
-      <label for="rom">Escolha seu próprio arquivo de jogo (.gba)</label>
-      <input id="rom" type="file" accept=".gba,application/octet-stream">
-      <p class="notice">
-        O arquivo é aberto localmente no seu navegador e não é enviado ao servidor.
-        Cada participante roda a própria partida. Use apenas ROMs que você tem
-        autorização para usar.
-      </p>
+      <label for="rom">Escolha um jogo</label>
+      <select id="rom" disabled>
+        <option value="">Carregando jogos…</option>
+      </select>
       <button id="start" type="button" disabled>Iniciar jogo</button>
       <p id="status" role="status">Conectando à Activity do Discord…</p>
     </section>
@@ -103,12 +99,44 @@
     const startButton = document.querySelector("#start");
     const status = document.querySelector("#status");
     const game = document.querySelector("#game");
-    let discordReady = window.parent === window;
+    let discordReady = false;
+    let roms = [];
+
+    function atualizarBotao() {
+      startButton.disabled = !discordReady || !romInput.value;
+    }
+
+    async function carregarRoms() {
+      try {
+        const resposta = await fetch("./roms.json");
+        if (!resposta.ok) {
+          throw new Error(`Falha ao carregar a lista de jogos (${resposta.status}).`);
+        }
+
+        const catalogo = await resposta.json();
+        if (!Array.isArray(catalogo.games) || catalogo.games.length === 0) {
+          throw new Error("Nenhum jogo .gba foi encontrado no catálogo.");
+        }
+
+        roms = catalogo.games;
+        romInput.replaceChildren(new Option("Selecione um jogo…", ""));
+        for (const rom of roms) {
+          romInput.add(new Option(rom.name, rom.url));
+        }
+        romInput.disabled = false;
+        atualizarBotao();
+      } catch (error) {
+        status.textContent = "Não foi possível carregar a lista de jogos.";
+        console.error("Failed to load the GBA ROM catalog:", error);
+      }
+    }
 
     async function connectToDiscord() {
       if (window.parent === window) {
+        discordReady = true;
         status.textContent =
-          "Prévia no navegador. Abra a Activity pelo Discord para jogá-la integrada.";
+          "Prévia no navegador. Escolha um jogo para iniciar.";
+        atualizarBotao();
         return;
       }
 
@@ -117,8 +145,8 @@
         const sdk = new DiscordSDK(DISCORD_CLIENT_ID);
         await sdk.ready();
         discordReady = true;
-        status.textContent = "Conectado. Selecione seu arquivo .gba.";
-        startButton.disabled = romInput.files.length === 0;
+        status.textContent = "Conectado. Escolha um jogo.";
+        atualizarBotao();
       } catch (error) {
         status.textContent =
           "Falha ao conectar à Activity do Discord. Confira o ID do aplicativo e a URL Mapping.";
@@ -126,20 +154,10 @@
       }
     }
 
-    romInput.addEventListener("change", () => {
-      const rom = romInput.files?.[0];
-      startButton.disabled = !discordReady || !rom;
-      if (!rom) return;
-      if (!rom.name.toLowerCase().endsWith(".gba")) {
-        startButton.disabled = true;
-        status.textContent = "Escolha um arquivo com extensão .gba.";
-        return;
-      }
-      status.textContent = `ROM selecionada: ${rom.name}`;
-    });
+    romInput.addEventListener("change", atualizarBotao);
 
     startButton.addEventListener("click", () => {
-      const rom = romInput.files?.[0];
+      const rom = roms.find((item) => item.url === romInput.value);
       if (!rom || !discordReady) return;
 
       startButton.disabled = true;
@@ -147,8 +165,8 @@
       status.textContent = "Iniciando o emulador…";
 
       window.EJS_player = "#game";
-      window.EJS_gameName = rom.name.replace(/\.gba$/i, "");
-      window.EJS_gameUrl = rom;
+      window.EJS_gameName = rom.name;
+      window.EJS_gameUrl = rom.url;
       window.EJS_core = "gba";
       window.EJS_pathtodata = EJS_DATA_PATH;
       window.EJS_startOnLoaded = true;
@@ -158,13 +176,13 @@
       loader.onerror = () => {
         status.textContent =
           "Não foi possível carregar o EmulatorJS. Confira sua conexão e tente atualizar.";
-        startButton.disabled = false;
         romInput.disabled = false;
+        atualizarBotao();
       };
       document.body.appendChild(loader);
     });
 
-    romInput.disabled = false;
+    carregarRoms();
     connectToDiscord();
   </script>
 </body>
