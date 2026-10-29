@@ -428,6 +428,7 @@
         }
         emulator.on("start", () => atualizarControles(true));
         emulator.on("exit", () => atualizarControles(false));
+        if (emulator.started) atualizarControles(true);
       };
       loader.onerror = () => {
         status.textContent =
