@@ -417,22 +417,17 @@
       window.EJS_controlScheme = "gba";
       window.EJS_pathtodata = EJS_DATA_PATH;
       window.EJS_startOnLoaded = true;
+      window.EJS_onGameStart = () => {
+        atualizarControles(true);
+        status.textContent = "Jogo iniciado. Use os controles abaixo.";
+      };
 
       const loader = document.createElement("script");
       loader.src = `${EJS_DATA_PATH}loader.js`;
-      loader.onload = () => {
-        const emulator = window.EJS_emulator;
-        if (!emulator) {
-          status.textContent = "O emulador não foi inicializado corretamente.";
-          return;
-        }
-        emulator.on("start", () => atualizarControles(true));
-        emulator.on("exit", () => atualizarControles(false));
-        if (emulator.started) atualizarControles(true);
-      };
       loader.onerror = () => {
         status.textContent =
           "Não foi possível carregar o EmulatorJS. Confira sua conexão e tente atualizar.";
+        atualizarControles(false);
         romInput.disabled = false;
         atualizarBotao();
       };
