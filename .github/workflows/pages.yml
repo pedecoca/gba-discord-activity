@@ -1,0 +1,114 @@
+name: Deploy Discord Activity to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out site
+        uses: actions/checkout@v4
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build static site and fetch EmulatorJS assets
+        env:
+          DISCORD_CLIENT_ID: ${{ vars.DISCORD_CLIENT_ID }}
+        run: |
+          set -euo pipefail
+
+          npm pack --silent @emulatorjs/emulatorjs@4.2.3 --pack-destination "$RUNNER_TEMP"
+          npm pack --silent @emulatorjs/core-mgba@4.2.3 --pack-destination "$RUNNER_TEMP"
+          npm pack --silent @discord/embedded-app-sdk@2.5.0 --pack-destination "$RUNNER_TEMP"
+
+          mkdir -p "$RUNNER_TEMP/emulatorjs-package" \
+            "$RUNNER_TEMP/mgba-package" \
+            "$RUNNER_TEMP/discord-sdk-package" \
+            dist/discord-sdk \
+            dist/emulatorjs/data/cores/reports
+
+          tar -xzf "$RUNNER_TEMP/emulatorjs-4.2.3.tgz" \
+            -C "$RUNNER_TEMP/emulatorjs-package" --strip-components=1
+          tar -xzf "$RUNNER_TEMP/core-mgba-4.2.3.tgz" \
+            -C "$RUNNER_TEMP/mgba-package" --strip-components=1
+          tar -xzf "$RUNNER_TEMP/embedded-app-sdk-2.5.0.tgz" \
+            -C "$RUNNER_TEMP/discord-sdk-package" --strip-components=1
+
+          cp -R "$RUNNER_TEMP/emulatorjs-package/data/." dist/emulatorjs/data/
+          cp "$RUNNER_TEMP/emulatorjs-package/LICENSE" dist/emulatorjs/LICENSE
+          cp "$RUNNER_TEMP/mgba-package/"*.data dist/emulatorjs/data/cores/
+          cp "$RUNNER_TEMP/mgba-package/reports/mgba.json" \
+            dist/emulatorjs/data/cores/reports/mgba.json
+          cp -R "$RUNNER_TEMP/discord-sdk-package/output/." dist/discord-sdk/
+          cp "$RUNNER_TEMP/discord-sdk-package/LICENSE.md" dist/discord-sdk/LICENSE.md
+          cp index.html dist/index.html
+
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          client_id = os.environ["DISCORD_CLIENT_ID"]
+          if not re.fullmatch(r"[0-9]{17,20}", client_id):
+              raise SystemExit(
+                  "Set the public Discord Application ID in the "
+                  "DISCORD_CLIENT_ID Actions variable."
+              )
+
+          page_path = Path("dist/index.html")
+          page = page_path.read_text(encoding="utf-8")
+          page = page.replace("__DISCORD_CLIENT_ID_JSON__", json.dumps(client_id))
+          page = page.replace(
+              "__EJS_DATA_PATH_JSON__",
+              json.dumps("./emulatorjs/data/"),
+          )
+          page = page.replace(
+              "__DISCORD_SDK_MODULE_URL_JSON__",
+              json.dumps("./discord-sdk/index.mjs"),
+          )
+          if any(
+              marker in page
+              for marker in (
+                  "__DISCORD_CLIENT_ID_JSON__",
+                  "__EJS_DATA_PATH_JSON__",
+                  "__DISCORD_SDK_MODULE_URL_JSON__",
+              )
+          ):
+              raise SystemExit("A required site configuration value was not replaced.")
+          page_path.write_text(page, encoding="utf-8")
+          PY
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
