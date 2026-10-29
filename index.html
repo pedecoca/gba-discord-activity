@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#11131b">
+  <title>EmulatorJS Activity</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font: 16px/1.5 system-ui, sans-serif;
+      background: #11131b;
+      color: #f5f6fa;
+    }
+
+    * { box-sizing: border-box; }
+
+    body { margin: 0; min-height: 100vh; }
+
+    main {
+      width: min(100% - 24px, 1000px);
+      margin: 0 auto;
+      padding: 18px 0 32px;
+    }
+
+    h1 { margin: 0; font-size: 1.4rem; }
+
+    .panel {
+      margin: 14px 0;
+      padding: 16px;
+      border: 1px solid #2e3345;
+      border-radius: 14px;
+      background: #1b1e2b;
+    }
+
+    label { display: block; margin-bottom: 8px; font-weight: 650; }
+
+    input, button {
+      max-width: 100%;
+      font: inherit;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px dashed #737d9c;
+      border-radius: 10px;
+      background: #141724;
+    }
+
+    button {
+      padding: 10px 16px;
+      border: 0;
+      border-radius: 9px;
+      background: #5865f2;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:disabled { opacity: .6; cursor: wait; }
+
+    #status { min-height: 1.5em; color: #c7cbea; }
+
+    #game {
+      width: 100%;
+      min-height: 320px;
+      overflow: hidden;
+      border-radius: 12px;
+      background: #000;
+    }
+
+    .notice { color: #c7cbea; font-size: .92rem; }
+
+    @media (max-width: 600px) {
+      main { width: min(100% - 16px, 1000px); padding-top: 10px; }
+      .panel { padding: 12px; }
+      #game { min-height: 240px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>EmulatorJS — Game Boy Advance</h1>
+    <section class="panel" id="setup">
+      <label for="rom">Escolha seu próprio arquivo de jogo (.gba)</label>
+      <input id="rom" type="file" accept=".gba,application/octet-stream">
+      <p class="notice">
+        O arquivo é aberto localmente no seu navegador e não é enviado ao servidor.
+        Cada participante roda a própria partida. Use apenas ROMs que você tem
+        autorização para usar.
+      </p>
+      <button id="start" type="button" disabled>Iniciar jogo</button>
+      <p id="status" role="status">Conectando à Activity do Discord…</p>
+    </section>
+    <section id="game" aria-label="Tela do emulador"></section>
+  </main>
+
+  <script type="module">
+    const DISCORD_CLIENT_ID = __DISCORD_CLIENT_ID_JSON__;
+    const EJS_DATA_PATH = __EJS_DATA_PATH_JSON__;
+    const DISCORD_SDK_MODULE_URL = __DISCORD_SDK_MODULE_URL_JSON__;
+    const romInput = document.querySelector("#rom");
+    const startButton = document.querySelector("#start");
+    const status = document.querySelector("#status");
+    const game = document.querySelector("#game");
+    let discordReady = window.parent === window;
+
+    async function connectToDiscord() {
+      if (window.parent === window) {
+        status.textContent =
+          "Prévia no navegador. Abra a Activity pelo Discord para jogá-la integrada.";
+        return;
+      }
+
+      try {
+        const { DiscordSDK } = await import(DISCORD_SDK_MODULE_URL);
+        const sdk = new DiscordSDK(DISCORD_CLIENT_ID);
+        await sdk.ready();
+        discordReady = true;
+        status.textContent = "Conectado. Selecione seu arquivo .gba.";
+        startButton.disabled = romInput.files.length === 0;
+      } catch (error) {
+        status.textContent =
+          "Falha ao conectar à Activity do Discord. Confira o ID do aplicativo e a URL Mapping.";
+        console.error("Discord Activity SDK failed to initialize:", error);
+      }
+    }
+
+    romInput.addEventListener("change", () => {
+      const rom = romInput.files?.[0];
+      startButton.disabled = !discordReady || !rom;
+      if (!rom) return;
+      if (!rom.name.toLowerCase().endsWith(".gba")) {
+        startButton.disabled = true;
+        status.textContent = "Escolha um arquivo com extensão .gba.";
+        return;
+      }
+      status.textContent = `ROM selecionada: ${rom.name}`;
+    });
+
+    startButton.addEventListener("click", () => {
+      const rom = romInput.files?.[0];
+      if (!rom || !discordReady) return;
+
+      startButton.disabled = true;
+      romInput.disabled = true;
+      status.textContent = "Iniciando o emulador…";
+
+      window.EJS_player = "#game";
+      window.EJS_gameName = rom.name.replace(/\.gba$/i, "");
+      window.EJS_gameUrl = rom;
+      window.EJS_core = "gba";
+      window.EJS_pathtodata = EJS_DATA_PATH;
+      window.EJS_startOnLoaded = true;
+
+      const loader = document.createElement("script");
+      loader.src = `${EJS_DATA_PATH}loader.js`;
+      loader.onerror = () => {
+        status.textContent =
+          "Não foi possível carregar o EmulatorJS. Confira sua conexão e tente atualizar.";
+        startButton.disabled = false;
+        romInput.disabled = false;
+      };
+      document.body.appendChild(loader);
+    });
+
+    romInput.disabled = false;
+    connectToDiscord();
+  </script>
+</body>
+</html>
