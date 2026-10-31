@@ -515,6 +515,7 @@
     let resizeScheduled = false;
     let emulatorReady = false;
     let falhaTimer = null;
+    let sessaoJogo = 0;
     const activePointers = new Map();
     const dpad = document.querySelector("#dpad");
     const dpadAtivos = new Set();
@@ -1001,8 +1002,41 @@
 
     systemInput.addEventListener("change", atualizarListaDeJogos);
     romInput.addEventListener("change", atualizarBotao);
-    restartButton.addEventListener("click", () => window.location.reload());
-    restartGameButton.addEventListener("click", () => window.location.reload());
+    restartButton.addEventListener("click", trocarJogo);
+    restartGameButton.addEventListener("click", trocarJogo);
+
+    function trocarJogo() {
+      // No Discord, recarregar o iframe nem sempre funciona; encerramos o
+      // emulador atual e voltamos para a seleção sem sair da Activity.
+      sessaoJogo += 1;
+      const emulator = window.EJS_emulator;
+      try {
+        emulator?.pause?.(true);
+      } catch {}
+      try {
+        emulator?.gameManager?.toggleMainLoop?.(0);
+      } catch {}
+
+      soltarTodosOsControles();
+      clearTimeout(falhaTimer);
+      window.EJS_emulator = null;
+      window.EJS_adBlocked = null;
+      emulatorReady = false;
+      game.replaceChildren();
+      document
+        .querySelectorAll("script[data-ejs-loader]")
+        .forEach((script) => script.remove());
+
+      document.body.classList.remove("jogando");
+      document.querySelector(".screen-label").hidden = false;
+      restartButton.hidden = true;
+      restartGameButton.hidden = true;
+      systemInput.disabled = false;
+      romInput.disabled = romInput.options.length <= 1;
+      atualizarControles(false);
+      status.textContent = "Escolha outro jogo para iniciar.";
+      atualizarBotao();
+    }
 
     startButton.addEventListener("click", () => {
       const rom = roms.find(
@@ -1011,6 +1045,7 @@
       );
       if (!rom) return;
 
+      const sessaoAtual = ++sessaoJogo;
       const coreN64 = ["mupen64plus_next", "parallel_n64"].includes(rom.core);
       const webgl = suporteWebgl();
       if (webgl === 0) {
@@ -1045,14 +1080,17 @@
       window.EJS_pathtodata = EJS_DATA_PATH;
       window.EJS_startOnLoaded = true;
       window.EJS_onGameStart = () => {
+        if (sessaoAtual !== sessaoJogo) return;
         clearTimeout(falhaTimer);
         atualizarControles(true);
         status.textContent = "Jogo iniciado. Use os controles abaixo.";
       };
 
       const loader = document.createElement("script");
+      loader.dataset.ejsLoader = "true";
       loader.src = `${EJS_DATA_PATH}loader.js`;
       loader.onerror = () => {
+        if (sessaoAtual !== sessaoJogo) return;
         status.textContent =
           "Não foi possível carregar o EmulatorJS. Confira sua conexão e tente atualizar.";
         document.body.classList.remove("jogando");
@@ -1068,6 +1106,7 @@
 
       clearTimeout(falhaTimer);
       falhaTimer = setTimeout(() => {
+        if (sessaoAtual !== sessaoJogo) return;
         if (emulatorReady) return;
         status.textContent =
           "O emulador não terminou de iniciar. Verifique o WebGL do navegador e tente de novo.";
