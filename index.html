@@ -3084,6 +3084,9 @@
     function corDaCapa(core) {
       if (core === "mgba") return ["#6d28d9", "#db2777"];
       if (core === "mupen64plus_next") return ["#0e7490", "#7c3aed"];
+      if (["melonds", "desmume", "desmume2015"].includes(core)) {
+        return ["#b91c1c", "#f59e0b"];
+      }
       return ["#43327a", "#a855f7"];
     }
 

@@ -32,6 +32,9 @@ CORE_TO_LIBRETRO = {
     "nestopia": "Nintendo - Nintendo Entertainment System",
     "mednafen_pce": "NEC - PC Engine - TurboGrafx 16",
     "mednafen_wswan": "Bandai - WonderSwan",
+    "melonds": "Nintendo - Nintendo DS",
+    "desmume": "Nintendo - Nintendo DS",
+    "desmume2015": "Nintendo - Nintendo DS",
 }
 
 # Títulos que o catálogo abrevia ou que são hacks de um jogo comercial.
@@ -73,7 +76,7 @@ REGION_PRIORITY = ("(usa", "(europe", "(japan", "(world", "(usa, europe")
 def normalize(value: str) -> str:
     value = urllib.parse.unquote(value)
     value = re.sub(
-        r"\.(png|gba|agb|z64|n64|v64|sfc|smc|md|gen|smd|bin|sms|gg|sg)$",
+        r"\.(png|gba|agb|z64|n64|v64|sfc|smc|md|gen|smd|bin|sms|gg|sg|nds)$",
         "",
         value,
         flags=re.IGNORECASE,
@@ -89,12 +92,19 @@ def normalize_compact(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "", normalize(value))
 
 
-def region_rank(filename: str) -> tuple[int, int]:
+def region_rank(filename: str) -> tuple[int, int, int]:
     lowered = filename.lower()
+    # Evita capas de demo/kiosk/protótipo quando existe a versão comercial.
+    nao_comercial = any(
+        marcador in lowered
+        for marcador in ("(demo", "(kiosk", "proto", "beta", "sample")
+    )
+    if nao_comercial:
+        return 1, len(REGION_PRIORITY), len(filename)
     for index, region in enumerate(REGION_PRIORITY):
         if region in lowered:
-            return index, len(filename)
-    return len(REGION_PRIORITY), len(filename)
+            return 0, index, len(filename)
+    return 0, len(REGION_PRIORITY), len(filename)
 
 
 def fetch_boxarts(core: str) -> list[str]:

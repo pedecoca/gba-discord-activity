@@ -187,6 +187,16 @@ jobs:
           print(f"ROMs publicadas: {len(catalogo['games'])}")
           PY
 
+      - name: Add missing Nintendo DS cover art
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet --disable-pip-version-check Pillow
+          python3 tools/sync_missing_covers.py \
+            --catalog dist/roms.json \
+            --covers dist/covers.json \
+            --asset-dir dist/asset/covers \
+            --core melonds
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
