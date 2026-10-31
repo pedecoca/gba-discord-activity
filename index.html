@@ -3553,6 +3553,7 @@
           // desativa o ponteiro do canvas por padrão; reativamos só no DS.
           const canvas = window.EJS_emulator?.frontend?.canvas;
           canvas?.classList.remove("ejs-canvas-no-pointer");
+          if (canvas) canvas.style.touchAction = "none";
         }
         atualizarControles(true);
         status.textContent = "Jogo iniciado. Use os controles abaixo.";
