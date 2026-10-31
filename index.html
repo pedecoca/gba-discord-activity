@@ -2049,6 +2049,11 @@
         }
       }
       if (!dados) return null;
+      // Se o save existia só neste dispositivo, envia para a nuvem ao
+      // abrir o jogo autenticado, para o outro aparelho encontrá-lo.
+      if (origem === "local" && jogadorId && tokenAcesso) {
+        await enviarSaveNuvem(chave, slot, dados);
+      }
       return aplicarSave(dados) ? origem : null;
     }
 
@@ -2066,6 +2071,28 @@
       }, 2600);
     }
 
+    async function enviarSaveNuvem(chave, slot, dados) {
+      if (!jogadorId || !tokenAcesso) return false;
+      try {
+        const resposta = await fetch(
+          apiUrl(`/api/emu/saves/${encodeURIComponent(chave)}/${slot}`),
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${tokenAcesso}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(dados),
+          },
+        );
+        if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+        return true;
+      } catch (erro) {
+        console.warn("Falha ao salvar na nuvem:", erro);
+        return false;
+      }
+    }
+
     async function salvarSlot(slot) {
       if (!jogoAtual || salvando) return false;
       const dados = capturarSave();
@@ -2076,28 +2103,11 @@
       const chave = jogoAtual.chave;
       salvando = true;
       const temConta = Boolean(jogadorId && tokenAcesso);
-      let naNuvem = false;
       try {
         await salvarLocal(chave, slot, dados);
-        if (temConta) {
-          try {
-            const resposta = await fetch(
-              apiUrl(`/api/emu/saves/${encodeURIComponent(chave)}/${slot}`),
-              {
-                method: "POST",
-                headers: {
-                  Authorization: `Bearer ${tokenAcesso}`,
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(dados),
-              },
-            );
-            if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
-            naNuvem = true;
-          } catch (erro) {
-            console.warn("Falha ao salvar na nuvem:", erro);
-          }
-        }
+        const naNuvem = temConta
+          ? await enviarSaveNuvem(chave, slot, dados)
+          : false;
         mostrarAvisoSave(
           naNuvem
             ? `☁️ Slot ${slot} salvo`
