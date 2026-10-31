@@ -1,7 +1,7 @@
 {
   "repository": "pedecoca/EmulatorJS",
   "tag": "psx-cds-v1",
-  "proxy_base": "https://api.pokedc.online/release-v2",
+  "proxy_base": "https://api.pokedc.online/release-v3",
   "download_base": "https://github.com/pedecoca/EmulatorJS/releases/download/psx-cds-v1",
   "files": [
     {

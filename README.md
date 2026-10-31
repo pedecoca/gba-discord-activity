@@ -16,7 +16,7 @@ o Game Boy Advance terá jogos para iniciar.
 Os BINs de PS1 são grandes demais para o repositório e para o limite de 1 GB do
 GitHub Pages. Eles ficam na release
 [`psx-cds-v1`](https://github.com/pedecoca/EmulatorJS/releases/tag/psx-cds-v1)
-e são baixados pelo proxy `https://api.pokedc.online/release-v2/...`.
+e são baixados pelo proxy `https://api.pokedc.online/release-v3/...`.
 
 O GitHub não envia CORS nos arquivos de Release; por isso o Activity **não**
 pode baixá-los diretamente. O `bot/activity_server.py` repassa os assets com
