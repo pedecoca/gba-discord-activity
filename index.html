@@ -176,6 +176,34 @@
       font-size: 0.72rem;
     }
 
+    .save-indicator {
+      position: fixed;
+      top: calc(8px + env(safe-area-inset-top, 0px));
+      left: calc(8px + env(safe-area-inset-left, 0px));
+      z-index: 30;
+      max-width: min(70vw, 260px);
+      padding: 5px 10px;
+      border: 1px solid #ffffff1f;
+      border-radius: 999px;
+      background: #0d101ae8;
+      color: #dfe4ff;
+      font-size: 0.68rem;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-4px);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+
+    .save-indicator.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .save-indicator.erro {
+      border-color: #ff8f9f55;
+      color: #ffc2ca;
+    }
+
     .gba-console {
       position: relative;
       flex: 1 1 auto;
@@ -582,6 +610,7 @@
       </div>
     </section>
     <p id="status" role="status">Conectando à Activity do Discord…</p>
+    <div id="save-indicator" class="save-indicator" role="status" hidden></div>
     <section class="gba-console" aria-label="Console retro">
       <button id="restart-game" class="floating-restart" type="button" hidden>Trocar jogo</button>
       <div class="gba-screen-frame">
@@ -610,6 +639,7 @@
 
   <script type="module">
     const DISCORD_CLIENT_ID = __DISCORD_CLIENT_ID_JSON__;
+    const SAVE_API_URL = __SAVE_API_URL_JSON__;
     const EJS_DATA_PATH = __EJS_DATA_PATH_JSON__;
     const DISCORD_SDK_MODULE_URL = __DISCORD_SDK_MODULE_URL_JSON__;
     const systemInput = document.querySelector("#system");
@@ -618,6 +648,7 @@
     const restartButton = document.querySelector("#restart");
     const restartGameButton = document.querySelector("#restart-game");
     const status = document.querySelector("#status");
+    const saveIndicator = document.querySelector("#save-indicator");
     const game = document.querySelector("#game");
     const controls = document.querySelector("#controls");
     const controlHint = document.querySelector("#control-hint");
@@ -630,6 +661,17 @@
     let falhaTimer = null;
     let sessaoJogo = 0;
     let webglSuporte = null;
+    let discordSdk = null;
+    let jogadorId = null;
+    let tokenAcesso = null;
+    let jogadorProntoResolver = null;
+    const jogadorPronto = new Promise((resolve) => {
+      jogadorProntoResolver = resolve;
+    });
+    let jogoAtual = null;
+    let autosaveTimer = null;
+    let salvando = false;
+    let avisoSaveTimer = null;
     const activePointers = new Map();
     const dpad = document.querySelector("#dpad");
     const stick = document.querySelector("#stick");
@@ -879,6 +921,252 @@
       // No RetroPad, 16/17 são os eixos do analógico esquerdo.
       emulator.gameManager.simulateInput(0, 16, Math.round(x * 0x7fff));
       emulator.gameManager.simulateInput(0, 17, Math.round(y * 0x7fff));
+    }
+
+    function apiUrl(path) {
+      return `${SAVE_API_URL}${path}`;
+    }
+
+    function bytesParaBase64(bytes) {
+      const dados = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+      let binario = "";
+      for (let i = 0; i < dados.length; i += 0x8000) {
+        binario += String.fromCharCode(...dados.subarray(i, i + 0x8000));
+      }
+      return btoa(binario);
+    }
+
+    function base64ParaBytes(texto) {
+      const binario = atob(texto);
+      const dados = new Uint8Array(binario.length);
+      for (let i = 0; i < binario.length; i += 1) dados[i] = binario.charCodeAt(i);
+      return dados;
+    }
+
+    let savesDbPromise = null;
+
+    function abrirSavesDb() {
+      if (!("indexedDB" in window)) return Promise.resolve(null);
+      if (savesDbPromise) return savesDbPromise;
+      savesDbPromise = new Promise((resolve, reject) => {
+        const requisicao = indexedDB.open("ejs-cloud-saves", 1);
+        requisicao.onupgradeneeded = () => {
+          const db = requisicao.result;
+          if (!db.objectStoreNames.contains("saves")) {
+            db.createObjectStore("saves", { keyPath: "key" });
+          }
+        };
+        requisicao.onsuccess = () => resolve(requisicao.result);
+        requisicao.onerror = () => reject(requisicao.error);
+      });
+      return savesDbPromise;
+    }
+
+    function chaveSaveLocal(chave) {
+      return `${jogadorId || "convidado"}:${chave}`;
+    }
+
+    async function salvarLocal(chave, dados) {
+      const db = await abrirSavesDb();
+      if (!db) return;
+      await new Promise((resolve, reject) => {
+        const transacao = db.transaction("saves", "readwrite");
+        transacao.objectStore("saves").put({
+          key: chaveSaveLocal(chave),
+          state: dados.state || null,
+          sram: dados.sram || null,
+          updatedAt: Date.now(),
+        });
+        transacao.oncomplete = () => resolve();
+        transacao.onerror = () => reject(transacao.error);
+      });
+    }
+
+    async function carregarLocal(chave) {
+      const db = await abrirSavesDb();
+      if (!db) return null;
+      return new Promise((resolve, reject) => {
+        const transacao = db.transaction("saves", "readonly");
+        const requisicao = transacao.objectStore("saves").get(chaveSaveLocal(chave));
+        requisicao.onsuccess = () => resolve(requisicao.result || null);
+        requisicao.onerror = () => reject(requisicao.error);
+      });
+    }
+
+    function capturarSave() {
+      const emulator = window.EJS_emulator;
+      const gm = emulator?.gameManager;
+      if (!gm || !jogoAtual) return null;
+
+      let state = null;
+      let sram = null;
+      try {
+        if (gm.supportsStates?.() !== false) {
+          const dados = gm.getState();
+          if (dados?.length) state = bytesParaBase64(dados);
+        }
+      } catch (erro) {
+        console.warn("Não foi possível capturar o save state:", erro);
+      }
+      try {
+        gm.saveSaveFiles?.();
+        const dados = gm.getSaveFile(false);
+        if (dados?.length) sram = bytesParaBase64(dados);
+      } catch (erro) {
+        console.warn("Não foi possível capturar o SRAM:", erro);
+      }
+      if (!state && !sram) return null;
+      return { state, sram };
+    }
+
+    function aplicarSave(dados) {
+      const emulator = window.EJS_emulator;
+      const gm = emulator?.gameManager;
+      if (!gm || !dados) return false;
+
+      try {
+        if (dados.sram) {
+          const caminho = gm.getSaveFilePath?.();
+          if (caminho) gm.FS.writeFile(caminho, base64ParaBytes(dados.sram));
+          gm.loadSaveFiles?.();
+        }
+      } catch (erro) {
+        console.warn("Não foi possível aplicar o SRAM:", erro);
+      }
+      try {
+        if (dados.state && gm.supportsStates?.() !== false) {
+          gm.loadState(base64ParaBytes(dados.state));
+        }
+      } catch (erro) {
+        console.warn("Não foi possível aplicar o save state:", erro);
+        return false;
+      }
+      return true;
+    }
+
+    async function carregarSave(chave) {
+      let dados = null;
+      let origem = null;
+      if (jogadorId && tokenAcesso) {
+        try {
+          const resposta = await fetch(
+            apiUrl(`/api/emu/saves/${encodeURIComponent(chave)}`),
+            {
+              headers: { Authorization: `Bearer ${tokenAcesso}` },
+              cache: "no-store",
+            },
+          );
+          if (resposta.ok) {
+            dados = await resposta.json();
+            origem = "nuvem";
+          }
+        } catch (erro) {
+          console.warn("Save na nuvem indisponível, usando o local:", erro);
+        }
+      }
+      if (!dados) {
+        try {
+          dados = await carregarLocal(chave);
+          if (dados) origem = "local";
+        } catch (erro) {
+          console.warn("Save local indisponível:", erro);
+        }
+      }
+      if (!dados) return null;
+      return aplicarSave(dados) ? origem : null;
+    }
+
+    function mostrarAvisoSave(texto, erro = false) {
+      clearTimeout(avisoSaveTimer);
+      saveIndicator.textContent = texto;
+      saveIndicator.classList.toggle("erro", erro);
+      saveIndicator.hidden = false;
+      requestAnimationFrame(() => saveIndicator.classList.add("show"));
+      avisoSaveTimer = setTimeout(() => {
+        saveIndicator.classList.remove("show");
+        setTimeout(() => {
+          saveIndicator.hidden = true;
+        }, 250);
+      }, 2600);
+    }
+
+    async function salvarAgora(keepalive = false) {
+      if (!jogoAtual || salvando) return;
+      const dados = capturarSave();
+      if (!dados) return;
+      const chave = jogoAtual.chave;
+      salvando = true;
+      try {
+        await salvarLocal(chave, dados);
+        if (jogadorId && tokenAcesso) {
+          const resposta = await fetch(
+            apiUrl(`/api/emu/saves/${encodeURIComponent(chave)}`),
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${tokenAcesso}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(dados),
+              keepalive,
+            },
+          );
+          if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+          mostrarAvisoSave("☁️ Save salvo");
+        } else {
+          mostrarAvisoSave("💾 Save local");
+        }
+      } catch (erro) {
+        console.warn("Falha ao salvar na nuvem:", erro);
+        mostrarAvisoSave("⚠️ Save só neste dispositivo", true);
+      } finally {
+        salvando = false;
+      }
+    }
+
+    function iniciarAutosave() {
+      pararAutosave();
+      autosaveTimer = setInterval(() => salvarAgora(false), 20000);
+    }
+
+    function pararAutosave() {
+      clearInterval(autosaveTimer);
+      autosaveTimer = null;
+    }
+
+    async function autenticarDiscord(sdk) {
+      if (!SAVE_API_URL && window.parent === window) return null;
+      try {
+        const { code } = await sdk.commands.authorize({
+          client_id: DISCORD_CLIENT_ID,
+          response_type: "code",
+          state: "",
+          prompt: "none",
+          scope: ["identify"],
+        });
+        const resposta = await fetch(apiUrl("/api/emu/token"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code }),
+        });
+        if (!resposta.ok) throw new Error(`Token HTTP ${resposta.status}`);
+        const { access_token: accessToken } = await resposta.json();
+        if (!accessToken) throw new Error("Token vazio");
+        const auth = await sdk.commands.authenticate({
+          access_token: accessToken,
+        });
+        tokenAcesso = accessToken;
+        jogadorId = auth.user.id;
+        return jogadorId;
+      } catch (erro) {
+        console.warn("OAuth do save na nuvem falhou:", erro);
+        try {
+          const { participants } =
+            await sdk.commands.getActivityInstanceConnectedParticipants();
+          if (participants?.length === 1) jogadorId = participants[0].id;
+        } catch {}
+        return jogadorId;
+      }
     }
 
     function soltarPonteiro(pointerId) {
@@ -1195,6 +1483,8 @@
 
       if (window.parent === window) {
         previewMode = true;
+        jogadorProntoResolver?.(null);
+        jogadorProntoResolver = null;
         atualizarStatusDaSelecao();
         atualizarBotao();
         return;
@@ -1205,13 +1495,17 @@
 
       try {
         const { DiscordSDK } = await import(DISCORD_SDK_MODULE_URL);
-        const sdk = new DiscordSDK(DISCORD_CLIENT_ID);
+        discordSdk = new DiscordSDK(DISCORD_CLIENT_ID);
         await Promise.race([
-          sdk.ready(),
+          discordSdk.ready(),
           new Promise((resolve) => setTimeout(resolve, 2500)),
         ]);
+        await autenticarDiscord(discordSdk);
       } catch (error) {
         console.error("Discord Activity SDK failed to initialize:", error);
+      } finally {
+        jogadorProntoResolver?.(jogadorId);
+        jogadorProntoResolver = null;
       }
     }
 
@@ -1223,6 +1517,9 @@
     function trocarJogo() {
       // No Discord, recarregar o iframe nem sempre funciona; encerramos o
       // emulador atual e voltamos para a seleção sem sair da Activity.
+      salvarAgora(true);
+      pararAutosave();
+      jogoAtual = null;
       sessaoJogo += 1;
       const emulator = window.EJS_emulator;
       try {
@@ -1288,6 +1585,10 @@
 
       const esquema = esquemaDoCore(rom.core);
       renderControles(esquema);
+      jogoAtual = {
+        chave: `${rom.core}:${rom.name.replace(/[\\/]/g, "-")}`,
+        rom,
+      };
 
       document.body.classList.add("jogando");
       restartGameButton.hidden = false;
@@ -1299,11 +1600,26 @@
       window.EJS_controlScheme = esquema;
       window.EJS_pathtodata = EJS_DATA_PATH;
       window.EJS_startOnLoaded = true;
-      window.EJS_onGameStart = () => {
+      window.EJS_onGameStart = async () => {
         if (sessaoAtual !== sessaoJogo) return;
         clearTimeout(falhaTimer);
         atualizarControles(true);
         status.textContent = "Jogo iniciado. Use os controles abaixo.";
+
+        await Promise.race([
+          jogadorPronto,
+          new Promise((resolve) => setTimeout(resolve, 2500)),
+        ]);
+        if (sessaoAtual !== sessaoJogo || !jogoAtual) return;
+        const carregou = await carregarSave(jogoAtual.chave);
+        if (sessaoAtual !== sessaoJogo) return;
+        if (carregou) {
+          status.textContent = "Save carregado. Continue de onde parou.";
+          mostrarAvisoSave(
+            carregou === "nuvem" ? "☁️ Save carregado" : "💾 Save carregado",
+          );
+        }
+        iniciarAutosave();
       };
 
       const loader = document.createElement("script");
@@ -1313,6 +1629,8 @@
         if (sessaoAtual !== sessaoJogo) return;
         status.textContent =
           "Não foi possível carregar o EmulatorJS. Confira sua conexão e tente atualizar.";
+        pararAutosave();
+        jogoAtual = null;
         document.body.classList.remove("jogando");
         document.querySelector(".screen-label").hidden = false;
         restartButton.hidden = true;
@@ -1330,6 +1648,8 @@
         if (emulatorReady) return;
         status.textContent =
           "O emulador não terminou de iniciar. Verifique o WebGL do navegador e tente de novo.";
+        pararAutosave();
+        jogoAtual = null;
         document.body.classList.remove("jogando");
         document.querySelector(".screen-label").hidden = false;
         restartButton.hidden = true;
@@ -1357,8 +1677,10 @@
         atualizarTamanhoEmulador();
       } else {
         soltarTodosOsControles();
+        salvarAgora(true);
       }
     });
+    window.addEventListener("pagehide", () => salvarAgora(true));
     document.addEventListener("fullscreenchange", atualizarTamanhoEmulador);
     window.addEventListener("pageshow", atualizarTamanhoEmulador);
 

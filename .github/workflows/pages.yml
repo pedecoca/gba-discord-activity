@@ -40,6 +40,7 @@ jobs:
       - name: Build static site and fetch EmulatorJS assets
         env:
           DISCORD_CLIENT_ID: ${{ vars.DISCORD_CLIENT_ID }}
+          SAVE_API_URL: ${{ vars.SAVE_API_URL }}
         run: |
           set -euo pipefail
 
@@ -106,6 +107,11 @@ jobs:
           page_path = Path("dist/index.html")
           page = page_path.read_text(encoding="utf-8")
           page = page.replace("__DISCORD_CLIENT_ID_JSON__", json.dumps(client_id))
+          save_api_url = (
+              os.environ.get("SAVE_API_URL", "").strip().rstrip("/")
+              or "https://pokedc.online"
+          )
+          page = page.replace("__SAVE_API_URL_JSON__", json.dumps(save_api_url))
           page = page.replace(
               "__EJS_DATA_PATH_JSON__",
               json.dumps("./emulatorjs/data/"),
@@ -118,6 +124,7 @@ jobs:
               marker in page
               for marker in (
                   "__DISCORD_CLIENT_ID_JSON__",
+                  "__SAVE_API_URL_JSON__",
                   "__EJS_DATA_PATH_JSON__",
                   "__DISCORD_SDK_MODULE_URL_JSON__",
               )
