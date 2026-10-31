@@ -12,12 +12,18 @@ EmulatorJS. No momento, se a pasta `rom` tiver apenas arquivos `.gba`, somente
 o Game Boy Advance terá jogos para iniciar.
 
 Para adicionar jogos de outros sistemas, organize os arquivos em uma pasta
-com o ID do core em `rom/`, por exemplo `rom/snes9x/jogo.sfc` ou
-`rom/mgba/jogo.gba`. Os IDs e formatos reconhecidos estão em
-[`systems.json`](./systems.json). Arquivos soltos diretamente em `rom/` são
-associados automaticamente apenas quando sua extensão identifica um único
+com o ID do core em `rom/`, por exemplo `rom/snes9x/jogo.sfc`,
+`rom/mgba/jogo.gba` ou `rom/melonds/jogo.nds`. Os IDs e formatos reconhecidos
+estão em [`systems.json`](./systems.json). Arquivos soltos diretamente em `rom/`
+são associados automaticamente apenas quando sua extensão identifica um único
 sistema; formatos ambíguos devem ficar na pasta do core correspondente. Depois,
 execute novamente o workflow do GitHub Pages.
+
+O Nintendo DS usa o core `melonds` por padrão e aparece no seletor mesmo antes
+de haver ROMs `.nds`. Coloque as ROMs em `rom/melonds/`; o BIOS do DS não é
+incluído pelo EmulatorJS e, se o jogo exigir, deve ser fornecido separadamente.
+Os dois botões L/R, ABXY e Start/Select ficam nos controles de toque; a tela
+inferior aceita toque/stylus no canvas quando o core permite ponteiro.
 
 O console mostra os controles de toque abaixo da tela. Eles usam os botões
 padrão do RetroPad, funcionam ao pressionar e segurar (inclusive em
