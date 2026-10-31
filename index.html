@@ -1814,7 +1814,7 @@
       snes: "A/B/X/Y e L/R ativos.",
       segaMD: "A/B/C e X/Y/Z ativos.",
       segaMS: "Botões 1/2 e PAUSE ativos.",
-      nds: "A/B/X/Y, L/R e Start/Select ativos.",
+      nds: "A/B/X/Y, L/R e Start/Select ativos; toque na tela para o stylus.",
       default: "Toque ou segure os botões para jogar.",
     };
 
@@ -1828,7 +1828,7 @@
       segaMD: "4 / 3",
       segaMS: "4 / 3",
       segaSaturn: "4 / 3",
-      nds: "4 / 3",
+      nds: "2 / 3",
       pce: "4 / 3",
       default: "4 / 3",
     };
@@ -3303,7 +3303,11 @@
         }
 
         const comJogos = new Set(roms.map((rom) => rom.core));
-        systems = systemCatalog.filter((system) => comJogos.has(system.id));
+        const sistemasSempreVisiveis = new Set(["melonds"]);
+        systems = systemCatalog.filter(
+          (system) =>
+            comJogos.has(system.id) || sistemasSempreVisiveis.has(system.id),
+        );
         if (systems.length === 0) {
           throw new Error("Nenhum sistema possui jogos no repositório.");
         }
