@@ -63,6 +63,8 @@ jobs:
           cp -R "$RUNNER_TEMP/discord-sdk-package/output/." dist/discord-sdk/
           cp "$RUNNER_TEMP/discord-sdk-package/LICENSE.md" dist/discord-sdk/LICENSE.md
           cp index.html dist/index.html
+          cp terms.html dist/terms.html
+          cp privacy.html dist/privacy.html
           cp systems.json dist/systems.json
           cp covers.json dist/covers.json
           cp -R brand dist/brand
