@@ -654,5 +654,11 @@
     "The Legend of Zelda - Ocarina of Time": "./asset/covers/cb6e30f16830ab58.webp",
     "Turok 2 - Seeds of Evil": "./asset/covers/bf1a54599ff98f89.webp",
     "Turok 3 - Shadow of Oblivion": "./asset/covers/08f67411ff05bfdb.webp"
+  },
+  "pcsx_rearmed": {
+    "Final Fantasy IX - CD1 (PT-BR)": "./asset/covers/final-fantasy-ix.webp",
+    "Final Fantasy IX - CD2 (PT-BR)": "./asset/covers/final-fantasy-ix.webp",
+    "Final Fantasy IX - CD3 (PT-BR)": "./asset/covers/final-fantasy-ix.webp",
+    "Final Fantasy IX - CD4 (PT-BR)": "./asset/covers/final-fantasy-ix.webp"
   }
 }
