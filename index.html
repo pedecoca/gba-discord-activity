@@ -3,20 +3,21 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#11131b">
+  <meta name="theme-color" content="#1b1240">
   <link rel="icon" type="image/png" href="./asset/icon.png">
   <title>GG Retro Emulador no Discord</title>
   <style>
     :root {
       color-scheme: dark;
-      --bg: #07080e;
-      --surface: #0d101a;
-      --surface-2: #121626;
-      --line: #232941;
-      --text: #f1f3ff;
-      --muted: #8f98bd;
-      --accent: #6d7cff;
-      --accent-2: #a06bff;
+      --bg: #1b1240;
+      --surface: #2f2363;
+      --surface-2: #3b2b7d;
+      --line: #6d5bc4;
+      --text: #fff7fe;
+      --muted: #cfc7f7;
+      --accent: #a855f7;
+      --accent-2: #fb7185;
+      --cyan: #22d3ee;
       font: 16px/1.45 "Segoe UI", system-ui, -apple-system, sans-serif;
       background: var(--bg);
       color: var(--text);
@@ -30,9 +31,10 @@
       min-height: 100dvh;
       overflow: hidden;
       background:
-        radial-gradient(900px 480px at 88% -12%, #3a2f7a55, transparent 62%),
-        radial-gradient(700px 420px at -10% 115%, #0e3b5c5c, transparent 60%),
-        var(--bg);
+        radial-gradient(900px 520px at 88% -12%, #ec489988, transparent 62%),
+        radial-gradient(760px 460px at -8% 112%, #06b6d477, transparent 60%),
+        radial-gradient(560px 380px at 55% 55%, #7c3aed33, transparent 70%),
+        linear-gradient(155deg, #32206e 0%, #1e1548 55%, #150f35 100%);
     }
 
     main {
@@ -72,13 +74,13 @@
       flex: 0 0 auto;
       border-radius: 10px;
       object-fit: cover;
-      background: #070a12;
-      box-shadow: 0 8px 18px -8px #6d7cffcc;
+      background: #1c1733;
+      box-shadow: 0 8px 18px -8px #8b5cf6cc;
     }
 
     .brand-name em {
       font-style: normal;
-      color: #b9c3ff;
+      color: #f9a8d4;
     }
 
     .brand-dot { color: var(--accent); }
@@ -91,9 +93,9 @@
 
     .badge {
       flex: 0 0 auto;
-      border: 1px solid #ffffff1a;
-      background: #ffffff0a;
-      color: #c9cff2;
+      border: 1px solid #8b5cf666;
+      background: #8b5cf624;
+      color: #f0eaff;
       padding: 5px 11px;
       border-radius: 999px;
       font-size: 0.72rem;
@@ -108,9 +110,10 @@
       align-items: end;
       gap: 8px;
       padding: 10px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: var(--surface);
+      border: 1px solid #6d56c9;
+      border-radius: 18px;
+      background: linear-gradient(160deg, #3b2b74, #261b4f 65%, #2e2160);
+      box-shadow: 0 0 42px #a855f72e, 0 26px 60px -32px #080615;
     }
 
     .field { display: grid; gap: 4px; min-width: 0; }
@@ -127,7 +130,7 @@
       width: 100%;
       height: 38px;
       padding: 0 30px 0 10px;
-      border: 1px solid #2a3150;
+      border: 1px solid #6553a8;
       border-radius: 9px;
       background-color: var(--surface-2);
       color: var(--text);
@@ -135,8 +138,8 @@
       font-size: 0.84rem;
       appearance: none;
       background-image:
-        linear-gradient(45deg, transparent 50%, #7d86ad 50%),
-        linear-gradient(135deg, #7d86ad 50%, transparent 50%);
+        linear-gradient(45deg, transparent 50%, #d8ccff 50%),
+        linear-gradient(135deg, #d8ccff 50%, transparent 50%);
       background-position: calc(100% - 17px) 50%, calc(100% - 12px) 50%;
       background-size: 5px 5px, 5px 5px;
       background-repeat: no-repeat;
@@ -158,20 +161,20 @@
       padding: 0 16px;
       border: 0;
       border-radius: 9px;
-      background: linear-gradient(180deg, var(--accent), #5460d8);
+      background: linear-gradient(180deg, var(--accent), #6d28d9);
       color: #fff;
       cursor: pointer;
-      box-shadow: 0 8px 18px -10px #6d7cffcc, inset 0 1px 0 #ffffff33;
+      box-shadow: 0 8px 18px -10px #8b5cf6cc, inset 0 1px 0 #ffffff44;
       transition: filter 0.15s ease, transform 0.1s ease;
     }
 
-    button:hover:not(:disabled) { filter: brightness(1.1); }
+    button:hover:not(:disabled) { filter: brightness(1.12); }
     button:active:not(:disabled) { transform: translateY(1px); }
     button:disabled { opacity: 0.5; cursor: wait; }
 
     button.secondary {
-      background: #1b2236;
-      box-shadow: inset 0 0 0 1px #ffffff14;
+      background: #43327a;
+      box-shadow: inset 0 0 0 1px #8874d4;
     }
 
     #status {
@@ -189,10 +192,10 @@
       z-index: 30;
       max-width: min(70vw, 260px);
       padding: 5px 10px;
-      border: 1px solid #ffffff1f;
+      border: 1px solid #a855f788;
       border-radius: 999px;
-      background: #0d101ae8;
-      color: #dfe4ff;
+      background: #2f2363ee;
+      color: #f7f3ff;
       font-size: 0.68rem;
       opacity: 0;
       pointer-events: none;
@@ -218,10 +221,10 @@
       flex-direction: column;
       gap: 8px;
       padding: 10px;
-      border: 1px solid #ffffff12;
+      border: 1px solid #715bd0;
       border-radius: 18px;
-      background: linear-gradient(180deg, #121524, #0b0d16);
-      box-shadow: 0 26px 60px -32px #000;
+      background: linear-gradient(160deg, #3a2a72, #23194c 62%, #2d205f);
+      box-shadow: 0 0 48px #a855f72e, 0 26px 60px -32px #080615;
     }
 
     .gba-screen-frame {
@@ -230,10 +233,10 @@
       min-height: 0;
       display: flex;
       padding: 6px;
-      border: 1px solid #ffffff10;
+      border: 1px solid #9b7cf0;
       border-radius: 12px;
-      background: #04050a;
-      box-shadow: inset 0 0 30px #000;
+      background: #05030c;
+      box-shadow: inset 0 0 30px #000, 0 0 32px #a855f74d;
     }
 
     .screen-label {
@@ -243,7 +246,7 @@
       right: 0;
       z-index: 1;
       margin: 0;
-      color: #596080;
+      color: #9b8bd6;
       font-size: 0.58rem;
       font-weight: 700;
       letter-spacing: 0.3em;
@@ -293,14 +296,14 @@
       display: grid;
       place-items: center;
       padding: 12px;
-      color: #3f4763;
+      color: #a99cdf;
       font-size: 0.72rem;
       letter-spacing: 0.14em;
       text-align: center;
       text-transform: uppercase;
       background:
-        radial-gradient(420px 220px at 50% 42%, #141a2e, transparent 72%),
-        repeating-linear-gradient(0deg, #ffffff05 0 1px, transparent 1px 4px);
+        radial-gradient(420px 220px at 50% 42%, #2a214e, transparent 72%),
+        repeating-linear-gradient(0deg, #ffffff08 0 1px, transparent 1px 4px);
     }
 
     #game .ejs_virtualGamepad_parent { display: none !important; }
@@ -354,11 +357,11 @@
       width: clamp(84px, 14vh, 108px);
       height: clamp(84px, 14vh, 108px);
       flex: 0 0 auto;
-      border: 1px solid #ffffff1f;
+      border: 1px solid #a58bed;
       border-radius: 50%;
       background:
-        radial-gradient(circle at 35% 30%, #303956, #121626 68%),
-        #121626;
+        radial-gradient(circle at 35% 30%, #715bc4, #2a1e5a 68%),
+        #2a1e5a;
       box-shadow: inset 0 0 0 5px #ffffff08, 0 8px 18px -12px #000;
       touch-action: none;
     }
@@ -370,7 +373,7 @@
       width: 44%;
       height: 44%;
       border-radius: 50%;
-      background: linear-gradient(180deg, #7f8cff, #3e49b8);
+      background: linear-gradient(180deg, #f472b6, #7c3aed);
       box-shadow: 0 4px 10px -4px #000, inset 0 1px 0 #ffffff40;
       transform: translate(-50%, -50%);
       pointer-events: none;
@@ -400,10 +403,10 @@
       min-width: 0;
       min-height: 0;
       padding: 0;
-      border: 1px solid #ffffff1c;
+      border: 1px solid #9b83e8;
       border-radius: 10px;
-      background: linear-gradient(180deg, #29304a, #171c2d);
-      box-shadow: inset 0 1px 0 #ffffff1a, 0 5px 10px -7px #000;
+      background: linear-gradient(180deg, #5b48a0, #33276a);
+      box-shadow: inset 0 1px 0 #ffffff38, 0 5px 10px -7px #000;
       color: var(--text);
       font-size: 0.9rem;
       font-weight: 750;
@@ -509,14 +512,14 @@
       height: 30px;
       padding: 0 11px;
       font-size: 0.7rem;
-      background: #1b2236;
-      box-shadow: inset 0 0 0 1px #ffffff14;
-      opacity: 0.92;
+      background: #43327a;
+      box-shadow: inset 0 0 0 1px #8874d4;
+      opacity: 0.98;
     }
 
     .console-actions .saves-button {
-      background: linear-gradient(180deg, #6674ff, #4a55c9);
-      box-shadow: 0 8px 18px -10px #6d7cffcc, inset 0 1px 0 #ffffff33;
+      background: linear-gradient(180deg, #f472b6, #db2777);
+      box-shadow: 0 8px 18px -10px #f472b6cc, inset 0 1px 0 #ffffff44;
     }
 
     body.jogando .app-header,
@@ -552,7 +555,7 @@
       display: grid;
       place-items: center;
       padding: 14px;
-      background: #04050ad9;
+      background: #0b071ad9;
       backdrop-filter: blur(7px);
     }
 
@@ -561,12 +564,12 @@
       max-height: min(86dvh, 680px);
       overflow: auto;
       padding: 16px;
-      border: 1px solid #2b3350;
+      border: 1px solid #5b4a99;
       border-radius: 18px;
       background:
-        radial-gradient(420px 220px at 100% 0, #3d347a55, transparent 60%),
-        #111522;
-      box-shadow: 0 30px 80px -34px #000;
+        radial-gradient(420px 220px at 100% 0, #fb71854d, transparent 60%),
+        #2f2363;
+      box-shadow: 0 0 45px #a855f72e, 0 30px 80px -34px #080615;
     }
 
     .saves-card > header {
@@ -595,8 +598,8 @@
       flex: 0 0 auto;
       padding: 0;
       border-radius: 9px;
-      background: #1b2236;
-      box-shadow: inset 0 0 0 1px #ffffff14;
+      background: #43327a;
+      box-shadow: inset 0 0 0 1px #8874d4;
       font-size: 1.1rem;
       line-height: 1;
     }
@@ -609,9 +612,9 @@
       align-items: center;
       gap: 10px;
       padding: 10px 11px;
-      border: 1px solid #28304a;
+      border: 1px solid #5d4aa8;
       border-radius: 12px;
-      background: #0d111b;
+      background: #2a1e58;
     }
 
     .slot-head {
@@ -628,16 +631,16 @@
       align-items: center;
       padding: 2px 7px;
       border-radius: 999px;
-      background: #222a40;
-      color: #9aa4c8;
+      background: #3a2f68;
+      color: #cfc4ff;
       font-size: 0.58rem;
       font-weight: 750;
       letter-spacing: 0.04em;
       text-transform: uppercase;
     }
 
-    .slot-badge.cloud { background: #1d3a5a; color: #8cd6ff; }
-    .slot-badge.local { background: #2b2a48; color: #c7c2ff; }
+    .slot-badge.cloud { background: #0e4b5c; color: #8df4ff; }
+    .slot-badge.local { background: #4a2f68; color: #f4c8ff; }
 
     .slot-time {
       margin: 3px 0 0;
@@ -659,11 +662,11 @@
       font-size: 0.7rem;
     }
 
-    .slot-actions button.secondary { background: #1b2236; }
+    .slot-actions button.secondary { background: #43327a; }
 
     .saves-note {
       margin: 12px 0 0;
-      color: #7f89ad;
+      color: #a99fd4;
       font-size: 0.66rem;
       line-height: 1.4;
       text-align: center;
@@ -678,9 +681,9 @@
       height: 30px;
       padding: 0 9px;
       font-size: 0.68rem;
-      background: #1b2236;
-      box-shadow: inset 0 0 0 1px #ffffff14;
-      opacity: 0.92;
+      background: #43327a;
+      box-shadow: inset 0 0 0 1px #8874d4;
+      opacity: 0.98;
     }
 
     .game-tools button.is-active {
@@ -693,14 +696,14 @@
     .control-options fieldset {
       margin: 0;
       padding: 9px;
-      border: 1px solid #28304a;
+      border: 1px solid #5d4aa8;
       border-radius: 12px;
-      background: #0d111b;
+      background: #2a1e58;
     }
 
     .control-options legend {
       padding: 0 5px;
-      color: #b9c3ff;
+      color: #f4c8ff;
       font-size: 0.7rem;
       font-weight: 700;
     }
@@ -711,7 +714,7 @@
       gap: 8px;
       padding: 7px 8px;
       border-radius: 9px;
-      color: #dfe4ff;
+      color: #f1ecff;
       font-size: 0.78rem;
       cursor: pointer;
     }
@@ -724,9 +727,9 @@
       margin-top: 8px;
       padding: 10px;
       resize: vertical;
-      border: 1px solid #39415e;
+      border: 1px solid #6d5bc4;
       border-radius: 10px;
-      background: #0b0f1a;
+      background: #211642;
       color: var(--text);
       font: 0.8rem/1.45 ui-monospace, SFMono-Regular, Menlo, monospace;
     }
@@ -746,6 +749,7 @@
       }
       body.jogando .gba-console {
         flex: 0 0 auto;
+        margin-block: auto;
         padding: 6px;
         gap: 6px;
       }
@@ -764,6 +768,15 @@
       .gba-stick {
         width: clamp(78px, 13vh, 100px);
         height: clamp(78px, 13vh, 100px);
+      }
+      body.jogando .game-tools {
+        order: 2;
+        justify-content: center;
+        margin-top: 6px;
+      }
+      body.jogando .console-actions {
+        order: 3;
+        margin: 6px 0 0;
       }
       .control-hint { display: none; }
     }
@@ -820,7 +833,10 @@
 
       body.jogando .gba-screen-frame {
         position: absolute;
-        inset: 38px clamp(108px, 15vw, 190px) 38px;
+        inset:
+          calc(38px + env(safe-area-inset-top, 0px))
+          clamp(108px, 15vw, 190px)
+          calc(38px + env(safe-area-inset-bottom, 0px));
         width: auto;
         height: auto;
         flex: none;
@@ -842,7 +858,7 @@
 
       body.jogando .gba-left {
         position: absolute;
-        left: 8px;
+        left: calc(8px + env(safe-area-inset-left, 0px));
         top: 50%;
         width: clamp(86px, 11vw, 140px);
         transform: translateY(-50%);
@@ -850,7 +866,7 @@
 
       body.jogando .gba-actions {
         position: absolute;
-        right: 8px;
+        right: calc(8px + env(safe-area-inset-right, 0px));
         top: 50%;
         width: clamp(100px, 12vw, 150px);
         transform: translateY(-50%);
@@ -859,7 +875,8 @@
 
       body.jogando .gba-system {
         position: absolute;
-        bottom: calc(5px + env(safe-area-inset-bottom, 0px));
+        top: calc(5px + env(safe-area-inset-top, 0px));
+        bottom: auto;
         left: 50%;
         transform: translateX(-50%);
       }
@@ -867,9 +884,9 @@
       body.jogando .gba-shoulders {
         position: absolute;
         top: auto;
-        right: 8px;
+        right: calc(8px + env(safe-area-inset-right, 0px));
         bottom: 18%;
-        left: 8px;
+        left: calc(8px + env(safe-area-inset-left, 0px));
         z-index: 2;
       }
 
@@ -911,12 +928,17 @@
         pointer-events: auto;
       }
 
-      body.jogando #open-saves { left: 8px; }
-      body.jogando #restart-game { right: 8px; }
+      body.jogando #open-saves {
+        left: calc(8px + env(safe-area-inset-left, 0px));
+      }
+      body.jogando #restart-game {
+        right: calc(8px + env(safe-area-inset-right, 0px));
+      }
 
       body.jogando .game-tools {
         position: absolute;
-        top: calc(5px + env(safe-area-inset-top, 0px));
+        top: auto;
+        bottom: calc(5px + env(safe-area-inset-bottom, 0px));
         right: auto;
         left: 50%;
         z-index: 6;
@@ -953,7 +975,10 @@
 
     @media (orientation: landscape) {
       body.jogando.controles-grandes .gba-screen-frame {
-        inset: 38px clamp(120px, 16vw, 205px) 38px;
+        inset:
+          calc(38px + env(safe-area-inset-top, 0px))
+          clamp(120px, 16vw, 205px)
+          calc(38px + env(safe-area-inset-bottom, 0px));
       }
       body.jogando.controles-grandes .gba-left {
         width: clamp(108px, 12vw, 156px);
@@ -998,7 +1023,7 @@
     <div id="save-indicator" class="save-indicator" role="status" hidden></div>
     <section class="gba-console" aria-label="Console retro">
       <div class="console-actions">
-        <button id="open-saves" class="saves-button" type="button" hidden>☁️ Saves</button>
+        <button id="open-saves" class="saves-button" type="button" hidden>Saves</button>
         <button id="restart-game" class="floating-restart" type="button" hidden>Trocar jogo</button>
       </div>
       <div class="game-tools" id="game-tools" hidden>
@@ -1034,7 +1059,7 @@
     <section class="saves-card" role="dialog" aria-modal="true" aria-labelledby="saves-title">
       <header>
         <div>
-          <h2 id="saves-title">☁️ Saves do jogo</h2>
+          <h2 id="saves-title">💾 Saves do jogo</h2>
           <p id="saves-status" class="save-status">Até 3 slots por jogo.</p>
         </div>
         <button id="close-saves" class="icon-button" type="button" aria-label="Fechar saves">×</button>
