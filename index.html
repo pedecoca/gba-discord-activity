@@ -836,7 +836,7 @@
         inset:
           calc(38px + env(safe-area-inset-top, 0px))
           clamp(108px, 15vw, 190px)
-          calc(38px + env(safe-area-inset-bottom, 0px));
+          calc(74px + env(safe-area-inset-bottom, 0px));
         width: auto;
         height: auto;
         flex: none;
@@ -875,8 +875,8 @@
 
       body.jogando .gba-system {
         position: absolute;
-        top: calc(5px + env(safe-area-inset-top, 0px));
-        bottom: auto;
+        top: auto;
+        bottom: calc(42px + env(safe-area-inset-bottom, 0px));
         left: 50%;
         transform: translateX(-50%);
       }
@@ -978,7 +978,7 @@
         inset:
           calc(38px + env(safe-area-inset-top, 0px))
           clamp(120px, 16vw, 205px)
-          calc(38px + env(safe-area-inset-bottom, 0px));
+          calc(74px + env(safe-area-inset-bottom, 0px));
       }
       body.jogando.controles-grandes .gba-left {
         width: clamp(108px, 12vw, 156px);
