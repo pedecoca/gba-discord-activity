@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 import urllib.parse
@@ -33,6 +34,16 @@ from pathlib import Path, PurePosixPath
 from typing import Callable, Iterable
 
 USER_AGENT = "gba-discord-activity-catalog"
+
+
+def _headers(extra: dict | None = None) -> dict:
+    headers = {"User-Agent": USER_AGENT}
+    token = os.environ.get("GITHUB_TOKEN", "").strip()
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    if extra:
+        headers.update(extra)
+    return headers
 
 # Extensões que mais de um sistema do systems.json reivindica.
 PREFERRED_CORE_BY_EXTENSION = {
@@ -244,7 +255,7 @@ def fetch_github_tree(repo: str, branch: str) -> list[dict]:
     url = f"https://api.github.com/repos/{repo}/git/trees/{branch}?recursive=1"
     request = urllib.request.Request(
         url,
-        headers={"Accept": "application/vnd.github+json", "User-Agent": USER_AGENT},
+        headers=_headers({"Accept": "application/vnd.github+json"}),
     )
     with urllib.request.urlopen(request, timeout=30) as response:
         data = json.load(response)
@@ -262,7 +273,7 @@ def fetch_github_head(repo: str, branch: str) -> Callable[[str], bytes]:
             f"https://raw.githubusercontent.com/{repo}/{branch}/{quote_path(rom_path)}"
         )
         request = urllib.request.Request(
-            url, headers={"Range": "bytes=0-1023", "User-Agent": USER_AGENT}
+            url, headers=_headers({"Range": "bytes=0-1023"})
         )
         with urllib.request.urlopen(request, timeout=30) as response:
             return response.read(1024)
@@ -272,7 +283,7 @@ def fetch_github_head(repo: str, branch: str) -> Callable[[str], bytes]:
 
 def download_github_blob(repo: str, branch: str, rom_path: str, destination: Path) -> None:
     url = f"https://raw.githubusercontent.com/{repo}/{branch}/{quote_path(rom_path)}"
-    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    request = urllib.request.Request(url, headers=_headers())
     destination.parent.mkdir(parents=True, exist_ok=True)
     with urllib.request.urlopen(request, timeout=180) as response:
         destination.write_bytes(response.read())

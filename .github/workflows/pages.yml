@@ -32,6 +32,7 @@ jobs:
       - name: Build static site and fetch EmulatorJS assets
         env:
           DISCORD_CLIENT_ID: ${{ vars.DISCORD_CLIENT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
 
@@ -142,7 +143,7 @@ jobs:
           python3 tools/build_catalog.py \
             --systems systems.json \
             --output dist/roms.json \
-            --download-to dist/roms
+            --url-base "https://raw.githubusercontent.com/pedecoca/EmulatorJS/main/rom/"
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
