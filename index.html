@@ -724,6 +724,95 @@
       .gba-controls { grid-template-areas: "shoulders shoulders shoulders" "dpad system actions"; }
       #status { font-size: 0.68rem; }
     }
+
+    /* Modo PSP: em paisagem, tela no centro e controles nas laterais. */
+    @media (orientation: landscape) {
+      body.jogando main {
+        width: 100%;
+        height: 100dvh;
+        padding: 0;
+        gap: 0;
+      }
+
+      body.jogando .gba-console {
+        position: relative;
+        display: block;
+        flex: 1 1 auto;
+        height: 100%;
+        min-height: 0;
+        padding: 6px;
+        border-radius: 14px;
+      }
+
+      body.jogando .gba-screen-frame {
+        position: absolute;
+        inset: 38px clamp(92px, 12vw, 168px) 38px;
+        width: auto;
+        height: auto;
+        flex: none;
+        padding: 5px;
+        border-radius: 10px;
+      }
+
+      body.jogando .gba-controls {
+        position: absolute;
+        inset: 0;
+        display: block;
+        pointer-events: none;
+      }
+
+      body.jogando .gba-controls button {
+        pointer-events: auto;
+      }
+
+      body.jogando .gba-left {
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        width: clamp(86px, 11vw, 140px);
+        transform: translateY(-50%);
+      }
+
+      body.jogando .gba-actions {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        width: clamp(100px, 12vw, 150px);
+        transform: translateY(-50%);
+        justify-content: center;
+      }
+
+      body.jogando .gba-system {
+        position: absolute;
+        bottom: 5px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      body.jogando .gba-shoulders {
+        position: absolute;
+        top: 5px;
+        left: 8px;
+        right: 8px;
+        z-index: 2;
+      }
+
+      body.jogando .console-actions {
+        position: absolute;
+        top: 5px;
+        right: auto;
+        left: 50%;
+        z-index: 4;
+        order: 0;
+        align-self: auto;
+        margin: 0;
+        transform: translateX(-50%);
+      }
+
+      body.jogando .control-hint {
+        display: none;
+      }
+    }
   </style>
 </head>
 <body>
