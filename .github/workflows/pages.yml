@@ -29,10 +29,17 @@ jobs:
         with:
           node-version: 22
 
+      - name: Check out ROMs
+        uses: actions/checkout@v4
+        with:
+          repository: pedecoca/EmulatorJS
+          path: emulatorjs-roms
+          sparse-checkout: rom
+          fetch-depth: 1
+
       - name: Build static site and fetch EmulatorJS assets
         env:
           DISCORD_CLIENT_ID: ${{ vars.DISCORD_CLIENT_ID }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
 
@@ -143,7 +150,10 @@ jobs:
           python3 tools/build_catalog.py \
             --systems systems.json \
             --output dist/roms.json \
-            --url-base "https://raw.githubusercontent.com/pedecoca/EmulatorJS/main/rom/"
+            --local-rom-dir emulatorjs-roms/rom
+
+          mkdir -p dist/roms
+          cp -R emulatorjs-roms/rom/. dist/roms/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

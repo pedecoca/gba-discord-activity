@@ -1,2 +1,4 @@
 dist/
 roms.json
+__pycache__/
+*.pyc
