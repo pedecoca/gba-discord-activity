@@ -24,6 +24,21 @@ padrão do RetroPad, funcionam ao pressionar e segurar (inclusive em
 combinações) e são habilitados quando o jogo inicia. O layout é recalculado
 quando a Activity é redimensionada ou volta a ficar visível.
 
+## Saves na nuvem dentro do Discord
+
+A API de saves fica em `api.pokedc.online`. Como Activities são executadas
+atrás do proxy `*.discordsays.com`, requisições absolutas para domínios
+externos são bloqueadas pela CSP. No Developer Portal, em
+**Activities → URL Mappings**, configure:
+
+| Prefix | Target |
+|---|---|
+| `/api` | `api.pokedc.online` |
+
+Com esse mapping, a Activity usa `/api/emu/...` e o Discord encaminha para a
+API. O servidor também aceita o caminho `/emu/...` para o caso de o proxy
+remover o prefixo `/api`.
+
 ## Publicar
 
 1. Crie um repositório **público** no GitHub para a Activity.

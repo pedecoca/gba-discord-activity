@@ -1640,7 +1640,7 @@
 
   <script type="module">
     const DISCORD_CLIENT_ID = __DISCORD_CLIENT_ID_JSON__;
-    const SAVE_API_URL = __SAVE_API_URL_JSON__;
+    let SAVE_API_URL = __SAVE_API_URL_JSON__;
     const EJS_DATA_PATH = __EJS_DATA_PATH_JSON__;
     const DISCORD_SDK_MODULE_URL = __DISCORD_SDK_MODULE_URL_JSON__;
     const systemInput = document.querySelector("#system");
@@ -3334,6 +3334,11 @@
         atualizarBotao();
         return;
       }
+
+      // Dentro do Discord, o Activity roda atrás do proxy *.discordsays.com.
+      // URLs externas absolutas são bloqueadas pela CSP. Use /api e o URL
+      // Mapping /api -> api.pokedc.online configurado no Developer Portal.
+      SAVE_API_URL = "";
 
       atualizarStatusDaSelecao();
       atualizarBotao();
