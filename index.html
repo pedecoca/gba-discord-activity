@@ -34,7 +34,21 @@
         radial-gradient(900px 520px at 88% -12%, #ec489988, transparent 62%),
         radial-gradient(760px 460px at -8% 112%, #06b6d477, transparent 60%),
         radial-gradient(560px 380px at 55% 55%, #7c3aed33, transparent 70%),
-        linear-gradient(155deg, #32206e 0%, #1e1548 55%, #150f35 100%);
+        linear-gradient(125deg, #2b1b63 0%, #4c1d95 22%, #155e75 45%, #831843 72%, #2b1b63 100%);
+      background-size: auto, auto, auto, 300% 300%;
+      background-position: 0 0, 0 0, 0 0, 0% 50%;
+      animation: fundoVivo 34s ease-in-out infinite;
+    }
+
+    @keyframes fundoVivo {
+      0%, 100% { background-position: 0 0, 0 0, 0 0, 0% 50%; }
+      50% { background-position: 0 0, 0 0, 0 0, 100% 50%; }
+    }
+
+    @property --border-angle {
+      syntax: "<angle>";
+      inherits: false;
+      initial-value: 0deg;
     }
 
     main {
@@ -76,6 +90,12 @@
       object-fit: cover;
       background: #1c1733;
       box-shadow: 0 8px 18px -8px #8b5cf6cc;
+      animation: flutuarLogo 6s ease-in-out infinite;
+    }
+
+    @keyframes flutuarLogo {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-2px) scale(1.03); }
     }
 
     .brand-name em {
@@ -411,6 +431,51 @@
       border-radius: 12px;
       background: #05030c;
       box-shadow: inset 0 0 30px #000, 0 0 32px #a855f74d;
+      transition: box-shadow 0.4s ease;
+    }
+
+    .gba-screen-frame::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      z-index: 2;
+      padding: 2px;
+      border-radius: 14px;
+      background: conic-gradient(
+        from var(--border-angle),
+        #a855f7,
+        #22d3ee,
+        #fb7185,
+        #facc15,
+        #a855f7
+      );
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      animation: girarBorda 6s linear infinite;
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      mask-composite: exclude;
+    }
+
+    body.jogando .gba-screen-frame {
+      box-shadow:
+        inset 0 0 30px #000,
+        0 0 26px #a855f766,
+        0 0 52px #22d3ee33;
+    }
+
+    body.jogando .gba-screen-frame::before {
+      opacity: 1;
+    }
+
+    @keyframes girarBorda {
+      to { --border-angle: 360deg; }
     }
 
     .screen-label {
@@ -1231,6 +1296,17 @@
       }
       body.jogando.controles-grandes .gba-actions {
         width: clamp(116px, 13vw, 166px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body,
+      .brand-logo,
+      .gba-screen-frame::before {
+        animation: none;
+      }
+      .gba-screen-frame::before {
+        opacity: 0;
       }
     }
   </style>
