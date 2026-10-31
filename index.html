@@ -3093,6 +3093,14 @@
       window.EJS_core = rom.core;
       window.EJS_controlScheme = esquema;
       window.EJS_pathtodata = EJS_DATA_PATH;
+      // CDs de PS1 passam de 400 MB. Em alguns iframes do Discord o
+      // IndexedDB tem cota pequena e o cache da ROM falha com "Erro de
+      // rede"; nesse core o download é feito direto para a memória.
+      if (rom.core === "pcsx_rearmed") {
+        window.EJS_cacheConfig = { enabled: false };
+      } else {
+        delete window.EJS_cacheConfig;
+      }
       window.EJS_startOnLoaded = true;
       window.EJS_onGameStart = async () => {
         if (sessaoAtual !== sessaoJogo) return;
