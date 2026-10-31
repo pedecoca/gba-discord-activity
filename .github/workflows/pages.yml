@@ -164,6 +164,11 @@ jobs:
             --output dist/roms.json \
             --local-rom-dir emulatorjs-roms/rom
 
+          python3 tools/apply_release_urls.py \
+            --catalog dist/roms.json \
+            --manifest psx_release.json \
+            --skip-output dist/release-skip.json
+
           python3 - <<'PY'
           import json
           import shutil
@@ -173,14 +178,23 @@ jobs:
           catalogo = json.loads(
               Path("dist/roms.json").read_text(encoding="utf-8")
           )
+          ignorar = set(
+              json.loads(
+                  Path("dist/release-skip.json").read_text(encoding="utf-8")
+              )
+          )
           origem = Path("emulatorjs-roms/rom")
           destino = Path("dist/roms")
           for jogo in catalogo["games"]:
               url = jogo["url"]
               prefixo = "./roms/"
               if not url.startswith(prefixo):
-                  raise SystemExit(f"URL de ROM inesperada: {url}")
+                  # URLs absolutas vêm do GitHub Release e são servidas
+                  # pelo proxy api.pokedc.online.
+                  continue
               relativo = urllib.parse.unquote(url[len(prefixo):])
+              if relativo in ignorar:
+                  continue
               alvo = destino / relativo
               alvo.parent.mkdir(parents=True, exist_ok=True)
               shutil.copy2(origem / relativo, alvo)
