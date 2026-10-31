@@ -625,21 +625,36 @@
     }
 
     function suporteWebgl() {
-      try {
-        // Canvases separados: pedir webgl no mesmo canvas depois de um webgl2
-        // que falhou retorna null e dava falso negativo no Discord.
-        const canvas2 = document.createElement("canvas");
-        if (canvas2.getContext("webgl2", { failIfMajorPerformanceCaveat: false })) {
-          return 2;
+      const testar = (tipo) => {
+        const canvas = document.createElement("canvas");
+        try {
+          const gl = canvas.getContext(tipo, {
+            failIfMajorPerformanceCaveat: false,
+          });
+          if (!gl) return false;
+          // Libera o contexto de teste; sem isso, cada início/troca deixa
+          // um WebGL vivo e o próximo jogo pode ficar sem contexto.
+          gl.getExtension("WEBGL_lose_context")?.loseContext();
+          return true;
+        } catch {
+          return false;
         }
-        const canvas1 = document.createElement("canvas");
-        if (canvas1.getContext("webgl", { failIfMajorPerformanceCaveat: false })) {
-          return 1;
-        }
-      } catch {
-        // sem WebGL
-      }
+      };
+
+      if (testar("webgl2")) return 2;
+      if (testar("webgl")) return 1;
       return 0;
+    }
+
+    function liberarContextosWebgl() {
+      document.querySelectorAll("canvas").forEach((canvas) => {
+        for (const tipo of ["webgl2", "webgl"]) {
+          try {
+            const gl = canvas.getContext(tipo);
+            gl?.getExtension("WEBGL_lose_context")?.loseContext();
+          } catch {}
+        }
+      });
     }
 
     function criarBotao(rotulo, input, classe = "") {
@@ -900,7 +915,7 @@
         requestAnimationFrame(() => {
           resizeScheduled = false;
           if (game.clientWidth === 0 || game.clientHeight === 0) return;
-          window.dispatchEvent(new Event("resize"));
+          window.EJS_emulator?.frontend?.handleResize?.();
         });
       });
     }
@@ -1016,7 +1031,14 @@
       try {
         emulator?.gameManager?.toggleMainLoop?.(0);
       } catch {}
+      try {
+        // O resize global ainda chama o emulador antigo; neutraliza para
+        // ele não tentar acessar o canvas que foi removido.
+        if (emulator) emulator.handleResize = () => {};
+        if (emulator?.frontend) emulator.frontend.handleResize = () => {};
+      } catch {}
 
+      liberarContextosWebgl();
       soltarTodosOsControles();
       clearTimeout(falhaTimer);
       window.EJS_emulator = null;
@@ -1038,7 +1060,7 @@
       atualizarBotao();
     }
 
-    startButton.addEventListener("click", () => {
+    startButton.addEventListener("click", async () => {
       const rom = roms.find(
         (item) =>
           item.url === romInput.value && item.core === systemInput.value,
@@ -1047,7 +1069,13 @@
 
       const sessaoAtual = ++sessaoJogo;
       const coreN64 = ["mupen64plus_next", "parallel_n64"].includes(rom.core);
-      const webgl = suporteWebgl();
+      let webgl = suporteWebgl();
+      if (webgl === 0) {
+        // O core anterior pode ter deixado o contexto WebGL preso.
+        liberarContextosWebgl();
+        await new Promise((resolve) => setTimeout(resolve, 150));
+        webgl = suporteWebgl();
+      }
       if (webgl === 0) {
         status.textContent =
           "WebGL indisponível neste iframe. Abra a Activity no painel normal (não no popout) ou ative a aceleração de hardware.";
