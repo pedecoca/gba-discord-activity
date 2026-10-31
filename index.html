@@ -177,6 +177,7 @@
     }
 
     .gba-console {
+      position: relative;
       flex: 1 1 auto;
       min-height: 0;
       display: flex;
@@ -225,6 +226,23 @@
       overflow: hidden;
       border-radius: 8px;
       background: #000;
+    }
+
+    #game:empty::after {
+      content: "Escolha um jogo para começar";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 12px;
+      color: #3f4763;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-align: center;
+      text-transform: uppercase;
+      background:
+        radial-gradient(420px 220px at 50% 42%, #141a2e, transparent 72%),
+        repeating-linear-gradient(0deg, #ffffff05 0 1px, transparent 1px 4px);
     }
 
     #game .ejs_virtualGamepad_parent { display: none !important; }
@@ -374,6 +392,26 @@
       text-align: center;
     }
 
+    .floating-restart {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 2;
+      height: 30px;
+      padding: 0 11px;
+      font-size: 0.7rem;
+      background: #1b2236;
+      box-shadow: inset 0 0 0 1px #ffffff14;
+      opacity: 0.9;
+    }
+
+    body.jogando .app-header,
+    body.jogando .panel,
+    body.jogando #status { display: none; }
+
+    body.jogando main { padding: 6px 0; gap: 0; }
+    body.jogando .gba-console { border-radius: 14px; }
+
     [hidden] { display: none !important; }
 
     @media (max-width: 700px) {
@@ -396,7 +434,7 @@
       .gba-console { min-height: 300px; }
     }
 
-    @media (max-height: 620px) {
+    @media (max-height: 560px) {
       main { padding: 6px 0; gap: 6px; }
       .subtitle, .screen-label, .control-hint { display: none; }
       .panel { padding: 7px; }
@@ -437,6 +475,7 @@
     </section>
     <p id="status" role="status">Conectando à Activity do Discord…</p>
     <section class="gba-console" aria-label="Console retro">
+      <button id="restart-game" class="floating-restart" type="button" hidden>Trocar jogo</button>
       <div class="gba-screen-frame">
         <p class="screen-label">Tela do jogo</p>
         <div id="game" aria-label="Tela do emulador"></div>
@@ -464,6 +503,7 @@
     const romInput = document.querySelector("#rom");
     const startButton = document.querySelector("#start");
     const restartButton = document.querySelector("#restart");
+    const restartGameButton = document.querySelector("#restart-game");
     const status = document.querySelector("#status");
     const game = document.querySelector("#game");
     const controls = document.querySelector("#controls");
@@ -830,6 +870,7 @@
       }
 
       romInput.disabled = jogosDoSistema.length === 0;
+      renderControles(esquemaDoCore(system?.id ?? "default"));
       atualizarStatusDaSelecao();
       atualizarBotao();
     }
@@ -848,9 +889,10 @@
 
     async function carregarRoms() {
       try {
+        const versao = Date.now();
         const [systemsResponse, romsResponse] = await Promise.all([
-          fetch("./systems.json"),
-          fetch("./roms.json"),
+          fetch(`./systems.json?v=${versao}`, { cache: "no-store" }),
+          fetch(`./roms.json?v=${versao}`, { cache: "no-store" }),
         ]);
         if (!systemsResponse.ok || !romsResponse.ok) {
           throw new Error(
@@ -940,6 +982,7 @@
     systemInput.addEventListener("change", atualizarListaDeJogos);
     romInput.addEventListener("change", atualizarBotao);
     restartButton.addEventListener("click", () => window.location.reload());
+    restartGameButton.addEventListener("click", () => window.location.reload());
 
     startButton.addEventListener("click", () => {
       const rom = roms.find(
@@ -950,6 +993,7 @@
 
       startButton.disabled = true;
       restartButton.hidden = false;
+      document.querySelector(".screen-label").hidden = true;
       systemInput.disabled = true;
       romInput.disabled = true;
       status.textContent = "Iniciando o emulador…";
@@ -967,6 +1011,9 @@
         atualizarBotao();
         return;
       }
+
+      document.body.classList.add("jogando");
+      restartGameButton.hidden = false;
 
       window.EJS_player = "#game";
       window.EJS_gameName = rom.name;
@@ -986,6 +1033,8 @@
       loader.onerror = () => {
         status.textContent =
           "Não foi possível carregar o EmulatorJS. Confira sua conexão e tente atualizar.";
+        document.body.classList.remove("jogando");
+        restartGameButton.hidden = true;
         atualizarControles(false);
         systemInput.disabled = false;
         romInput.disabled = false;
@@ -998,6 +1047,8 @@
         if (emulatorReady) return;
         status.textContent =
           "O emulador não terminou de iniciar. Verifique o WebGL do navegador e tente de novo.";
+        document.body.classList.remove("jogando");
+        restartGameButton.hidden = true;
         atualizarControles(false);
         systemInput.disabled = false;
         romInput.disabled = false;
