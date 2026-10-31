@@ -105,11 +105,6 @@
     "extensions": [".pce", ".cue", ".chd"]
   },
   {
-    "id": "mednafen_psx_hw",
-    "name": "Sony PlayStation (Beetle PSX HW)",
-    "extensions": [".cue", ".chd", ".pbp", ".iso", ".bin"]
-  },
-  {
     "id": "mednafen_wswan",
     "name": "WonderSwan / WonderSwan Color",
     "extensions": [".ws", ".wsc"]
@@ -133,11 +128,6 @@
     "id": "opera",
     "name": "3DO",
     "extensions": [".cue", ".chd", ".iso", ".bin"]
-  },
-  {
-    "id": "pcsx_rearmed",
-    "name": "Sony PlayStation (PCSX ReARMed)",
-    "extensions": [".cue", ".chd", ".pbp", ".iso", ".bin"]
   },
   {
     "id": "picodrive",

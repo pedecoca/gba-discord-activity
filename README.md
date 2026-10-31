@@ -11,25 +11,9 @@ seletor de jogos mostra somente ROMs compatíveis que estejam no repositório
 EmulatorJS. No momento, se a pasta `rom` tiver apenas arquivos `.gba`, somente
 o Game Boy Advance terá jogos para iniciar.
 
-## CDs de PlayStation no GitHub Releases
-
-Os BINs de PS1 são grandes demais para o repositório e para o limite de 1 GB do
-GitHub Pages. Eles ficam na release
-[`psx-cds-v1`](https://github.com/pedecoca/EmulatorJS/releases/tag/psx-cds-v1)
-e são baixados pelo proxy `https://api.pokedc.online/release-v3/...`.
-
-O GitHub não envia CORS nos arquivos de Release; por isso o Activity **não**
-pode baixá-los diretamente. O `bot/activity_server.py` repassa os assets com
-CORS, `Range` e `Cache-Control: no-store`. O catálogo do Pages é montado por
-`tools/apply_release_urls.py` a partir de [`psx_release.json`](./psx_release.json),
-que também impede a cópia desses BINs para dentro de `dist/roms`.
-
-Se você trocar a release, atualize `download_base` e `proxy_base` em
-`psx_release.json`; se o caminho do proxy mudar, reinicie o servidor da Activity.
-
 Para adicionar jogos de outros sistemas, organize os arquivos em uma pasta
 com o ID do core em `rom/`, por exemplo `rom/snes9x/jogo.sfc` ou
-`rom/pcsx_rearmed/jogo.chd`. Os IDs e formatos reconhecidos estão em
+`rom/mgba/jogo.gba`. Os IDs e formatos reconhecidos estão em
 [`systems.json`](./systems.json). Arquivos soltos diretamente em `rom/` são
 associados automaticamente apenas quando sua extensão identifica um único
 sistema; formatos ambíguos devem ficar na pasta do core correspondente. Depois,
