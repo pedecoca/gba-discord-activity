@@ -302,8 +302,21 @@ def build_catalog(
     extension_owners = build_extension_owners(systems)
     games: list[dict] = []
     skipped: list[tuple[str, str]] = []
+    rom_paths = list(rom_paths)
+    cue_stems = {
+        PurePosixPath(path).with_suffix("").as_posix()
+        for path in rom_paths
+        if PurePosixPath(path).suffix.lower() == ".cue"
+    }
 
     for rom_path in sorted(rom_paths, key=str.casefold):
+        if (
+            PurePosixPath(rom_path).suffix.lower() == ".bin"
+            and PurePosixPath(rom_path).with_suffix("").as_posix() in cue_stems
+        ):
+            skipped.append((rom_path, "BIN coberto pelo CUE correspondente"))
+            continue
+
         core, reason = resolve_core(
             rom_path, systems_by_id, extension_owners, head_reader
         )
