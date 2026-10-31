@@ -859,7 +859,7 @@
 
       body.jogando .gba-system {
         position: absolute;
-        bottom: 5px;
+        bottom: calc(5px + env(safe-area-inset-bottom, 0px));
         left: 50%;
         transform: translateX(-50%);
       }
@@ -907,7 +907,7 @@
 
       body.jogando .console-actions button {
         position: absolute;
-        bottom: 5px;
+        bottom: calc(5px + env(safe-area-inset-bottom, 0px));
         pointer-events: auto;
       }
 
@@ -916,7 +916,7 @@
 
       body.jogando .game-tools {
         position: absolute;
-        top: 5px;
+        top: calc(5px + env(safe-area-inset-top, 0px));
         right: auto;
         left: 50%;
         z-index: 6;
