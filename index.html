@@ -223,9 +223,33 @@
       flex: 1 1 auto;
       min-height: 0;
       width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       overflow: hidden;
       border-radius: 8px;
       background: #000;
+    }
+
+    #game .ejs_canvas_parent {
+      position: absolute !important;
+      inset: 0;
+      width: 100% !important;
+      height: 100% !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+    }
+
+    #game canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 100%;
+      max-height: 100%;
+      margin: auto;
+      object-fit: contain;
     }
 
     #game:empty::after {
@@ -246,6 +270,10 @@
     }
 
     #game .ejs_virtualGamepad_parent { display: none !important; }
+    #game .ejs_menu_bar,
+    #game .ejs_virtualGamepad_open {
+      display: none !important;
+    }
 
     .gba-controls {
       flex: 0 0 auto;
@@ -266,6 +294,10 @@
       grid-template-columns: minmax(80px, auto) minmax(52px, 0.5fr) minmax(148px, auto);
     }
 
+    .gba-controls.has-stick {
+      grid-template-columns: minmax(96px, auto) minmax(52px, 0.5fr) minmax(132px, auto);
+    }
+
     .gba-shoulders {
       grid-area: shoulders;
       display: flex;
@@ -273,13 +305,51 @@
       padding: 0 2px;
     }
 
-    .gba-dpad {
+    .gba-left {
       grid-area: dpad;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    .gba-stick {
+      position: relative;
+      width: clamp(84px, 14vh, 108px);
+      height: clamp(84px, 14vh, 108px);
+      flex: 0 0 auto;
+      border: 1px solid #ffffff1f;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 30%, #303956, #121626 68%),
+        #121626;
+      box-shadow: inset 0 0 0 5px #ffffff08, 0 8px 18px -12px #000;
+      touch-action: none;
+    }
+
+    .gba-stick-knob {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 44%;
+      height: 44%;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #7f8cff, #3e49b8);
+      box-shadow: 0 4px 10px -4px #000, inset 0 1px 0 #ffffff40;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .gba-stick[aria-disabled="true"] { opacity: 0.5; }
+
+    .gba-dpad {
       display: grid;
       grid-template-columns: repeat(3, clamp(28px, 4.4vh, 44px));
       grid-template-rows: repeat(3, clamp(28px, 4.4vh, 44px));
       gap: 3px;
-      justify-content: start;
+      justify-content: center;
       touch-action: none;
     }
 
@@ -414,6 +484,44 @@
 
     [hidden] { display: none !important; }
 
+    @media (max-width: 700px), (max-height: 560px) {
+      body.jogando .floating-restart {
+        position: fixed;
+        top: calc(8px + env(safe-area-inset-top, 0px));
+        right: calc(8px + env(safe-area-inset-right, 0px));
+        z-index: 20;
+      }
+    }
+
+    @media (max-width: 700px) and (orientation: portrait) {
+      body.jogando main {
+        justify-content: center;
+        padding: 4px 0;
+      }
+      body.jogando .gba-console {
+        flex: 0 0 auto;
+        padding: 6px;
+        gap: 6px;
+      }
+      body.jogando .gba-screen-frame {
+        flex: 0 0 auto;
+        width: 100%;
+        aspect-ratio: var(--screen-aspect, 3 / 2);
+      }
+      .gba-controls { gap: 4px 6px; }
+      .gba-controls.has-cpad .gba-actions {
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+      .gba-shoulder { width: clamp(46px, 13vw, 58px); }
+      .gba-stick {
+        width: clamp(78px, 13vh, 100px);
+        height: clamp(78px, 13vh, 100px);
+      }
+      .control-hint { display: none; }
+    }
+
     @media (max-width: 700px) {
       main { width: min(100% - 14px, 900px); padding: 9px 0; gap: 8px; }
       .panel { grid-template-columns: 1fr 1fr; padding: 8px; }
@@ -482,11 +590,16 @@
       </div>
       <div class="gba-controls" id="controls" aria-label="Controles do jogo" aria-disabled="true">
         <div class="gba-shoulders" id="shoulders"></div>
-        <div class="gba-dpad" id="dpad" role="group" aria-label="Direcional">
-          <button class="gba-control" type="button" data-dir="4" aria-label="Cima" tabindex="-1">▲</button>
-          <button class="gba-control" type="button" data-dir="6" aria-label="Esquerda" tabindex="-1">◀</button>
-          <button class="gba-control" type="button" data-dir="7" aria-label="Direita" tabindex="-1">▶</button>
-          <button class="gba-control" type="button" data-dir="5" aria-label="Baixo" tabindex="-1">▼</button>
+        <div class="gba-left">
+          <div class="gba-stick" id="stick" role="group" aria-label="Analógico" hidden>
+            <span class="gba-stick-knob" id="stick-knob"></span>
+          </div>
+          <div class="gba-dpad" id="dpad" role="group" aria-label="Direcional">
+            <button class="gba-control" type="button" data-dir="4" aria-label="Cima" tabindex="-1">▲</button>
+            <button class="gba-control" type="button" data-dir="6" aria-label="Esquerda" tabindex="-1">◀</button>
+            <button class="gba-control" type="button" data-dir="7" aria-label="Direita" tabindex="-1">▶</button>
+            <button class="gba-control" type="button" data-dir="5" aria-label="Baixo" tabindex="-1">▼</button>
+          </div>
         </div>
         <div class="gba-system" id="system-buttons"></div>
         <div class="gba-actions" id="actions" aria-label="Botões de ação"></div>
@@ -519,8 +632,11 @@
     let webglSuporte = null;
     const activePointers = new Map();
     const dpad = document.querySelector("#dpad");
+    const stick = document.querySelector("#stick");
+    const stickKnob = document.querySelector("#stick-knob");
     const dpadAtivos = new Set();
     const teclasAtivas = new Set();
+    let stickPointer = null;
     let esquemaAtual = "default";
 
     // Layouts por control scheme do EmulatorJS (RetroPad): 0=B, 1=Y, 2=Select,
@@ -551,6 +667,7 @@
         face: [["B", 1], ["A", 0]],
         system: [["START", 3]],
         cpad: [["C▲", 23], ["C◀", 21], ["C▶", 20], ["C▼", 22]],
+        stick: true,
       },
       psx: {
         shoulders: [["L1", 10], ["R1", 11], ["L2", 12], ["R2", 13]],
@@ -612,13 +729,28 @@
     };
 
     const DICAS = {
-      n64: "Direcional anda; C▲▼◀▶ giram a câmera.",
+      n64: "Analógico move; C▲▼◀▶ giram a câmera.",
       psx: "△ □ ✕ ○ e L1/R1/L2/R2 ativos.",
       snes: "A/B/X/Y e L/R ativos.",
       segaMD: "A/B/C e X/Y/Z ativos.",
       segaMS: "Botões 1/2 e PAUSE ativos.",
       nds: "A/B/X/Y, L/R e Start/Select ativos.",
       default: "Toque ou segure os botões para jogar.",
+    };
+
+    const ASPECTOS = {
+      gba: "3 / 2",
+      gb: "10 / 9",
+      nes: "4 / 3",
+      snes: "4 / 3",
+      n64: "4 / 3",
+      psx: "4 / 3",
+      segaMD: "4 / 3",
+      segaMS: "4 / 3",
+      segaSaturn: "4 / 3",
+      nds: "4 / 3",
+      pce: "4 / 3",
+      default: "4 / 3",
     };
 
     function esquemaDoCore(core) {
@@ -672,6 +804,7 @@
     function atualizarControles(disponiveis) {
       emulatorReady = disponiveis;
       controls.setAttribute("aria-disabled", String(!disponiveis));
+      stick.setAttribute("aria-disabled", String(!disponiveis));
       controls.querySelectorAll("[data-input]").forEach((button) => {
         button.disabled = !disponiveis;
       });
@@ -684,6 +817,12 @@
       esquemaAtual = LAYOUTS[scheme] ? scheme : "default";
       const layout = LAYOUTS[esquemaAtual];
       controls.classList.toggle("has-cpad", Boolean(layout.cpad));
+      controls.classList.toggle("has-stick", Boolean(layout.stick));
+      stick.hidden = !layout.stick;
+      game.parentElement.style.setProperty(
+        "--screen-aspect",
+        ASPECTOS[esquemaAtual] || ASPECTOS.default,
+      );
 
       document
         .querySelector("#shoulders")
@@ -732,6 +871,14 @@
 
     function enviarEntrada(input, pressed) {
       enviarValor(input, pressed ? 1 : 0);
+    }
+
+    function enviarAnalog(x, y) {
+      const emulator = window.EJS_emulator;
+      if (!emulatorReady || !emulator?.gameManager) return;
+      // No RetroPad, 16/17 são os eixos do analógico esquerdo.
+      emulator.gameManager.simulateInput(0, 16, Math.round(x * 0x7fff));
+      emulator.gameManager.simulateInput(0, 17, Math.round(y * 0x7fff));
     }
 
     function soltarPonteiro(pointerId) {
@@ -811,6 +958,57 @@
       });
     }
 
+    function soltarStick() {
+      if (stickPointer === null) return;
+      stickPointer = null;
+      stickKnob.style.transform = "translate(-50%, -50%)";
+      enviarAnalog(0, 0);
+    }
+
+    function atualizarStick(event) {
+      const rect = stick.getBoundingClientRect();
+      const raio = Math.min(rect.width, rect.height) / 2;
+      if (raio <= 0) return;
+
+      let dx = (event.clientX - (rect.left + rect.width / 2)) / raio;
+      let dy = (event.clientY - (rect.top + rect.height / 2)) / raio;
+      const distancia = Math.hypot(dx, dy);
+      if (distancia > 1) {
+        dx /= distancia;
+        dy /= distancia;
+      }
+      if (Math.hypot(dx, dy) < 0.14) {
+        dx = 0;
+        dy = 0;
+      }
+
+      const limite = raio * 0.36;
+      stickKnob.style.transform =
+        `translate(calc(-50% + ${dx * limite}px), calc(-50% + ${dy * limite}px))`;
+      enviarAnalog(dx, dy);
+    }
+
+    stick.addEventListener("pointerdown", (event) => {
+      if (stick.hidden || !emulatorReady) return;
+      event.preventDefault();
+      stickPointer = event.pointerId;
+      stick.setPointerCapture(event.pointerId);
+      atualizarStick(event);
+    });
+
+    stick.addEventListener("pointermove", (event) => {
+      if (event.pointerId !== stickPointer) return;
+      event.preventDefault();
+      atualizarStick(event);
+    });
+
+    for (const eventName of ["pointerup", "pointercancel", "lostpointercapture"]) {
+      stick.addEventListener(eventName, (event) => {
+        if (event.pointerId !== stickPointer) return;
+        soltarStick();
+      });
+    }
+
     const TECLAS = {
       ArrowUp: [4],
       ArrowDown: [5],
@@ -853,6 +1051,7 @@
     function soltarTodosOsControles() {
       for (const pointerId of [...activePointers.keys()]) soltarPonteiro(pointerId);
       aplicarDpad(new Set());
+      soltarStick();
       for (const input of [...teclasAtivas]) enviarEntrada(input, false);
       teclasAtivas.clear();
     }
