@@ -629,5 +629,30 @@
   },
   "smsplus": {
     "Danan the Jungle Fighter (PT-BR)": "https://thumbnails.libretro.com/Sega%20-%20Master%20System%20-%20Mark%20III/Named_Boxarts/Danan%20-%20The%20Jungle%20Fighter%20%28Europe%2C%20Brazil%29%20%28En%29.png"
+  },
+  "mupen64plus_next": {
+    "007 GoldenEye": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/GoldenEye%20007%20%28USA%29.png",
+    "Automobili Lamborghini": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/Automobili%20Lamborghini%20%28USA%29.png",
+    "Banjo-Kazooie": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/Banjo-Kazooie%20%28USA%29.png",
+    "Cruis'n Exotica": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/Cruis%27n%20Exotica%20%28USA%29.png",
+    "Diddy Kong Racing": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/Diddy%20Kong%20Racing%20%28USA%29%20%28En%2CFr%29.png",
+    "Donald Duck Goin' Quackers": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/Donald%20Duck%20-%20Goin%27%20Quackers%20%28USA%29%20%28En%2CFr%2CDe%2CEs%2CIt%29.png",
+    "Doom 64": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/Doom%2064%20%28USA%29.png",
+    "FIFA 99": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/FIFA%2099%20%28USA%29%20%28En%2CFr%2CDe%2CEs%2CIt%2CNl%2CPt%2CSv%29.png",
+    "Gex 3 Deep Cover Gecko": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/Gex%203%20-%20Deep%20Cover%20Gecko%20%28USA%29.png",
+    "Jet Force Gemini": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/Jet%20Force%20Gemini%20%28USA%29.png",
+    "Mario Kart 64": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/Mario%20Kart%2064%20%28USA%29.png",
+    "Paper Mario 64": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/Paper%20Mario%20%28USA%29.png",
+    "Perfect Dark": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/Perfect%20Dark%20%28USA%29.png",
+    "Pokemon Stadium": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/Pokemon%20Stadium%20%28USA%29.png",
+    "Shadow Man": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/Shadow%20Man%20%28USA%29.png",
+    "South Park": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/South%20Park%20%28USA%29.png",
+    "Space Station Silicon Valley": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/SpaceStation%20Silicon%20Valley%20%28USA%29.png",
+    "Star Fox 64": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/Star%20Fox%2064%20%28USA%29.png",
+    "Super Mario 64": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/Super%20Mario%2064%20%28USA%29.png",
+    "The Legend of Zelda - Majora's Mask": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/Legend%20of%20Zelda%2C%20The%20-%20Majora%27s%20Mask%20%28USA%29.png",
+    "The Legend of Zelda - Ocarina of Time": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/Legend%20of%20Zelda%2C%20The%20-%20Ocarina%20of%20Time%20%28USA%29.png",
+    "Turok 2 - Seeds of Evil": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/Turok%202%20-%20Seeds%20of%20Evil%20%28USA%29.png",
+    "Turok 3 - Shadow of Oblivion": "https://thumbnails.libretro.com/Nintendo%20-%20Nintendo%2064/Named_Boxarts/Turok%203%20-%20Shadow%20of%20Oblivion%20%28USA%29.png"
   }
 }
