@@ -2812,8 +2812,15 @@
       gameTools.hidden = true;
     }
 
+    function emActivityDiscord() {
+      return (
+        window.parent !== window ||
+        window.location.hostname.endsWith("discordsays.com")
+      );
+    }
+
     async function autenticarDiscord(sdk) {
-      if (!SAVE_API_URL && window.parent === window) return null;
+      if (!SAVE_API_URL && !emActivityDiscord()) return null;
       try {
         const { code } = await sdk.commands.authorize({
           client_id: DISCORD_CLIENT_ID,
@@ -3334,7 +3341,8 @@
       // A UI não depende do SDK do Discord; o handshake roda em background.
       discordReady = true;
 
-      if (window.parent === window) {
+      const activityDiscord = emActivityDiscord();
+      if (!activityDiscord) {
         previewMode = true;
         jogadorProntoResolver?.(null);
         jogadorProntoResolver = null;
