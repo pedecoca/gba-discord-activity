@@ -85,9 +85,8 @@ jobs:
           import json
           import os
           import re
-          import urllib.parse
           import urllib.request
-          from pathlib import Path, PurePosixPath
+          from pathlib import Path
 
           client_id = os.environ["DISCORD_CLIENT_ID"]
           if not re.fullmatch(r"[0-9]{17,20}", client_id):
@@ -138,109 +137,12 @@ jobs:
                   asset_path.write_bytes(response.read())
               if asset_path.stat().st_size == 0:
                   raise SystemExit(f"Downloaded EmulatorJS runtime asset is empty: {asset_name}")
-
-          with urllib.request.urlopen(
-              urllib.request.Request(
-                  "https://api.github.com/repos/pedecoca/EmulatorJS/git/trees/main?recursive=1",
-                  headers={
-                      "Accept": "application/vnd.github+json",
-                      "User-Agent": "gba-discord-activity-pages",
-                  },
-              ),
-              timeout=30,
-          ) as response:
-              repository_tree = json.load(response)
-          if repository_tree.get("truncated"):
-              raise SystemExit("GitHub returned an incomplete ROM directory listing.")
-          tree = repository_tree.get("tree")
-          if not isinstance(tree, list):
-              raise SystemExit("GitHub did not return a ROM directory listing.")
-
-          systems = json.loads(Path("systems.json").read_text(encoding="utf-8"))
-          systems_by_id = {system["id"]: system for system in systems}
-          extension_owners = {}
-          for system in systems:
-              for extension in system["extensions"]:
-                  if not re.fullmatch(r"\.[a-z0-9]+", extension):
-                      raise SystemExit(
-                          f"Invalid extension for {system['id']}: {extension!r}"
-                      )
-                  extension_owners.setdefault(extension, []).append(system["id"])
-
-          rom_dir = Path("dist/roms")
-          games = []
-          skipped = []
-          rom_paths = sorted(
-              (
-                  item["path"]
-                  for item in tree
-                  if item.get("type") == "blob"
-                  and item.get("path", "").startswith("rom/")
-              ),
-              key=str.casefold,
-          )
-          for rom_path in rom_paths:
-              parts = rom_path.split("/")
-              if (
-                  len(parts) < 2
-                  or parts[0] != "rom"
-                  or any(part in ("", ".", "..") or "\\" in part for part in parts)
-              ):
-                  raise SystemExit(f"Invalid ROM path in source repository: {rom_path!r}")
-
-              extension = PurePosixPath(parts[-1]).suffix.lower()
-              if len(parts) > 2 and parts[1] in systems_by_id:
-                  system = systems_by_id[parts[1]]
-                  if extension not in system["extensions"]:
-                      skipped.append(rom_path)
-                      continue
-                  core = system["id"]
-              else:
-                  owners = extension_owners.get(extension, [])
-                  if len(owners) != 1:
-                      skipped.append(rom_path)
-                      continue
-                  core = owners[0]
-
-              relative_path = parts[1:]
-              safe_path = "/".join(
-                  urllib.parse.quote(part, safe="") for part in relative_path
-              )
-              download_url = (
-                  "https://raw.githubusercontent.com/pedecoca/EmulatorJS/main/"
-                  + "/".join(urllib.parse.quote(part, safe="") for part in parts)
-              )
-              destination = rom_dir.joinpath(*relative_path)
-              destination.parent.mkdir(parents=True, exist_ok=True)
-              with urllib.request.urlopen(
-                  urllib.request.Request(
-                      download_url,
-                      headers={"User-Agent": "gba-discord-activity-pages"},
-                  ),
-                  timeout=120,
-              ) as response:
-                  destination.write_bytes(response.read())
-
-              games.append(
-                  {
-                      "name": PurePosixPath(parts[-1]).stem,
-                      "url": "./roms/" + safe_path,
-                      "core": core,
-                  }
-              )
-
-          if skipped:
-              print(
-                  f"Skipped {len(skipped)} ROM file(s) with unsupported or ambiguous "
-                  "formats. Put these files under rom/<core-id>/ to select a system."
-              )
-              for path in skipped[:10]:
-                  print(f"  {path}")
-          Path("dist/roms.json").write_text(
-              json.dumps({"games": games}, ensure_ascii=False, indent=2) + "\n",
-              encoding="utf-8",
-          )
           PY
+
+          python3 tools/build_catalog.py \
+            --systems systems.json \
+            --output dist/roms.json \
+            --download-to dist/roms
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
