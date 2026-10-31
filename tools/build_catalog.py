@@ -35,6 +35,12 @@ from typing import Callable, Iterable
 
 USER_AGENT = "gba-discord-activity-catalog"
 
+# O Mupen64Plus e o Parallel N64 usam o mesmo formato de ROM. Publicamos
+# cada jogo nos dois cores para o usuário poder alternar no seletor.
+CORES_ALTERNATIVOS = {
+    "mupen64plus_next": ("parallel_n64",),
+}
+
 
 def _headers(extra: dict | None = None) -> dict:
     headers = {"User-Agent": USER_AGENT}
@@ -320,6 +326,11 @@ def build_catalog(
                 "core": core,
             }
         )
+
+    for jogo in list(games):
+        for alternativa in CORES_ALTERNATIVOS.get(jogo["core"], ()):
+            if alternativa in systems_by_id:
+                games.append({**jogo, "core": alternativa})
 
     games.sort(key=lambda game: game["name"].casefold())
     return games, skipped
