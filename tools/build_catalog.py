@@ -35,12 +35,6 @@ from typing import Callable, Iterable
 
 USER_AGENT = "gba-discord-activity-catalog"
 
-# O Mupen64Plus e o Parallel N64 usam o mesmo formato de ROM. Publicamos
-# cada jogo nos dois cores para o usuário poder alternar no seletor.
-CORES_ALTERNATIVOS = {
-    "mupen64plus_next": ("parallel_n64",),
-}
-
 
 def _headers(extra: dict | None = None) -> dict:
     headers = {"User-Agent": USER_AGENT}
@@ -310,9 +304,16 @@ def build_catalog(
     skipped: list[tuple[str, str]] = []
 
     for rom_path in sorted(rom_paths, key=str.casefold):
-        core, reason = resolve_core(rom_path, systems_by_id, extension_owners, head_reader)
-        if core is None:
-            skipped.append((rom_path, reason))
+        core, reason = resolve_core(
+            rom_path, systems_by_id, extension_owners, head_reader
+        )
+        if core is None or core not in systems_by_id:
+            motivo = (
+                reason
+                if core is None
+                else f"core {core} não está configurado em systems.json"
+            )
+            skipped.append((rom_path, motivo))
             continue
 
         relative = rom_path.split("/")[1:]
@@ -326,11 +327,6 @@ def build_catalog(
                 "core": core,
             }
         )
-
-    for jogo in list(games):
-        for alternativa in CORES_ALTERNATIVOS.get(jogo["core"], ()):
-            if alternativa in systems_by_id:
-                games.append({**jogo, "core": alternativa})
 
     games.sort(key=lambda game: game["name"].casefold())
     return games, skipped

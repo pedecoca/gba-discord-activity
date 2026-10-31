@@ -159,8 +159,28 @@ jobs:
             --output dist/roms.json \
             --local-rom-dir emulatorjs-roms/rom
 
-          mkdir -p dist/roms
-          cp -R emulatorjs-roms/rom/. dist/roms/
+          python3 - <<'PY'
+          import json
+          import shutil
+          import urllib.parse
+          from pathlib import Path
+
+          catalogo = json.loads(
+              Path("dist/roms.json").read_text(encoding="utf-8")
+          )
+          origem = Path("emulatorjs-roms/rom")
+          destino = Path("dist/roms")
+          for jogo in catalogo["games"]:
+              url = jogo["url"]
+              prefixo = "./roms/"
+              if not url.startswith(prefixo):
+                  raise SystemExit(f"URL de ROM inesperada: {url}")
+              relativo = urllib.parse.unquote(url[len(prefixo):])
+              alvo = destino / relativo
+              alvo.parent.mkdir(parents=True, exist_ok=True)
+              shutil.copy2(origem / relativo, alvo)
+          print(f"ROMs publicadas: {len(catalogo['games'])}")
+          PY
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

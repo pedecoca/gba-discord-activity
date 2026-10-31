@@ -125,11 +125,6 @@
     "extensions": [".gba", ".agb"]
   },
   {
-    "id": "mupen64plus_next",
-    "name": "Nintendo 64 (Mupen64Plus - alternativa)",
-    "extensions": [".n64", ".z64", ".v64"]
-  },
-  {
     "id": "nestopia",
     "name": "Nintendo NES/Famicom (Nestopia)",
     "extensions": [".nes", ".fds"]
@@ -138,11 +133,6 @@
     "id": "opera",
     "name": "3DO",
     "extensions": [".cue", ".chd", ".iso", ".bin"]
-  },
-  {
-    "id": "parallel_n64",
-    "name": "Nintendo 64 (Parallel N64 - recomendado)",
-    "extensions": [".n64", ".z64", ".v64"]
   },
   {
     "id": "pcsx_rearmed",
