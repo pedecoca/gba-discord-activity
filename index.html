@@ -623,15 +623,22 @@
       return CORE_SCHEMES[core] || "default";
     }
 
-    function temWebgl2() {
+    function suporteWebgl() {
       try {
-        const canvas = document.createElement("canvas");
-        return Boolean(
-          canvas.getContext("webgl2", { failIfMajorPerformanceCaveat: false }),
-        );
+        // Canvases separados: pedir webgl no mesmo canvas depois de um webgl2
+        // que falhou retorna null e dava falso negativo no Discord.
+        const canvas2 = document.createElement("canvas");
+        if (canvas2.getContext("webgl2", { failIfMajorPerformanceCaveat: false })) {
+          return 2;
+        }
+        const canvas1 = document.createElement("canvas");
+        if (canvas1.getContext("webgl", { failIfMajorPerformanceCaveat: false })) {
+          return 1;
+        }
       } catch {
-        return false;
+        // sem WebGL
       }
+      return 0;
     }
 
     function criarBotao(rotulo, input, classe = "") {
@@ -967,34 +974,28 @@
     }
 
     async function connectToDiscord() {
+      // A UI não depende do SDK do Discord; o handshake roda em background.
+      discordReady = true;
+
       if (window.parent === window) {
         previewMode = true;
-        discordReady = true;
         atualizarStatusDaSelecao();
         atualizarBotao();
         return;
       }
 
-      const liberarInterface = () => {
-        discordReady = true;
-        atualizarStatusDaSelecao();
-        atualizarBotao();
-      };
-      // Se o import/handshake do SDK travar (ex.: popout), libera a UI assim mesmo.
-      const limite = setTimeout(liberarInterface, 3000);
+      atualizarStatusDaSelecao();
+      atualizarBotao();
 
       try {
         const { DiscordSDK } = await import(DISCORD_SDK_MODULE_URL);
         const sdk = new DiscordSDK(DISCORD_CLIENT_ID);
         await Promise.race([
           sdk.ready(),
-          new Promise((resolve) => setTimeout(resolve, 2000)),
+          new Promise((resolve) => setTimeout(resolve, 2500)),
         ]);
       } catch (error) {
         console.error("Discord Activity SDK failed to initialize:", error);
-      } finally {
-        clearTimeout(limite);
-        liberarInterface();
       }
     }
 
@@ -1011,9 +1012,15 @@
       if (!rom) return;
 
       const coreN64 = ["mupen64plus_next", "parallel_n64"].includes(rom.core);
-      if (coreN64 && !temWebgl2()) {
+      const webgl = suporteWebgl();
+      if (webgl === 0) {
         status.textContent =
-          "N64 exige WebGL2. Este iframe não expõe WebGL2 — abra a Activity no painel normal (não no popout/fullscreen) ou ative a aceleração de hardware.";
+          "WebGL indisponível neste iframe. Abra a Activity no painel normal (não no popout) ou ative a aceleração de hardware.";
+        return;
+      }
+      if (coreN64 && webgl < 2) {
+        status.textContent =
+          "N64 exige WebGL2. Este iframe só expõe WebGL1 — abra a Activity no painel normal (não no popout/fullscreen) ou ative a aceleração de hardware.";
         return;
       }
 
