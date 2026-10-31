@@ -1001,17 +1001,6 @@
       const esquema = esquemaDoCore(rom.core);
       renderControles(esquema);
 
-      const testeWebgl = document.createElement("canvas");
-      if (!testeWebgl.getContext("webgl2") && !testeWebgl.getContext("webgl")) {
-        status.textContent =
-          "Este navegador não expõe WebGL, então o EmulatorJS não consegue iniciar.";
-        atualizarControles(false);
-        systemInput.disabled = false;
-        romInput.disabled = false;
-        atualizarBotao();
-        return;
-      }
-
       document.body.classList.add("jogando");
       restartGameButton.hidden = false;
 
@@ -1034,6 +1023,8 @@
         status.textContent =
           "Não foi possível carregar o EmulatorJS. Confira sua conexão e tente atualizar.";
         document.body.classList.remove("jogando");
+        document.querySelector(".screen-label").hidden = false;
+        restartButton.hidden = true;
         restartGameButton.hidden = true;
         atualizarControles(false);
         systemInput.disabled = false;
@@ -1048,6 +1039,8 @@
         status.textContent =
           "O emulador não terminou de iniciar. Verifique o WebGL do navegador e tente de novo.";
         document.body.classList.remove("jogando");
+        document.querySelector(".screen-label").hidden = false;
+        restartButton.hidden = true;
         restartGameButton.hidden = true;
         atualizarControles(false);
         systemInput.disabled = false;
