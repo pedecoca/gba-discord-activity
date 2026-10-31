@@ -836,8 +836,7 @@
     window.addEventListener("blur", soltarTodosOsControles);
 
     function atualizarBotao() {
-      startButton.disabled =
-        !discordReady || romInput.disabled || !romInput.value;
+      startButton.disabled = romInput.disabled || !romInput.value;
     }
 
     function atualizarStatusDaSelecao() {
@@ -976,21 +975,26 @@
         return;
       }
 
+      const liberarInterface = () => {
+        discordReady = true;
+        atualizarStatusDaSelecao();
+        atualizarBotao();
+      };
+      // Se o import/handshake do SDK travar (ex.: popout), libera a UI assim mesmo.
+      const limite = setTimeout(liberarInterface, 3000);
+
       try {
         const { DiscordSDK } = await import(DISCORD_SDK_MODULE_URL);
         const sdk = new DiscordSDK(DISCORD_CLIENT_ID);
         await Promise.race([
           sdk.ready(),
-          new Promise((resolve) => setTimeout(resolve, 3000)),
+          new Promise((resolve) => setTimeout(resolve, 2000)),
         ]);
       } catch (error) {
         console.error("Discord Activity SDK failed to initialize:", error);
       } finally {
-        // O emulador não depende do SDK: mesmo que o handshake do Discord
-        // trave (ex.: depois de recarregar no popout), libera a interface.
-        discordReady = true;
-        atualizarStatusDaSelecao();
-        atualizarBotao();
+        clearTimeout(limite);
+        liberarInterface();
       }
     }
 
@@ -1004,7 +1008,7 @@
         (item) =>
           item.url === romInput.value && item.core === systemInput.value,
       );
-      if (!rom || !discordReady) return;
+      if (!rom) return;
 
       const coreN64 = ["mupen64plus_next", "parallel_n64"].includes(rom.core);
       if (coreN64 && !temWebgl2()) {
