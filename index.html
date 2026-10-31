@@ -3165,7 +3165,7 @@
         systemInput.disabled = false;
         romInput.disabled = false;
         atualizarBotao();
-      }, coreN64 ? 90000 : 30000);
+      }, coreN64 ? 90000 : rom.core === "pcsx_rearmed" ? 600000 : 30000);
     });
 
     if ("ResizeObserver" in window) {
