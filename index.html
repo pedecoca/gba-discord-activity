@@ -1238,9 +1238,9 @@
         <button id="restart-game" class="floating-restart" type="button" hidden>Trocar jogo</button>
       </div>
       <div class="game-tools" id="game-tools" hidden>
-        <button id="fast-forward" type="button">⚡ Fast</button>
-        <button id="open-cheat" type="button">🧩 Cheat</button>
-        <button id="open-controls" type="button">⚙️ Controles</button>
+        <button id="fast-forward" type="button">Fast</button>
+        <button id="open-cheat" type="button">Cheat</button>
+        <button id="open-controls" type="button">Controles</button>
       </div>
       <div class="gba-screen-frame">
         <p class="screen-label">Tela do jogo</p>
@@ -1270,7 +1270,7 @@
     <section class="saves-card" role="dialog" aria-modal="true" aria-labelledby="saves-title">
       <header>
         <div>
-          <h2 id="saves-title">💾 Saves do jogo</h2>
+          <h2 id="saves-title">Saves do jogo</h2>
           <p id="saves-status" class="save-status">Até 3 slots por jogo.</p>
         </div>
         <button id="close-saves" class="icon-button" type="button" aria-label="Fechar saves">×</button>
@@ -1284,7 +1284,7 @@
     <section class="saves-card" role="dialog" aria-modal="true" aria-labelledby="controls-title">
       <header>
         <div>
-          <h2 id="controls-title">⚙️ Controles</h2>
+          <h2 id="controls-title">Controles</h2>
           <p class="save-status">Escolha como prefere tocar.</p>
         </div>
         <button id="close-controls" class="icon-button" type="button" aria-label="Fechar controles">×</button>
@@ -1321,7 +1321,7 @@
     <section class="saves-card" role="dialog" aria-modal="true" aria-labelledby="cheat-title">
       <header>
         <div>
-          <h2 id="cheat-title">🧩 Cheats</h2>
+          <h2 id="cheat-title">Cheats</h2>
           <p class="save-status">GameShark, Game Genie ou Action Replay.</p>
         </div>
         <button id="close-cheat" class="icon-button" type="button" aria-label="Fechar cheats">×</button>
@@ -1932,7 +1932,7 @@
         mostrarAvisoSave(
           naNuvem
             ? `☁️ Slot ${slot} salvo`
-            : `💾 Slot ${slot} salvo neste dispositivo`,
+            : `Slot ${slot} salvo neste dispositivo`,
           temConta && !naNuvem,
         );
         return true;
@@ -2071,7 +2071,7 @@
             mostrarAvisoSave(
               origem === "nuvem"
                 ? `☁️ Slot ${slot} carregado`
-                : `💾 Slot ${slot} carregado`,
+                : `Slot ${slot} carregado`,
             );
             status.textContent = `Slot ${slot} carregado. Continue jogando.`;
             fecharSaves();
@@ -2112,8 +2112,8 @@
     function atualizarBotaoFast() {
       fastForwardButton.classList.toggle("is-active", fastForwardAtivo);
       fastForwardButton.textContent = fastForwardAtivo
-        ? "⚡ Fast ON"
-        : "⚡ Fast";
+        ? "Fast ON"
+        : "Fast";
     }
 
     function alternarFastForward() {
@@ -2126,7 +2126,7 @@
         atualizarBotaoFast();
         mostrarAvisoSave(
           fastForwardAtivo
-            ? "⚡ Fast-forward ativado"
+            ? "Fast-forward ativado"
             : "Fast-forward desativado",
         );
       } catch (erro) {
@@ -2951,7 +2951,7 @@
           mostrarAvisoSave(
             carregou === "nuvem"
               ? "☁️ Slot 1 carregado"
-              : "💾 Slot 1 carregado",
+              : "Slot 1 carregado",
           );
         } else {
           status.textContent =
