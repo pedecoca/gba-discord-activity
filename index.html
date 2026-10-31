@@ -623,6 +623,17 @@
       return CORE_SCHEMES[core] || "default";
     }
 
+    function temWebgl2() {
+      try {
+        const canvas = document.createElement("canvas");
+        return Boolean(
+          canvas.getContext("webgl2", { failIfMajorPerformanceCaveat: false }),
+        );
+      } catch {
+        return false;
+      }
+    }
+
     function criarBotao(rotulo, input, classe = "") {
       const botao = document.createElement("button");
       botao.type = "button";
@@ -995,6 +1006,13 @@
       );
       if (!rom || !discordReady) return;
 
+      const coreN64 = ["mupen64plus_next", "parallel_n64"].includes(rom.core);
+      if (coreN64 && !temWebgl2()) {
+        status.textContent =
+          "N64 exige WebGL2. Este iframe não expõe WebGL2 — abra a Activity no painel normal (não no popout/fullscreen) ou ative a aceleração de hardware.";
+        return;
+      }
+
       startButton.disabled = true;
       restartButton.hidden = false;
       document.querySelector(".screen-label").hidden = true;
@@ -1050,7 +1068,7 @@
         systemInput.disabled = false;
         romInput.disabled = false;
         atualizarBotao();
-      }, 30000);
+      }, coreN64 ? 90000 : 30000);
     });
 
     if ("ResizeObserver" in window) {
