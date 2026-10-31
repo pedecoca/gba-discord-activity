@@ -188,6 +188,7 @@ jobs:
           PY
 
       - name: Add missing Nintendo DS cover art
+        continue-on-error: true
         run: |
           set -euo pipefail
           python3 -m pip install --quiet --disable-pip-version-check Pillow
