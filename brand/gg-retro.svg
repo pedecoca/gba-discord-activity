@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="GG Retro">
+  <defs>
+    <linearGradient id="g" x1="48" y1="32" x2="472" y2="488" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7c8cff"/>
+      <stop offset="1" stop-color="#b16bff"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="148" fill="url(#g)"/>
+  <circle cx="390" cy="120" r="24" fill="#ffffff" opacity="0.85"/>
+  <text x="256" y="338" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="218" font-weight="900" letter-spacing="-14" fill="#ffffff">GG</text>
+</svg>

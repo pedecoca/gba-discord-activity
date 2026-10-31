@@ -64,6 +64,7 @@ jobs:
           cp "$RUNNER_TEMP/discord-sdk-package/LICENSE.md" dist/discord-sdk/LICENSE.md
           cp index.html dist/index.html
           cp systems.json dist/systems.json
+          cp -R brand dist/brand
 
           shopt -s nullglob
           while IFS= read -r core; do
