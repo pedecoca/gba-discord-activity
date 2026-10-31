@@ -530,11 +530,20 @@
       margin: 0 0 2px;
     }
 
+    body.jogando .game-tools {
+      position: static;
+      order: -2;
+      align-self: center;
+      margin: 0 0 2px;
+    }
+
     body.jogando .console-actions button {
       height: 28px;
       padding: 0 12px;
       opacity: 0.95;
     }
+
+    .gba-controls.modo-analogico .gba-dpad { display: none; }
 
     .saves-modal {
       position: fixed;
@@ -660,6 +669,71 @@
       text-align: center;
     }
 
+    .game-tools {
+      display: flex;
+      gap: 6px;
+    }
+
+    .game-tools button {
+      height: 30px;
+      padding: 0 9px;
+      font-size: 0.68rem;
+      background: #1b2236;
+      box-shadow: inset 0 0 0 1px #ffffff14;
+      opacity: 0.92;
+    }
+
+    .game-tools button.is-active {
+      background: linear-gradient(180deg, #44c98b, #258b62);
+      box-shadow: 0 8px 18px -10px #3bd89acc, inset 0 1px 0 #ffffff33;
+    }
+
+    .control-options { display: grid; gap: 10px; }
+
+    .control-options fieldset {
+      margin: 0;
+      padding: 9px;
+      border: 1px solid #28304a;
+      border-radius: 12px;
+      background: #0d111b;
+    }
+
+    .control-options legend {
+      padding: 0 5px;
+      color: #b9c3ff;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .option-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 8px;
+      border-radius: 9px;
+      color: #dfe4ff;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+
+    .option-row input { accent-color: var(--accent); }
+
+    .cheat-textarea {
+      width: 100%;
+      min-height: 100px;
+      margin-top: 8px;
+      padding: 10px;
+      resize: vertical;
+      border: 1px solid #39415e;
+      border-radius: 10px;
+      background: #0b0f1a;
+      color: var(--text);
+      font: 0.8rem/1.45 ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+
+    .cheat-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .cheat-actions button { flex: 1 1 auto; }
+
     body.jogando main { padding: 6px 0; gap: 0; }
     body.jogando .gba-console { border-radius: 14px; }
 
@@ -746,7 +820,7 @@
 
       body.jogando .gba-screen-frame {
         position: absolute;
-        inset: 38px clamp(92px, 12vw, 168px) 38px;
+        inset: 38px clamp(108px, 15vw, 190px) 38px;
         width: auto;
         height: auto;
         flex: none;
@@ -791,18 +865,60 @@
 
       body.jogando .gba-shoulders {
         position: absolute;
-        top: 5px;
-        left: 8px;
+        top: auto;
         right: 8px;
+        bottom: 18%;
+        left: 8px;
         z-index: 2;
+      }
+
+      body.jogando .gba-shoulder {
+        width: clamp(58px, 9vw, 74px);
+        height: 30px;
+      }
+
+      body.jogando .gba-dpad {
+        grid-template-columns: repeat(3, clamp(34px, 7vh, 48px));
+        grid-template-rows: repeat(3, clamp(34px, 7vh, 48px));
+      }
+
+      body.jogando .action-face {
+        grid-template-columns: repeat(var(--cols, 2), clamp(48px, 8vh, 64px));
+        gap: 10px;
+      }
+
+      body.jogando .action-face .gba-action {
+        width: clamp(48px, 8vh, 64px);
+        height: clamp(48px, 8vh, 64px);
       }
 
       body.jogando .console-actions {
         position: absolute;
+        inset: 0;
+        display: block;
+        z-index: 5;
+        order: 0;
+        align-self: auto;
+        margin: 0;
+        transform: none;
+        pointer-events: none;
+      }
+
+      body.jogando .console-actions button {
+        position: absolute;
+        bottom: 5px;
+        pointer-events: auto;
+      }
+
+      body.jogando #open-saves { left: 8px; }
+      body.jogando #restart-game { right: 8px; }
+
+      body.jogando .game-tools {
+        position: absolute;
         top: 5px;
         right: auto;
         left: 50%;
-        z-index: 4;
+        z-index: 6;
         order: 0;
         align-self: auto;
         margin: 0;
@@ -811,6 +927,38 @@
 
       body.jogando .control-hint {
         display: none;
+      }
+    }
+
+    body.controles-grandes .gba-dpad {
+      grid-template-columns: repeat(3, clamp(34px, 5.6vh, 50px));
+      grid-template-rows: repeat(3, clamp(34px, 5.6vh, 50px));
+    }
+
+    body.controles-grandes .action-face {
+      grid-template-columns: repeat(var(--cols, 2), clamp(52px, 9vh, 66px));
+      gap: 10px;
+    }
+
+    body.controles-grandes .action-face .gba-action {
+      width: clamp(52px, 9vh, 66px);
+      height: clamp(52px, 9vh, 66px);
+    }
+
+    body.controles-grandes .gba-stick {
+      width: clamp(94px, 16vh, 126px);
+      height: clamp(94px, 16vh, 126px);
+    }
+
+    @media (orientation: landscape) {
+      body.jogando.controles-grandes .gba-screen-frame {
+        inset: 38px clamp(120px, 16vw, 205px) 38px;
+      }
+      body.jogando.controles-grandes .gba-left {
+        width: clamp(108px, 12vw, 156px);
+      }
+      body.jogando.controles-grandes .gba-actions {
+        width: clamp(116px, 13vw, 166px);
       }
     }
   </style>
@@ -852,6 +1000,11 @@
         <button id="open-saves" class="saves-button" type="button" hidden>☁️ Saves</button>
         <button id="restart-game" class="floating-restart" type="button" hidden>Trocar jogo</button>
       </div>
+      <div class="game-tools" id="game-tools" hidden>
+        <button id="fast-forward" type="button">⚡ Fast</button>
+        <button id="open-cheat" type="button">🧩 Cheat</button>
+        <button id="open-controls" type="button">⚙️ Controles</button>
+      </div>
       <div class="gba-screen-frame">
         <p class="screen-label">Tela do jogo</p>
         <div id="game" aria-label="Tela do emulador"></div>
@@ -890,6 +1043,62 @@
     </section>
   </div>
 
+  <div id="controls-modal" class="saves-modal" hidden>
+    <section class="saves-card" role="dialog" aria-modal="true" aria-labelledby="controls-title">
+      <header>
+        <div>
+          <h2 id="controls-title">⚙️ Controles</h2>
+          <p class="save-status">Escolha como prefere tocar.</p>
+        </div>
+        <button id="close-controls" class="icon-button" type="button" aria-label="Fechar controles">×</button>
+      </header>
+      <div class="control-options">
+        <fieldset>
+          <legend>Direcional</legend>
+          <label class="option-row">
+            <input type="radio" name="touch-mode" value="dpad">
+            Setas direcionais
+          </label>
+          <label class="option-row">
+            <input type="radio" name="touch-mode" value="stick">
+            Bolinha analógica
+          </label>
+        </fieldset>
+        <fieldset>
+          <legend>Tamanho</legend>
+          <label class="option-row">
+            <input type="radio" name="touch-size" value="normal">
+            Normal
+          </label>
+          <label class="option-row">
+            <input type="radio" name="touch-size" value="grande">
+            Grande
+          </label>
+        </fieldset>
+      </div>
+      <p class="saves-note">A preferência fica salva neste dispositivo e vale para os próximos jogos.</p>
+    </section>
+  </div>
+
+  <div id="cheat-modal" class="saves-modal" hidden>
+    <section class="saves-card" role="dialog" aria-modal="true" aria-labelledby="cheat-title">
+      <header>
+        <div>
+          <h2 id="cheat-title">🧩 Cheats</h2>
+          <p class="save-status">GameShark, Game Genie ou Action Replay.</p>
+        </div>
+        <button id="close-cheat" class="icon-button" type="button" aria-label="Fechar cheats">×</button>
+      </header>
+      <label for="cheat-code">Códigos (um por linha)</label>
+      <textarea id="cheat-code" class="cheat-textarea" placeholder="Ex.: 820051C4 0063&#10;82005274 0001" spellcheck="false"></textarea>
+      <div class="cheat-actions">
+        <button id="apply-cheat" type="button">Ativar códigos</button>
+        <button id="disable-cheat" class="secondary" type="button">Desativar</button>
+      </div>
+      <p class="saves-note">Alguns cheats só fazem efeito depois de reiniciar o jogo. Os códigos ficam salvos para este jogo.</p>
+    </section>
+  </div>
+
   <script type="module">
     const DISCORD_CLIENT_ID = __DISCORD_CLIENT_ID_JSON__;
     const SAVE_API_URL = __SAVE_API_URL_JSON__;
@@ -910,6 +1119,17 @@
     const closeSavesButton = document.querySelector("#close-saves");
     const saveSlotsContainer = document.querySelector("#save-slots");
     const savesStatus = document.querySelector("#saves-status");
+    const gameTools = document.querySelector("#game-tools");
+    const fastForwardButton = document.querySelector("#fast-forward");
+    const openCheatButton = document.querySelector("#open-cheat");
+    const openControlsButton = document.querySelector("#open-controls");
+    const controlsModal = document.querySelector("#controls-modal");
+    const closeControlsButton = document.querySelector("#close-controls");
+    const cheatModal = document.querySelector("#cheat-modal");
+    const closeCheatButton = document.querySelector("#close-cheat");
+    const cheatCodeInput = document.querySelector("#cheat-code");
+    const applyCheatButton = document.querySelector("#apply-cheat");
+    const disableCheatButton = document.querySelector("#disable-cheat");
     let discordReady = false;
     let previewMode = false;
     let systems = [];
@@ -929,6 +1149,11 @@
     let jogoAtual = null;
     let salvando = false;
     let avisoSaveTimer = null;
+    let fastForwardAtivo = false;
+    let stickComoDpad = false;
+    const PREF_CONTROLES_KEY = "ggretro-controles";
+    const PREF_CONTROLES_PADRAO = { modo: "dpad", tamanho: "normal" };
+    const preferenciasControles = { ...PREF_CONTROLES_PADRAO };
     const activePointers = new Map();
     const dpad = document.querySelector("#dpad");
     const stick = document.querySelector("#stick");
@@ -1052,6 +1277,47 @@
       default: "4 / 3",
     };
 
+    function carregarPreferenciasControles() {
+      try {
+        const salvo = JSON.parse(
+          localStorage.getItem(PREF_CONTROLES_KEY) || "{}",
+        );
+        if (salvo.modo === "dpad" || salvo.modo === "stick") {
+          preferenciasControles.modo = salvo.modo;
+        }
+        if (salvo.tamanho === "normal" || salvo.tamanho === "grande") {
+          preferenciasControles.tamanho = salvo.tamanho;
+        }
+      } catch {
+        // Preferência inválida: fica no padrão.
+      }
+    }
+
+    function salvarPreferenciasControles() {
+      try {
+        localStorage.setItem(
+          PREF_CONTROLES_KEY,
+          JSON.stringify(preferenciasControles),
+        );
+      } catch {
+        // Modo privado pode bloquear o localStorage.
+      }
+    }
+
+    function aplicarPreferenciasControles() {
+      const layout = LAYOUTS[esquemaAtual] || LAYOUTS.default;
+      const modoStick = preferenciasControles.modo === "stick";
+      const usarStick = Boolean(layout.stick) || modoStick;
+      stickComoDpad = modoStick && !layout.stick;
+      controls.classList.toggle("has-stick", usarStick);
+      controls.classList.toggle("modo-analogico", modoStick);
+      stick.hidden = !usarStick;
+      document.body.classList.toggle(
+        "controles-grandes",
+        preferenciasControles.tamanho === "grande",
+      );
+    }
+
     function esquemaDoCore(core) {
       return CORE_SCHEMES[core] || "default";
     }
@@ -1116,8 +1382,7 @@
       esquemaAtual = LAYOUTS[scheme] ? scheme : "default";
       const layout = LAYOUTS[esquemaAtual];
       controls.classList.toggle("has-cpad", Boolean(layout.cpad));
-      controls.classList.toggle("has-stick", Boolean(layout.stick));
-      stick.hidden = !layout.stick;
+      aplicarPreferenciasControles();
       game.parentElement.style.setProperty(
         "--screen-aspect",
         ASPECTOS[esquemaAtual] || ASPECTOS.default,
@@ -1600,6 +1865,145 @@
       savesModal.hidden = true;
     }
 
+    function atualizarBotaoFast() {
+      fastForwardButton.classList.toggle("is-active", fastForwardAtivo);
+      fastForwardButton.textContent = fastForwardAtivo
+        ? "⚡ Fast ON"
+        : "⚡ Fast";
+    }
+
+    function alternarFastForward() {
+      if (!emulatorReady) return;
+      const gameManager = window.EJS_emulator?.gameManager;
+      if (!gameManager?.toggleFastForward) return;
+      try {
+        fastForwardAtivo = !fastForwardAtivo;
+        gameManager.toggleFastForward(fastForwardAtivo ? 1 : 0);
+        atualizarBotaoFast();
+        mostrarAvisoSave(
+          fastForwardAtivo
+            ? "⚡ Fast-forward ativado"
+            : "Fast-forward desativado",
+        );
+      } catch (erro) {
+        console.warn("Fast-forward indisponível:", erro);
+        fastForwardAtivo = false;
+        atualizarBotaoFast();
+        mostrarAvisoSave("Fast-forward indisponível", true);
+      }
+    }
+
+    function chaveCheats(chave) {
+      return `ggretro-cheats:${chave}`;
+    }
+
+    function carregarCheats(chave) {
+      try {
+        const dados = JSON.parse(localStorage.getItem(chaveCheats(chave)) || "[]");
+        return Array.isArray(dados)
+          ? dados.filter((codigo) => typeof codigo === "string" && codigo.trim())
+          : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function aplicarCheats(codigos) {
+      const gameManager = window.EJS_emulator?.gameManager;
+      if (!gameManager?.setCheat || !codigos.length) return false;
+      try {
+        gameManager.resetCheat?.();
+        codigos.forEach((codigo, indice) => {
+          gameManager.setCheat(indice, 1, codigo);
+        });
+        return true;
+      } catch (erro) {
+        console.warn("Não foi possível aplicar os cheats:", erro);
+        return false;
+      }
+    }
+
+    function abrirCheat() {
+      if (!jogoAtual) {
+        mostrarAvisoSave("Inicie um jogo primeiro", true);
+        return;
+      }
+      cheatCodeInput.value = carregarCheats(jogoAtual.chave).join("\n");
+      cheatModal.hidden = false;
+    }
+
+    function fecharCheat() {
+      cheatModal.hidden = true;
+    }
+
+    function ativarCheats() {
+      if (!jogoAtual) return;
+      const codigos = cheatCodeInput.value
+        .split(/\r?\n/)
+        .map((codigo) => codigo.trim())
+        .filter(Boolean);
+      if (!codigos.length) {
+        mostrarAvisoSave("Digite pelo menos um código", true);
+        return;
+      }
+      if (!aplicarCheats(codigos)) {
+        mostrarAvisoSave("Cheat indisponível neste jogo", true);
+        return;
+      }
+      try {
+        localStorage.setItem(chaveCheats(jogoAtual.chave), JSON.stringify(codigos));
+      } catch {}
+      fecharCheat();
+      mostrarAvisoSave(`🧩 ${codigos.length} cheat(s) ativo(s)`);
+    }
+
+    function desativarCheats() {
+      try {
+        window.EJS_emulator?.gameManager?.resetCheat?.();
+      } catch (erro) {
+        console.warn("Não foi possível remover os cheats:", erro);
+      }
+      if (jogoAtual) {
+        try {
+          localStorage.removeItem(chaveCheats(jogoAtual.chave));
+        } catch {}
+      }
+      cheatCodeInput.value = "";
+      fecharCheat();
+      mostrarAvisoSave("Cheats desativados");
+    }
+
+    function abrirControles() {
+      if (!jogoAtual) {
+        mostrarAvisoSave("Inicie um jogo primeiro", true);
+        return;
+      }
+      document
+        .querySelectorAll('input[name="touch-mode"]')
+        .forEach((radio) => {
+          radio.checked = radio.value === preferenciasControles.modo;
+        });
+      document
+        .querySelectorAll('input[name="touch-size"]')
+        .forEach((radio) => {
+          radio.checked = radio.value === preferenciasControles.tamanho;
+        });
+      controlsModal.hidden = false;
+    }
+
+    function fecharControles() {
+      controlsModal.hidden = true;
+    }
+
+    function resetarFerramentasJogo() {
+      fastForwardAtivo = false;
+      atualizarBotaoFast();
+      fecharSaves();
+      fecharCheat();
+      fecharControles();
+      gameTools.hidden = true;
+    }
+
     async function autenticarDiscord(sdk) {
       if (!SAVE_API_URL && window.parent === window) return null;
       try {
@@ -1716,7 +2120,8 @@
       if (stickPointer === null) return;
       stickPointer = null;
       stickKnob.style.transform = "translate(-50%, -50%)";
-      enviarAnalog(0, 0);
+      if (stickComoDpad) aplicarDpad(new Set());
+      else enviarAnalog(0, 0);
     }
 
     function atualizarStick(event) {
@@ -1739,6 +2144,14 @@
       const limite = raio * 0.36;
       stickKnob.style.transform =
         `translate(calc(-50% + ${dx * limite}px), calc(-50% + ${dy * limite}px))`;
+
+      if (stickComoDpad) {
+        const ativos = new Set();
+        if (Math.abs(dx) > 0.22) ativos.add(dx < 0 ? 6 : 7);
+        if (Math.abs(dy) > 0.22) ativos.add(dy < 0 ? 4 : 5);
+        aplicarDpad(ativos);
+        return;
+      }
       enviarAnalog(dx, dy);
     }
 
@@ -1984,14 +2397,47 @@
     savesModal.addEventListener("click", (event) => {
       if (event.target === savesModal) fecharSaves();
     });
+    fastForwardButton.addEventListener("click", alternarFastForward);
+    openCheatButton.addEventListener("click", abrirCheat);
+    closeCheatButton.addEventListener("click", fecharCheat);
+    applyCheatButton.addEventListener("click", ativarCheats);
+    disableCheatButton.addEventListener("click", desativarCheats);
+    cheatModal.addEventListener("click", (event) => {
+      if (event.target === cheatModal) fecharCheat();
+    });
+    openControlsButton.addEventListener("click", abrirControles);
+    closeControlsButton.addEventListener("click", fecharControles);
+    controlsModal.addEventListener("click", (event) => {
+      if (event.target === controlsModal) fecharControles();
+    });
+    document.querySelectorAll('input[name="touch-mode"]').forEach((radio) => {
+      radio.addEventListener("change", () => {
+        if (!radio.checked) return;
+        preferenciasControles.modo = radio.value;
+        salvarPreferenciasControles();
+        soltarTodosOsControles();
+        aplicarPreferenciasControles();
+      });
+    });
+    document.querySelectorAll('input[name="touch-size"]').forEach((radio) => {
+      radio.addEventListener("change", () => {
+        if (!radio.checked) return;
+        preferenciasControles.tamanho = radio.value;
+        salvarPreferenciasControles();
+        aplicarPreferenciasControles();
+      });
+    });
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && !savesModal.hidden) fecharSaves();
+      if (event.key !== "Escape") return;
+      if (!savesModal.hidden) fecharSaves();
+      if (!cheatModal.hidden) fecharCheat();
+      if (!controlsModal.hidden) fecharControles();
     });
 
     function trocarJogo() {
       // No Discord, recarregar o iframe nem sempre funciona; encerramos o
       // emulador atual e voltamos para a seleção sem sair da Activity.
-      fecharSaves();
+      resetarFerramentasJogo();
       openSavesButton.hidden = true;
       jogoAtual = null;
       sessaoJogo += 1;
@@ -2068,6 +2514,9 @@
       document.body.classList.add("jogando");
       restartGameButton.hidden = false;
       openSavesButton.hidden = false;
+      gameTools.hidden = false;
+      fastForwardAtivo = false;
+      atualizarBotaoFast();
 
       window.EJS_player = "#game";
       window.EJS_gameName = rom.name;
@@ -2101,6 +2550,10 @@
           status.textContent =
             "Jogo iniciado. Abra ☁️ Saves para salvar ou carregar.";
         }
+        const cheats = carregarCheats(jogoAtual.chave);
+        if (cheats.length && aplicarCheats(cheats)) {
+          mostrarAvisoSave(`🧩 ${cheats.length} cheat(s) ativo(s)`);
+        }
       };
 
       const loader = document.createElement("script");
@@ -2110,6 +2563,7 @@
         if (sessaoAtual !== sessaoJogo) return;
         status.textContent =
           "Não foi possível carregar o EmulatorJS. Confira sua conexão e tente atualizar.";
+        resetarFerramentasJogo();
         jogoAtual = null;
         document.body.classList.remove("jogando");
         document.querySelector(".screen-label").hidden = false;
@@ -2129,6 +2583,7 @@
         if (emulatorReady) return;
         status.textContent =
           "O emulador não terminou de iniciar. Verifique o WebGL do navegador e tente de novo.";
+        resetarFerramentasJogo();
         jogoAtual = null;
         document.body.classList.remove("jogando");
         document.querySelector(".screen-label").hidden = false;
@@ -2163,6 +2618,7 @@
     document.addEventListener("fullscreenchange", atualizarTamanhoEmulador);
     window.addEventListener("pageshow", atualizarTamanhoEmulador);
 
+    carregarPreferenciasControles();
     carregarRoms();
     connectToDiscord();
   </script>
