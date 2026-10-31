@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#11131b">
-  <link rel="icon" type="image/svg+xml" href="./brand/gg-retro.svg">
-  <title>GG Retro — Emulador no Discord</title>
+  <link rel="icon" type="image/png" href="./asset/icon.png">
+  <title>GG Retro Emulador no Discord</title>
   <style>
     :root {
       color-scheme: dark;
@@ -67,10 +67,12 @@
     }
 
     .brand-logo {
-      width: 30px;
-      height: 30px;
+      width: 34px;
+      height: 34px;
       flex: 0 0 auto;
-      border-radius: 9px;
+      border-radius: 10px;
+      object-fit: cover;
+      background: #070a12;
       box-shadow: 0 8px 18px -8px #6d7cffcc;
     }
 
@@ -494,31 +496,168 @@
       text-align: center;
     }
 
-    .floating-restart {
+    .console-actions {
       position: absolute;
       top: 8px;
       right: 8px;
-      z-index: 2;
+      z-index: 3;
+      display: flex;
+      gap: 6px;
+    }
+
+    .console-actions button {
       height: 30px;
       padding: 0 11px;
       font-size: 0.7rem;
       background: #1b2236;
       box-shadow: inset 0 0 0 1px #ffffff14;
-      opacity: 0.9;
+      opacity: 0.92;
+    }
+
+    .console-actions .saves-button {
+      background: linear-gradient(180deg, #6674ff, #4a55c9);
+      box-shadow: 0 8px 18px -10px #6d7cffcc, inset 0 1px 0 #ffffff33;
     }
 
     body.jogando .app-header,
     body.jogando .panel,
     body.jogando #status { display: none; }
 
-    body.jogando .floating-restart {
+    body.jogando .console-actions {
       position: static;
       order: -1;
       align-self: center;
+      margin: 0 0 2px;
+    }
+
+    body.jogando .console-actions button {
       height: 28px;
       padding: 0 12px;
-      margin: 0;
       opacity: 0.95;
+    }
+
+    .saves-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: grid;
+      place-items: center;
+      padding: 14px;
+      background: #04050ad9;
+      backdrop-filter: blur(7px);
+    }
+
+    .saves-card {
+      width: min(100%, 520px);
+      max-height: min(86dvh, 680px);
+      overflow: auto;
+      padding: 16px;
+      border: 1px solid #2b3350;
+      border-radius: 18px;
+      background:
+        radial-gradient(420px 220px at 100% 0, #3d347a55, transparent 60%),
+        #111522;
+      box-shadow: 0 30px 80px -34px #000;
+    }
+
+    .saves-card > header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .saves-card h2 {
+      margin: 0;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+    }
+
+    .saves-card .save-status {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 0.72rem;
+    }
+
+    .icon-button {
+      width: 32px;
+      height: 32px;
+      flex: 0 0 auto;
+      padding: 0;
+      border-radius: 9px;
+      background: #1b2236;
+      box-shadow: inset 0 0 0 1px #ffffff14;
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    .save-slots { display: grid; gap: 8px; }
+
+    .save-slot {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 11px;
+      border: 1px solid #28304a;
+      border-radius: 12px;
+      background: #0d111b;
+    }
+
+    .slot-head {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .slot-head strong { font-size: 0.82rem; }
+
+    .slot-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: #222a40;
+      color: #9aa4c8;
+      font-size: 0.58rem;
+      font-weight: 750;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .slot-badge.cloud { background: #1d3a5a; color: #8cd6ff; }
+    .slot-badge.local { background: #2b2a48; color: #c7c2ff; }
+
+    .slot-time {
+      margin: 3px 0 0;
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 0.68rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .slot-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .slot-actions button {
+      height: 32px;
+      padding: 0 10px;
+      font-size: 0.7rem;
+    }
+
+    .slot-actions button.secondary { background: #1b2236; }
+
+    .saves-note {
+      margin: 12px 0 0;
+      color: #7f89ad;
+      font-size: 0.66rem;
+      line-height: 1.4;
+      text-align: center;
     }
 
     body.jogando main { padding: 6px 0; gap: 0; }
@@ -592,20 +731,10 @@
     <header class="app-header">
       <div>
         <h1>
-          <svg class="brand-logo" viewBox="0 0 48 48" role="img" aria-label="GG Retro">
-            <defs>
-              <linearGradient id="gg-logo-gradient" x1="4" y1="2" x2="44" y2="46" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#7c8cff" />
-                <stop offset="1" stop-color="#b16bff" />
-              </linearGradient>
-            </defs>
-            <rect width="48" height="48" rx="14" fill="url(#gg-logo-gradient)" />
-            <text x="24" y="32" text-anchor="middle" font-family="Segoe UI, system-ui, sans-serif" font-size="20" font-weight="900" letter-spacing="-1.5" fill="#ffffff">GG</text>
-            <circle cx="37" cy="11" r="2.5" fill="#ffffff" opacity="0.85" />
-          </svg>
+          <img class="brand-logo" src="./asset/icon.png" alt="GG Retro">
           <span class="brand-name">GG <em>Retro</em></span>
         </h1>
-        <p class="subtitle">Escolha o console e o jogo — GBA, SNES, Mega Drive e mais.</p>
+        <p class="subtitle">Escolha o console e o jogo GBA, SNES, Mega Drive e mais.</p>
       </div>
       <span class="badge" id="game-count">Carregando…</span>
     </header>
@@ -630,7 +759,10 @@
     <p id="status" role="status">Conectando à Activity do Discord…</p>
     <div id="save-indicator" class="save-indicator" role="status" hidden></div>
     <section class="gba-console" aria-label="Console retro">
-      <button id="restart-game" class="floating-restart" type="button" hidden>Trocar jogo</button>
+      <div class="console-actions">
+        <button id="open-saves" class="saves-button" type="button" hidden>☁️ Saves</button>
+        <button id="restart-game" class="floating-restart" type="button" hidden>Trocar jogo</button>
+      </div>
       <div class="gba-screen-frame">
         <p class="screen-label">Tela do jogo</p>
         <div id="game" aria-label="Tela do emulador"></div>
@@ -655,6 +787,20 @@
     </section>
   </main>
 
+  <div id="saves-modal" class="saves-modal" hidden>
+    <section class="saves-card" role="dialog" aria-modal="true" aria-labelledby="saves-title">
+      <header>
+        <div>
+          <h2 id="saves-title">☁️ Saves do jogo</h2>
+          <p id="saves-status" class="save-status">Até 3 slots por jogo.</p>
+        </div>
+        <button id="close-saves" class="icon-button" type="button" aria-label="Fechar saves">×</button>
+      </header>
+      <div id="save-slots" class="save-slots"></div>
+      <p class="saves-note">Salve em um dos 3 slots e carregue quando quiser. Com o Discord conectado, os slots também ficam na nuvem.</p>
+    </section>
+  </div>
+
   <script type="module">
     const DISCORD_CLIENT_ID = __DISCORD_CLIENT_ID_JSON__;
     const SAVE_API_URL = __SAVE_API_URL_JSON__;
@@ -670,6 +816,11 @@
     const game = document.querySelector("#game");
     const controls = document.querySelector("#controls");
     const controlHint = document.querySelector("#control-hint");
+    const openSavesButton = document.querySelector("#open-saves");
+    const savesModal = document.querySelector("#saves-modal");
+    const closeSavesButton = document.querySelector("#close-saves");
+    const saveSlotsContainer = document.querySelector("#save-slots");
+    const savesStatus = document.querySelector("#saves-status");
     let discordReady = false;
     let previewMode = false;
     let systems = [];
@@ -687,7 +838,6 @@
       jogadorProntoResolver = resolve;
     });
     let jogoAtual = null;
-    let autosaveTimer = null;
     let salvando = false;
     let avisoSaveTimer = null;
     const activePointers = new Map();
@@ -980,17 +1130,22 @@
       return savesDbPromise;
     }
 
-    function chaveSaveLocal(chave) {
-      return `${jogadorId || "convidado"}:${chave}`;
+    const SAVE_SLOTS = 3;
+    let savesCarregando = false;
+
+    function chaveSaveLocal(chave, slot) {
+      return `${jogadorId || "convidado"}:${chave}:${slot}`;
     }
 
-    async function salvarLocal(chave, dados) {
+    async function salvarLocal(chave, slot, dados) {
       const db = await abrirSavesDb();
       if (!db) return;
       await new Promise((resolve, reject) => {
         const transacao = db.transaction("saves", "readwrite");
         transacao.objectStore("saves").put({
-          key: chaveSaveLocal(chave),
+          key: chaveSaveLocal(chave, slot),
+          gameKey: chave,
+          slot,
           state: dados.state || null,
           sram: dados.sram || null,
           updatedAt: Date.now(),
@@ -1000,15 +1155,49 @@
       });
     }
 
-    async function carregarLocal(chave) {
+    async function carregarLocal(chave, slot) {
       const db = await abrirSavesDb();
       if (!db) return null;
+      const chaveAtual = chaveSaveLocal(chave, slot);
+      const chaveAntiga = `${jogadorId || "convidado"}:${chave}`;
       return new Promise((resolve, reject) => {
         const transacao = db.transaction("saves", "readonly");
-        const requisicao = transacao.objectStore("saves").get(chaveSaveLocal(chave));
-        requisicao.onsuccess = () => resolve(requisicao.result || null);
+        const store = transacao.objectStore("saves");
+        const requisicao = store.get(chaveAtual);
+        requisicao.onsuccess = () => {
+          if (requisicao.result || slot !== 1) {
+            resolve(requisicao.result || null);
+            return;
+          }
+          const legado = store.get(chaveAntiga);
+          legado.onsuccess = () => resolve(legado.result || null);
+          legado.onerror = () => reject(legado.error);
+        };
         requisicao.onerror = () => reject(requisicao.error);
       });
+    }
+
+    async function listarLocais(chave) {
+      const db = await abrirSavesDb();
+      if (!db) return [];
+      const registros = await new Promise((resolve, reject) => {
+        const transacao = db.transaction("saves", "readonly");
+        const requisicao = transacao.objectStore("saves").getAll();
+        requisicao.onsuccess = () => resolve(requisicao.result || []);
+        requisicao.onerror = () => reject(requisicao.error);
+      });
+      const prefixoAntigo = `${jogadorId || "convidado"}:${chave}`;
+      return registros
+        .map((item) => {
+          if (item.gameKey === chave && Number.isInteger(item.slot)) {
+            return item;
+          }
+          if (item.key === prefixoAntigo) {
+            return { ...item, gameKey: chave, slot: 1 };
+          }
+          return null;
+        })
+        .filter(Boolean);
     }
 
     function capturarSave() {
@@ -1062,13 +1251,13 @@
       return true;
     }
 
-    async function carregarSave(chave) {
+    async function carregarSave(chave, slot) {
       let dados = null;
       let origem = null;
       if (jogadorId && tokenAcesso) {
         try {
           const resposta = await fetch(
-            apiUrl(`/api/emu/saves/${encodeURIComponent(chave)}`),
+            apiUrl(`/api/emu/saves/${encodeURIComponent(chave)}/${slot}`),
             {
               headers: { Authorization: `Bearer ${tokenAcesso}` },
               cache: "no-store",
@@ -1077,6 +1266,8 @@
           if (resposta.ok) {
             dados = await resposta.json();
             origem = "nuvem";
+          } else if (resposta.status !== 404) {
+            throw new Error(`HTTP ${resposta.status}`);
           }
         } catch (erro) {
           console.warn("Save na nuvem indisponível, usando o local:", erro);
@@ -1084,7 +1275,7 @@
       }
       if (!dados) {
         try {
-          dados = await carregarLocal(chave);
+          dados = await carregarLocal(chave, slot);
           if (dados) origem = "local";
         } catch (erro) {
           console.warn("Save local indisponível:", erro);
@@ -1108,48 +1299,216 @@
       }, 2600);
     }
 
-    async function salvarAgora(keepalive = false) {
-      if (!jogoAtual || salvando) return;
+    async function salvarSlot(slot) {
+      if (!jogoAtual || salvando) return false;
       const dados = capturarSave();
-      if (!dados) return;
+      if (!dados) {
+        mostrarAvisoSave("Nada para salvar ainda", true);
+        return false;
+      }
       const chave = jogoAtual.chave;
       salvando = true;
+      const temConta = Boolean(jogadorId && tokenAcesso);
+      let naNuvem = false;
       try {
-        await salvarLocal(chave, dados);
-        if (jogadorId && tokenAcesso) {
-          const resposta = await fetch(
-            apiUrl(`/api/emu/saves/${encodeURIComponent(chave)}`),
-            {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${tokenAcesso}`,
-                "Content-Type": "application/json",
+        await salvarLocal(chave, slot, dados);
+        if (temConta) {
+          try {
+            const resposta = await fetch(
+              apiUrl(`/api/emu/saves/${encodeURIComponent(chave)}/${slot}`),
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${tokenAcesso}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(dados),
               },
-              body: JSON.stringify(dados),
-              keepalive,
-            },
-          );
-          if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
-          mostrarAvisoSave("☁️ Save salvo");
-        } else {
-          mostrarAvisoSave("💾 Save local");
+            );
+            if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+            naNuvem = true;
+          } catch (erro) {
+            console.warn("Falha ao salvar na nuvem:", erro);
+          }
         }
+        mostrarAvisoSave(
+          naNuvem
+            ? `☁️ Slot ${slot} salvo`
+            : `💾 Slot ${slot} salvo neste dispositivo`,
+          temConta && !naNuvem,
+        );
+        return true;
       } catch (erro) {
-        console.warn("Falha ao salvar na nuvem:", erro);
-        mostrarAvisoSave("⚠️ Save só neste dispositivo", true);
+        console.warn("Falha ao salvar:", erro);
+        mostrarAvisoSave("Não foi possível salvar", true);
+        return false;
       } finally {
         salvando = false;
       }
     }
 
-    function iniciarAutosave() {
-      pararAutosave();
-      autosaveTimer = setInterval(() => salvarAgora(false), 20000);
+    async function listarSavesDoJogo(chave) {
+      const mapa = new Map();
+      try {
+        for (const item of await listarLocais(chave)) {
+          mapa.set(item.slot, {
+            ...item,
+            local: true,
+            localUpdatedAt: item.updatedAt,
+          });
+        }
+      } catch (erro) {
+        console.warn("Não foi possível listar os saves locais:", erro);
+      }
+
+      let nuvemIndisponivel = false;
+      if (jogadorId && tokenAcesso) {
+        try {
+          const resposta = await fetch(
+            apiUrl(`/api/emu/saves?game_key=${encodeURIComponent(chave)}`),
+            {
+              headers: { Authorization: `Bearer ${tokenAcesso}` },
+              cache: "no-store",
+            },
+          );
+          if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+          const dados = await resposta.json();
+          for (const save of dados.saves || []) {
+            const slot = Number(save.slot);
+            if (!Number.isInteger(slot) || slot < 1 || slot > SAVE_SLOTS) {
+              continue;
+            }
+            mapa.set(slot, {
+              ...(mapa.get(slot) || {}),
+              cloud: true,
+              cloudUpdatedAt: save.updated_at,
+              state_size: save.state_size,
+              sram_size: save.sram_size,
+            });
+          }
+        } catch (erro) {
+          console.warn("Não foi possível listar os saves na nuvem:", erro);
+          nuvemIndisponivel = true;
+        }
+      }
+      return { mapa, nuvemIndisponivel };
     }
 
-    function pararAutosave() {
-      clearInterval(autosaveTimer);
-      autosaveTimer = null;
+    function formatarDataSave(valor) {
+      if (!valor) return "";
+      const data = new Date(valor);
+      if (Number.isNaN(data.getTime())) return "";
+      return data.toLocaleString("pt-BR", {
+        dateStyle: "short",
+        timeStyle: "short",
+      });
+    }
+
+    async function renderSaves() {
+      if (!jogoAtual || savesCarregando) return;
+      savesCarregando = true;
+      savesStatus.textContent = "Carregando saves…";
+      try {
+        const { mapa, nuvemIndisponivel } = await listarSavesDoJogo(
+          jogoAtual.chave,
+        );
+        saveSlotsContainer.replaceChildren();
+
+        for (let slot = 1; slot <= SAVE_SLOTS; slot += 1) {
+          const item = mapa.get(slot);
+          const card = document.createElement("article");
+          card.className = "save-slot";
+
+          const info = document.createElement("div");
+          const cabecalho = document.createElement("div");
+          cabecalho.className = "slot-head";
+          const titulo = document.createElement("strong");
+          titulo.textContent = `Slot ${slot}`;
+          const badge = document.createElement("span");
+          badge.className = "slot-badge";
+          if (item?.cloud) {
+            badge.textContent = "Nuvem";
+            badge.classList.add("cloud");
+          } else if (item?.local) {
+            badge.textContent = "Local";
+            badge.classList.add("local");
+          } else {
+            badge.textContent = "Vazio";
+          }
+          cabecalho.append(titulo, badge);
+
+          const quando = document.createElement("p");
+          quando.className = "slot-time";
+          const dataSave = item?.cloudUpdatedAt || item?.localUpdatedAt;
+          quando.textContent = dataSave
+            ? `Salvo em ${formatarDataSave(dataSave)}`
+            : "Nenhum save neste slot.";
+          info.append(cabecalho, quando);
+
+          const acoes = document.createElement("div");
+          acoes.className = "slot-actions";
+          const salvar = document.createElement("button");
+          salvar.type = "button";
+          salvar.textContent = "Salvar";
+          const carregar = document.createElement("button");
+          carregar.type = "button";
+          carregar.className = "secondary";
+          carregar.textContent = "Carregar";
+          carregar.disabled = !(item?.local || item?.cloud) || !emulatorReady;
+
+          salvar.addEventListener("click", async () => {
+            salvar.disabled = true;
+            carregar.disabled = true;
+            await salvarSlot(slot);
+            await renderSaves();
+          });
+          carregar.addEventListener("click", async () => {
+            carregar.disabled = true;
+            const origem = await carregarSave(jogoAtual.chave, slot);
+            if (!origem) {
+              mostrarAvisoSave("Não foi possível carregar este slot", true);
+              carregar.disabled = false;
+              return;
+            }
+            mostrarAvisoSave(
+              origem === "nuvem"
+                ? `☁️ Slot ${slot} carregado`
+                : `💾 Slot ${slot} carregado`,
+            );
+            status.textContent = `Slot ${slot} carregado. Continue jogando.`;
+            fecharSaves();
+          });
+
+          acoes.append(salvar, carregar);
+          card.append(info, acoes);
+          saveSlotsContainer.append(card);
+        }
+
+        if (!jogadorId || !tokenAcesso) {
+          savesStatus.textContent =
+            "Sem login do Discord: os saves ficam neste dispositivo.";
+        } else if (nuvemIndisponivel) {
+          savesStatus.textContent =
+            "Nuvem indisponível agora; usando os saves locais.";
+        } else {
+          savesStatus.textContent = "Sincronizado com sua conta Discord.";
+        }
+      } finally {
+        savesCarregando = false;
+      }
+    }
+
+    function abrirSaves() {
+      if (!jogoAtual) {
+        mostrarAvisoSave("Inicie um jogo primeiro", true);
+        return;
+      }
+      savesModal.hidden = false;
+      renderSaves();
+    }
+
+    function fecharSaves() {
+      savesModal.hidden = true;
     }
 
     async function autenticarDiscord(sdk) {
@@ -1531,12 +1890,20 @@
     romInput.addEventListener("change", atualizarBotao);
     restartButton.addEventListener("click", trocarJogo);
     restartGameButton.addEventListener("click", trocarJogo);
+    openSavesButton.addEventListener("click", abrirSaves);
+    closeSavesButton.addEventListener("click", fecharSaves);
+    savesModal.addEventListener("click", (event) => {
+      if (event.target === savesModal) fecharSaves();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !savesModal.hidden) fecharSaves();
+    });
 
     function trocarJogo() {
       // No Discord, recarregar o iframe nem sempre funciona; encerramos o
       // emulador atual e voltamos para a seleção sem sair da Activity.
-      salvarAgora(true);
-      pararAutosave();
+      fecharSaves();
+      openSavesButton.hidden = true;
       jogoAtual = null;
       sessaoJogo += 1;
       const emulator = window.EJS_emulator;
@@ -1568,6 +1935,7 @@
       document.querySelector(".screen-label").hidden = false;
       restartButton.hidden = true;
       restartGameButton.hidden = true;
+      openSavesButton.hidden = true;
       systemInput.disabled = false;
       romInput.disabled = romInput.options.length <= 1;
       atualizarControles(false);
@@ -1610,6 +1978,7 @@
 
       document.body.classList.add("jogando");
       restartGameButton.hidden = false;
+      openSavesButton.hidden = false;
 
       window.EJS_player = "#game";
       window.EJS_gameName = rom.name;
@@ -1629,15 +1998,20 @@
           new Promise((resolve) => setTimeout(resolve, 2500)),
         ]);
         if (sessaoAtual !== sessaoJogo || !jogoAtual) return;
-        const carregou = await carregarSave(jogoAtual.chave);
+        const carregou = await carregarSave(jogoAtual.chave, 1);
         if (sessaoAtual !== sessaoJogo) return;
         if (carregou) {
-          status.textContent = "Save carregado. Continue de onde parou.";
+          status.textContent =
+            "Slot 1 carregado. Abra ☁️ Saves para usar outro slot.";
           mostrarAvisoSave(
-            carregou === "nuvem" ? "☁️ Save carregado" : "💾 Save carregado",
+            carregou === "nuvem"
+              ? "☁️ Slot 1 carregado"
+              : "💾 Slot 1 carregado",
           );
+        } else {
+          status.textContent =
+            "Jogo iniciado. Abra ☁️ Saves para salvar ou carregar.";
         }
-        iniciarAutosave();
       };
 
       const loader = document.createElement("script");
@@ -1647,12 +2021,12 @@
         if (sessaoAtual !== sessaoJogo) return;
         status.textContent =
           "Não foi possível carregar o EmulatorJS. Confira sua conexão e tente atualizar.";
-        pararAutosave();
         jogoAtual = null;
         document.body.classList.remove("jogando");
         document.querySelector(".screen-label").hidden = false;
         restartButton.hidden = true;
         restartGameButton.hidden = true;
+        openSavesButton.hidden = true;
         atualizarControles(false);
         systemInput.disabled = false;
         romInput.disabled = false;
@@ -1666,12 +2040,12 @@
         if (emulatorReady) return;
         status.textContent =
           "O emulador não terminou de iniciar. Verifique o WebGL do navegador e tente de novo.";
-        pararAutosave();
         jogoAtual = null;
         document.body.classList.remove("jogando");
         document.querySelector(".screen-label").hidden = false;
         restartButton.hidden = true;
         restartGameButton.hidden = true;
+        openSavesButton.hidden = true;
         atualizarControles(false);
         systemInput.disabled = false;
         romInput.disabled = false;
@@ -1695,10 +2069,8 @@
         atualizarTamanhoEmulador();
       } else {
         soltarTodosOsControles();
-        salvarAgora(true);
       }
     });
-    window.addEventListener("pagehide", () => salvarAgora(true));
     document.addEventListener("fullscreenchange", atualizarTamanhoEmulador);
     window.addEventListener("pageshow", atualizarTamanhoEmulador);
 

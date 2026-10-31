@@ -65,6 +65,7 @@ jobs:
           cp index.html dist/index.html
           cp systems.json dist/systems.json
           cp -R brand dist/brand
+          cp -R asset dist/asset
 
           shopt -s nullglob
           while IFS= read -r core; do
