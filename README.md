@@ -19,22 +19,29 @@ são associados automaticamente apenas quando sua extensão identifica um único
 sistema; formatos ambíguos devem ficar na pasta do core correspondente. Depois,
 execute novamente o workflow do GitHub Pages.
 
-O Nintendo DS usa o core `melonds` por padrão e aparece no seletor mesmo antes
-de haver ROMs `.nds`. Coloque as ROMs em `rom/melonds/`; o BIOS do DS não é
-incluído pelo EmulatorJS e, se o jogo exigir, deve ser fornecido separadamente.
+O Nintendo DS aparece no seletor mesmo antes de haver ROMs `.nds`; no
+computador ele usa o core `melonds` por padrão. Coloque as ROMs em
+`rom/melonds/`; o BIOS do DS não é incluído pelo EmulatorJS e, se o jogo
+exigir, deve ser fornecido separadamente.
 Os dois botões L/R, ABXY e Start/Select ficam nos controles de toque; a tela
 inferior aceita toque/stylus no canvas quando o core permite ponteiro. Em
 navegadores móveis, a Activity converte os toques do canvas em eventos de
-mouse para o melonDS reconhecer o dedo/caneta como stylus. As capas
+mouse para o DS reconhecer o dedo/caneta como stylus. As capas
 de DS são procuradas no Libretro durante o deploy e salvas em
 `asset/covers/`; a primeira publicação com uma ROM nova pode demorar um pouco
 mais para baixar a capa.
 
-No Nintendo DS, a Activity ativa o renderizador threaded do melonDS, desliga
-o VSync e usa áudio de 10 bits sem interpolação por padrão. O botão
-**DS: 1 tela** troca para o layout de tela superior e reduz o trabalho de
-vídeo quando o jogo estiver lento; toque novamente para voltar às duas telas.
-O core threaded só é usado quando o navegador expõe `SharedArrayBuffer`.
+No Nintendo DS, a Activity usa o DeSmuME com frameskip 1 por padrão em telas
+de toque (celular/tablet) e o melonDS em computadores. O botão
+**NDS: DeSmuME** / **NDS: melonDS** alterna entre os dois; essa preferência
+fica salva. Os saves do modo DeSmuME usam uma chave separada para não
+sobrescrever os saves do melonDS, já que os formatos de save state/SRAM não
+são compatíveis. O melonDS continua sendo a opção mais compatível quando o
+DeSmuME apresentar algum problema. O botão **DS: 1 tela** troca para o layout de tela
+superior e reduz o trabalho de vídeo quando o jogo estiver lento; toque
+novamente para voltar às duas telas. O modo threaded fica desativado por
+padrão porque alguns WebViews/iframes do Discord não compartilham o contexto
+WebGL entre threads; isso evita a falha `GLctx` na inicialização.
 
 O console mostra os controles de toque abaixo da tela. Eles usam os botões
 padrão do RetroPad, funcionam ao pressionar e segurar (inclusive em

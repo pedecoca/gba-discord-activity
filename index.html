@@ -1631,6 +1631,7 @@
       <div class="game-tools" id="game-tools" hidden>
         <button id="fast-forward" type="button" data-move-key="fast">Fast</button>
         <button id="nds-fast" type="button" data-move-key="ds" hidden>DS rápido</button>
+        <button id="nds-boost" type="button" data-move-key="nds-core" hidden>NDS: melonDS</button>
         <button id="open-cheat" type="button" data-move-key="cheat">Cheat</button>
         <button id="open-controls" type="button" data-move-key="controles">Controles</button>
       </div>
@@ -1826,6 +1827,7 @@
     const gameTools = document.querySelector("#game-tools");
     const fastForwardButton = document.querySelector("#fast-forward");
     const ndsFastButton = document.querySelector("#nds-fast");
+    const ndsBoostButton = document.querySelector("#nds-boost");
     const openCheatButton = document.querySelector("#open-cheat");
     const openControlsButton = document.querySelector("#open-controls");
     const controlsModal = document.querySelector("#controls-modal");
@@ -1870,6 +1872,8 @@
     let ndsModoRapido = false;
     let stickComoDpad = false;
     const PREF_CONTROLES_KEY = "ggretro-controles";
+    const PREF_NDS_CORE_KEY = "ggretro-nds-core";
+    let ndsCoreRapido = false;
     const PREF_CONTROLES_PADRAO = {
       modo: "dpad",
       escala: 100,
@@ -3360,19 +3364,82 @@
       ndsFastButton.classList.toggle("is-active", ndsModoRapido);
       ndsFastButton.setAttribute("aria-pressed", String(ndsModoRapido));
       ndsFastButton.textContent = ndsModoRapido ? "DS: 2 telas" : "DS: 1 tela";
+      atualizarBotaoCoreNds();
+    }
+
+    function carregarPreferenciaCoreNds() {
+      const telaDeToque =
+        Boolean(window.matchMedia?.("(pointer: coarse)")?.matches) ||
+        /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+      try {
+        const salvo = localStorage.getItem(PREF_NDS_CORE_KEY);
+        ndsCoreRapido = salvo ? salvo === "desmume" : telaDeToque;
+      } catch {
+        ndsCoreRapido = telaDeToque;
+      }
+      atualizarBotaoCoreNds();
+    }
+
+    function salvarPreferenciaCoreNds() {
+      try {
+        localStorage.setItem(
+          PREF_NDS_CORE_KEY,
+          ndsCoreRapido ? "desmume" : "melonds",
+        );
+      } catch {}
+    }
+
+    function atualizarBotaoCoreNds() {
+      if (!ndsBoostButton) return;
+      ndsBoostButton.hidden = esquemaAtual !== "nds";
+      ndsBoostButton.classList.toggle("is-active", ndsCoreRapido);
+      ndsBoostButton.setAttribute("aria-pressed", String(ndsCoreRapido));
+      ndsBoostButton.textContent = ndsCoreRapido
+        ? "NDS: DeSmuME"
+        : "NDS: melonDS";
+      ndsBoostButton.title = ndsCoreRapido
+        ? "Voltar ao melonDS (mais compatível)"
+        : "Usar DeSmuME com frameskip (mais rápido)";
+    }
+
+    function alternarCoreNdsRapido() {
+      if (esquemaAtual !== "nds" || !jogoAtual) return;
+      const rom = jogoAtual.rom;
+      ndsCoreRapido = !ndsCoreRapido;
+      salvarPreferenciaCoreNds();
+      atualizarBotaoCoreNds();
+      mostrarAvisoSave(
+        ndsCoreRapido
+          ? "NDS rápido: DeSmuME + frameskip (saves separados)"
+          : "NDS: melonDS",
+      );
+      trocarJogo();
+      setTimeout(() => {
+        systemInput.value = rom.core;
+        atualizarListaDeJogos();
+        romInput.value = rom.url;
+        selecionarEAbrirJogo(rom);
+      }, 60);
     }
 
     function alternarModoDsRapido() {
       if (!jogoAtual || esquemaAtual !== "nds") return;
       ndsModoRapido = !ndsModoRapido;
       const emulator = window.EJS_emulator;
-      const layout = ndsModoRapido ? "Top Only" : "Top/Bottom";
+      const coreAtual = jogoAtual.coreExecucao || window.EJS_core;
+      const desmume = coreAtual === "desmume";
+      const chave = desmume
+        ? "desmume_screens_layout"
+        : "melonds_screen_layout";
+      const layout = desmume
+        ? ndsModoRapido
+          ? "top only"
+          : "top/bottom"
+        : ndsModoRapido
+          ? "Top Only"
+          : "Top/Bottom";
       try {
-        emulator?.menuOptionChanged?.("melonds_screen_layout", layout);
-        emulator?.menuOptionChanged?.(
-          "melonds_threaded_renderer",
-          ndsModoRapido ? "enabled" : "disabled",
-        );
+        emulator?.menuOptionChanged?.(chave, layout);
       } catch (erro) {
         console.warn("Não foi possível alterar o modo de vídeo do DS:", erro);
       }
@@ -4359,6 +4426,7 @@
     });
     fastForwardButton.addEventListener("click", alternarFastForward);
     ndsFastButton?.addEventListener("click", alternarModoDsRapido);
+    ndsBoostButton?.addEventListener("click", alternarCoreNdsRapido);
     openCheatButton.addEventListener("click", abrirCheat);
     closeCheatButton.addEventListener("click", fecharCheat);
     applyCheatButton.addEventListener("click", ativarCheats);
@@ -4502,15 +4570,22 @@
       status.textContent = "Iniciando o emulador…";
 
       const esquema = esquemaDoCore(rom.core);
+      const coreExecucao =
+        esquema === "nds" && ndsCoreRapido ? "desmume" : rom.core;
+      const chaveJogo =
+        coreExecucao === "desmume"
+          ? `${chaveDoJogo(rom)}::desmume`
+          : chaveDoJogo(rom);
       renderControles(esquema);
       jogoAtual = {
-        chave: chaveDoJogo(rom),
+        chave: chaveJogo,
         rom,
+        coreExecucao,
       };
 
-      // O melonDS em WebAssembly é pesado. Ativa as opções que reduzem
-      // trabalho de vídeo/áudio sem mudar a jogabilidade normal.
-      const dsOtimizado = rom.core === "melonds";
+      // O modo rápido do NDS usa DeSmuME com frameskip; o melonDS fica
+      // disponível como opção de maior compatibilidade.
+      const dsOtimizado = esquema === "nds";
       document.body.classList.add("jogando");
       document.body.classList.toggle("modo-ds", dsOtimizado);
       restartGameButton.hidden = false;
@@ -4525,21 +4600,26 @@
       // WebGL compartilhado; mantém o core normal, que é mais compatível.
       window.EJS_threads = false;
       window.EJS_defaultOptions = dsOtimizado
-        ? {
-            vsync: "disabled",
-            melonds_threaded_renderer: "enabled",
-            melonds_opengl_renderer: "disabled",
-            melonds_opengl_resolution: "1x native (256x192)",
-            melonds_audio_bitrate: "10-bit",
-            melonds_audio_interpolation: "None",
-            melonds_screen_gap: "0",
-          }
+        ? coreExecucao === "desmume"
+          ? {
+              vsync: "disabled",
+              desmume_frameskip: "1",
+              desmume_advanced_timing: "disabled",
+              desmume_screens_layout: "top/bottom",
+              desmume_internal_resolution: "256x192",
+            }
+          : {
+              vsync: "disabled",
+              melonds_audio_bitrate: "10-bit",
+              melonds_audio_interpolation: "None",
+              melonds_screen_gap: "0",
+            }
         : {};
 
       window.EJS_player = "#game";
       window.EJS_gameName = rom.name;
       window.EJS_gameUrl = rom.url;
-      window.EJS_core = rom.core;
+      window.EJS_core = coreExecucao;
       window.EJS_controlScheme = esquema;
       window.EJS_pathtodata = EJS_DATA_PATH;
       window.EJS_startOnLoaded = true;
@@ -4656,6 +4736,7 @@
 
     configurarArrastoDosControles();
     configurarArrastoDeBotoes();
+    carregarPreferenciaCoreNds();
     carregarPreferenciasControles();
     carregarRoms();
     connectToDiscord();
