@@ -81,9 +81,11 @@ OAuth2 → Redirects**:
 - `https://api.pokedc.online/`
 - se também usar o GitHub Pages: `https://pedecoca.github.io/gba-discord-activity/`
 
-O `redirect_uri` usado pelo botão é exatamente a origem e o caminho da página
-atual (`window.location.origin + window.location.pathname`). Se você publicar
-em outro domínio, cadastre também essa URL.
+Copie exatamente como está, **incluindo a barra final**. O `redirect_uri` usado
+pelo botão é a origem e o caminho da página atual
+(`window.location.origin + window.location.pathname`); se você publicar em
+outro domínio, cadastre também essa URL. Se cadastrar
+`https://api.pokedc.online` sem a barra, o Discord ainda recusa o login.
 
 Dentro do Discord, o catálogo também tenta `/api/roms.json`, `/api/systems.json`
 e `/api/covers.json` antes de usar os arquivos estáticos do GitHub Pages.
