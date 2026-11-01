@@ -2017,6 +2017,13 @@
       return `${SAVE_API_URL}${path}`;
     }
 
+    function cabecalhosNuvem(extras = {}) {
+      const headers = { ...extras };
+      if (tokenAcesso) headers.Authorization = `Bearer ${tokenAcesso}`;
+      if (jogadorId) headers["X-Discord-User-ID"] = String(jogadorId);
+      return headers;
+    }
+
     function bytesParaBase64(bytes) {
       const dados = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
       let binario = "";
@@ -2213,12 +2220,12 @@
       let nuvem = null;
       let local = null;
       let nuvemIndisponivel = false;
-      if (jogadorId && tokenAcesso) {
+      if (jogadorId) {
         try {
           const resposta = await fetch(
             apiUrl(`/api/emu/saves/${encodeURIComponent(chave)}/${slot}`),
             {
-              headers: { Authorization: `Bearer ${tokenAcesso}` },
+              headers: cabecalhosNuvem(),
               cache: "no-store",
             },
           );
@@ -2263,7 +2270,7 @@
       }
       if (!dados) return null;
 
-      if (origem === "local" && jogadorId && tokenAcesso && !nuvemIndisponivel) {
+      if (origem === "local" && jogadorId && !nuvemIndisponivel) {
         // Só envia automaticamente se a nuvem respondeu (vazia ou mais antiga).
         await enviarSaveNuvem(chave, slot, dados);
       }
@@ -2293,16 +2300,13 @@
     }
 
     async function enviarSaveNuvem(chave, slot, dados) {
-      if (!jogadorId || !tokenAcesso) return false;
+      if (!jogadorId) return false;
       try {
         const resposta = await fetch(
           apiUrl(`/api/emu/saves/${encodeURIComponent(chave)}/${slot}`),
           {
             method: "POST",
-            headers: {
-              Authorization: `Bearer ${tokenAcesso}`,
-              "Content-Type": "application/json",
-            },
+            headers: cabecalhosNuvem({ "Content-Type": "application/json" }),
             body: JSON.stringify(dados),
           },
         );
@@ -2323,7 +2327,7 @@
       }
       const chave = jogoAtual.chave;
       salvando = true;
-      const temConta = Boolean(jogadorId && tokenAcesso);
+      const temConta = Boolean(jogadorId);
       try {
         await salvarLocal(chave, slot, dados);
         const naNuvem = temConta
@@ -2360,12 +2364,12 @@
       }
 
       let nuvemIndisponivel = false;
-      if (jogadorId && tokenAcesso) {
+      if (jogadorId) {
         try {
           const resposta = await fetch(
             apiUrl(`/api/emu/saves?game_key=${encodeURIComponent(chave)}`),
             {
-              headers: { Authorization: `Bearer ${tokenAcesso}` },
+              headers: cabecalhosNuvem(),
               cache: "no-store",
             },
           );
@@ -2439,10 +2443,10 @@
       }
 
       let nuvemIndisponivel = false;
-      if (jogadorId && tokenAcesso) {
+      if (jogadorId) {
         try {
           const resposta = await fetch(apiUrl("/api/emu/saves"), {
-            headers: { Authorization: `Bearer ${tokenAcesso}` },
+            headers: cabecalhosNuvem(),
             cache: "no-store",
           });
           if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
@@ -2529,7 +2533,7 @@
         }
       }
 
-      if (!jogadorId || !tokenAcesso) {
+      if (!jogadorId) {
         libraryStatus.textContent =
           "Saves deste dispositivo. Entre pela Activity do Discord para sincronizar.";
       } else if (nuvemIndisponivel) {
@@ -2642,9 +2646,9 @@
           saveSlotsContainer.append(card);
         }
 
-        if (!jogadorId || !tokenAcesso) {
+        if (!jogadorId) {
           savesStatus.textContent =
-            "Sem login do Discord: os saves ficam neste dispositivo.";
+            "Sem usuário da Activity: os saves ficam neste dispositivo.";
         } else if (nuvemIndisponivel) {
           savesStatus.textContent =
             "Nuvem indisponível agora; usando os saves locais.";
@@ -2675,7 +2679,7 @@
     async function excluirSaveDaNuvem() {
       const slot = slotParaExcluir;
       if (!slot || !jogoAtual) return;
-      if (!jogadorId || !tokenAcesso) {
+      if (!jogadorId) {
         fecharConfirmacaoExclusao();
         mostrarAvisoSave("Entre com o Discord para excluir da nuvem", true);
         return;
@@ -2690,7 +2694,7 @@
           apiUrl(`/api/emu/saves/${encodeURIComponent(chave)}/${slot}`),
           {
             method: "DELETE",
-            headers: { Authorization: `Bearer ${tokenAcesso}` },
+            headers: cabecalhosNuvem(),
             cache: "no-store",
           },
         );
@@ -2942,12 +2946,44 @@
       return dadosToken;
     }
 
+    async function obterUsuarioSemOauth(sdk) {
+      // O cliente do Discord já sabe quem está com a Activity aberta.
+      // authenticate() sem token pode devolver o usuário atual; se não
+      // devolver, usamos o participante conectado à instância.
+      try {
+        const auth = await sdk.commands.authenticate({});
+        if (auth?.user?.id) {
+          if (auth.access_token) tokenAcesso = auth.access_token;
+          return auth.user.id;
+        }
+      } catch (erro) {
+        console.warn("Autenticação implícita do Discord indisponível:", erro);
+      }
+      try {
+        const { participants } =
+          await sdk.commands.getActivityInstanceConnectedParticipants();
+        if (Array.isArray(participants) && participants.length) {
+          // Em uma Activity single-player o primeiro participante é o
+          // usuário que abriu o jogo. Não há popup de OAuth nesse caminho.
+          return participants[0].id;
+        }
+      } catch (erro) {
+        console.warn("Participantes da Activity indisponíveis:", erro);
+      }
+      return null;
+    }
+
     async function autenticarDiscord(sdk) {
       if (!SAVE_API_URL && !emActivityDiscord()) return null;
       try {
         // authorize() depende do handshake ready(); chamá-lo antes disso
         // gera códigos inválidos e o backend recebe invalid_grant.
         await esperarSdkPronto(sdk);
+        const idSemOauth = await obterUsuarioSemOauth(sdk);
+        if (idSemOauth) {
+          jogadorId = String(idSemOauth);
+          return jogadorId;
+        }
         let ultimoErro = null;
         for (let tentativa = 0; tentativa < 2; tentativa += 1) {
           // Um state novo evita reutilizar um código/cache da tentativa anterior.
@@ -2993,7 +3029,9 @@
         try {
           const { participants } =
             await sdk.commands.getActivityInstanceConnectedParticipants();
-          if (participants?.length === 1) jogadorId = participants[0].id;
+          if (Array.isArray(participants) && participants.length) {
+            jogadorId = participants[0].id;
+          }
         } catch {}
         return jogadorId;
       }

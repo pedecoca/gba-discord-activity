@@ -65,7 +65,11 @@ no repositório do Pages; se a API estiver fora, a Activity usa o catálogo
 estático como reserva.
 
 Para os saves aparecerem no PC e no celular, abra a Activity **pelo Discord**
-nos dois aparelhos e entre com a mesma conta. A prévia em
+nos dois aparelhos e entre com a mesma conta.
+
+A identidade do save usa o token OAuth quando ele existe; se o Discord já
+entrega o participante conectado pelo Embedded App SDK, a Activity usa esse
+ID diretamente, sem exigir popup de autorização. A prévia em
 `http://127.0.0.1:8081` ou em um navegador comum, fora do Discord, usa somente
 o IndexedDB local porque não há OAuth do Discord nesse modo.
 
