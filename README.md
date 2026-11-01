@@ -48,6 +48,12 @@ Com esse mapping, a Activity usa `/api/emu/...` e o Discord encaminha para a
 API. O servidor também aceita o caminho `/emu/...` para o caso de o proxy
 remover o prefixo `/api`.
 
+Dentro do Discord, o catálogo também tenta `/api/roms.json`, `/api/systems.json`
+e `/api/covers.json` antes de usar os arquivos estáticos do GitHub Pages. Isso
+permite jogar ROMs grandes que estão apenas no servidor local, sem publicá-las
+no repositório do Pages; se a API estiver fora, a Activity usa o catálogo
+estático como reserva.
+
 Para os saves aparecerem no PC e no celular, abra a Activity **pelo Discord**
 nos dois aparelhos e entre com a mesma conta. A prévia em
 `http://127.0.0.1:8081` ou em um navegador comum, fora do Discord, usa somente

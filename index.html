@@ -3345,19 +3345,49 @@
       });
     }
 
+    async function buscarCatalogo(nome, versao) {
+      // No Discord, o catálogo local da API pode ter mais sistemas/ROMs
+      // que o catálogo estático do GitHub Pages. /api já está mapeado no
+      // Developer Portal; se a API falhar, cai no arquivo estático.
+      const bases = emActivityDiscord() ? ["/api", "."] : ["."];
+      let ultimaResposta = null;
+      for (const base of bases) {
+        try {
+          const resposta = await fetch(`${base}/${nome}?v=${versao}`, {
+            cache: "no-store",
+          });
+          if (resposta.ok) return { resposta, base };
+          ultimaResposta = resposta;
+        } catch (erro) {
+          console.warn(`Catálogo ${base}/${nome} indisponível:`, erro);
+        }
+      }
+      return { resposta: ultimaResposta, base: bases[0] };
+    }
+
+    function ajustarCaminhoDoCatalogo(valor, base) {
+      // O proxy do Discord remove /api; o servidor local serve ./roms e
+      // ./asset. Assim os caminhos locais também funcionam no Discord.
+      if (base === "/api" && typeof valor === "string" && valor.startsWith("./")) {
+        return `/api/${valor.slice(2)}`;
+      }
+      return valor;
+    }
+
     async function carregarRoms() {
       try {
         const versao = Date.now();
-        const [systemsResponse, romsResponse, coversResponse] = await Promise.all([
-          fetch(`./systems.json?v=${versao}`, { cache: "no-store" }),
-          fetch(`./roms.json?v=${versao}`, { cache: "no-store" }),
-          fetch(`./covers.json?v=${versao}`, { cache: "no-store" }).catch(
-            () => null,
-          ),
+        const [systemsInfo, romsInfo, coversInfo] = await Promise.all([
+          buscarCatalogo("systems.json", versao),
+          buscarCatalogo("roms.json", versao),
+          buscarCatalogo("covers.json", versao).catch(() => null),
         ]);
-        if (!systemsResponse.ok || !romsResponse.ok) {
+        const systemsResponse = systemsInfo?.resposta;
+        const romsResponse = romsInfo?.resposta;
+        const coversResponse = coversInfo?.resposta;
+        if (!systemsResponse?.ok || !romsResponse?.ok) {
           throw new Error(
-            `Falha ao carregar os catálogos (${systemsResponse.status}, ${romsResponse.status}).`,
+            `Falha ao carregar os catálogos (${systemsResponse?.status}, ${romsResponse?.status}).`,
           );
         }
 
@@ -3380,7 +3410,11 @@
         }
 
         systems = systemCatalog;
-        roms = gameCatalog.games;
+        const catalogoVeioDaApi = romsInfo.base === "/api";
+        roms = gameCatalog.games.map((rom) => ({
+          ...rom,
+          url: ajustarCaminhoDoCatalogo(rom.url, catalogoVeioDaApi ? "/api" : "."),
+        }));
         const systemIds = new Set(systemCatalog.map((system) => system.id));
         if (
           roms.some(
@@ -3407,7 +3441,21 @@
           try {
             const catalogoDeCapas = await coversResponse.json();
             if (catalogoDeCapas && typeof catalogoDeCapas === "object") {
-              covers = catalogoDeCapas;
+              const capasDaApi = coversInfo?.base === "/api";
+              covers = Object.fromEntries(
+                Object.entries(catalogoDeCapas).map(([core, itens]) => [
+                  core,
+                  Object.fromEntries(
+                    Object.entries(itens || {}).map(([nome, caminho]) => [
+                      nome,
+                      ajustarCaminhoDoCatalogo(
+                        caminho,
+                        capasDaApi ? "/api" : ".",
+                      ),
+                    ]),
+                  ),
+                ]),
+              );
             }
           } catch (error) {
             console.warn("Não foi possível carregar as capas dos jogos:", error);
