@@ -3649,7 +3649,7 @@
         // ignorar a nuvem quando o handshake do Discord é mais lento.
         await Promise.race([
           jogadorPronto,
-          new Promise((resolve) => setTimeout(resolve, 12000)),
+          new Promise((resolve) => setTimeout(resolve, 15000)),
         ]);
         if (sessaoAtual !== sessaoJogo || !jogoAtual) return;
         const carregou = await carregarSave(jogoAtual.chave, 1);
