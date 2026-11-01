@@ -53,6 +53,11 @@ ALIASES = {
     "Moemon Ruby": "Pokemon - Ruby Version",
     "Pokemon - AshGray 4.5.3": "Pokemon - FireRed Version",
     "Pokemon - Fire Red Version (Rev 1)": "Pokemon - FireRed Version",
+    "Picross": "Picross DS",
+    "Pokemon Platinum": "Pokemon - Platinum Version",
+    "Yu-Gi-Oh! 5D's World Championship 2009 Stardust Accelerator": (
+        "Yu-Gi-Oh! 5D's - Stardust Accelerator - World Championship 2009"
+    ),
     "Pokemon - Water Blue": "Pokemon - LeafGreen Version",
     "Pokemon Omega Ruby v1.8": "Pokemon - Ruby Version",
     "Pokemon Resolute Version": "Pokemon - Ruby Version",
