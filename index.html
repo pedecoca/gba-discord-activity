@@ -2947,24 +2947,13 @@
     }
 
     async function obterUsuarioSemOauth(sdk) {
-      // O cliente do Discord já sabe quem está com a Activity aberta.
-      // authenticate() sem token pode devolver o usuário atual; se não
-      // devolver, usamos o participante conectado à instância.
-      try {
-        const auth = await sdk.commands.authenticate({});
-        if (auth?.user?.id) {
-          if (auth.access_token) tokenAcesso = auth.access_token;
-          return auth.user.id;
-        }
-      } catch (erro) {
-        console.warn("Autenticação implícita do Discord indisponível:", erro);
-      }
+      // O cliente do Discord já entrega os participantes conectados à
+      // instância da Activity. Para o jogo single-player, o primeiro é o
+      // usuário que abriu a Activity; não há popup de OAuth nesse caminho.
       try {
         const { participants } =
           await sdk.commands.getActivityInstanceConnectedParticipants();
         if (Array.isArray(participants) && participants.length) {
-          // Em uma Activity single-player o primeiro participante é o
-          // usuário que abriu o jogo. Não há popup de OAuth nesse caminho.
           return participants[0].id;
         }
       } catch (erro) {
