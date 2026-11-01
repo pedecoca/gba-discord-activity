@@ -1240,6 +1240,23 @@
       pointer-events: auto;
     }
 
+    [data-move-key] {
+      translate: calc(var(--move-x, 0) * 1vw) calc(var(--move-y, 0) * 1vh);
+    }
+
+    body.movendo-controles [data-move-key] {
+      outline: 1.5px dashed #f472b6;
+      outline-offset: 3px;
+      cursor: grab;
+      touch-action: none;
+      pointer-events: auto;
+    }
+
+    body.movendo-controles [data-move-key].arrastando {
+      cursor: grabbing;
+      outline-style: solid;
+    }
+
     body.movendo-controles .gba-left.arrastando,
     body.movendo-controles .gba-actions.arrastando {
       cursor: grabbing;
@@ -1608,14 +1625,14 @@
     <div id="save-indicator" class="save-indicator" role="status" hidden></div>
     <section class="gba-console" aria-label="Console retro" hidden>
       <div class="console-actions">
-        <button id="open-saves" class="saves-button" type="button" hidden>Saves</button>
-        <button id="restart-game" class="floating-restart" type="button" hidden>Trocar jogo</button>
+        <button id="open-saves" class="saves-button" type="button" data-move-key="saves" hidden>Saves</button>
+        <button id="restart-game" class="floating-restart" type="button" data-move-key="trocar" hidden>Trocar jogo</button>
       </div>
       <div class="game-tools" id="game-tools" hidden>
-        <button id="fast-forward" type="button">Fast</button>
-        <button id="nds-fast" type="button" hidden>DS rápido</button>
-        <button id="open-cheat" type="button">Cheat</button>
-        <button id="open-controls" type="button">Controles</button>
+        <button id="fast-forward" type="button" data-move-key="fast">Fast</button>
+        <button id="nds-fast" type="button" data-move-key="ds" hidden>DS rápido</button>
+        <button id="open-cheat" type="button" data-move-key="cheat">Cheat</button>
+        <button id="open-controls" type="button" data-move-key="controles">Controles</button>
       </div>
       <div class="gba-screen-frame">
         <p class="screen-label">Tela do jogo</p>
@@ -1740,8 +1757,9 @@
             <button id="reset-control-position" class="secondary" type="button">Centralizar</button>
           </div>
           <p class="option-hint">
-            Ative “Mover controles”, arraste o direcional e os botões para onde
-            preferir e abra Controles de novo para concluir.
+            Ative “Mover controles” e arraste o direcional, A/B, L/R,
+            SELECT/START, Fast, Cheat, Controles, Saves ou Trocar jogo.
+            Abra Controles de novo para concluir.
           </p>
         </fieldset>
       </div>
@@ -1859,6 +1877,10 @@
         retrato: { dpadX: 0, dpadY: 0, acoesX: 0, acoesY: 0 },
         paisagem: { dpadX: 0, dpadY: 0, acoesX: 0, acoesY: 0 },
       },
+      botoes: {
+        retrato: {},
+        paisagem: {},
+      },
     };
     const ESCALA_CONTROLES_MIN = 70;
     const ESCALA_CONTROLES_MAX = 140;
@@ -1871,9 +1893,12 @@
         retrato: { ...PREF_CONTROLES_PADRAO.posicoes.retrato },
         paisagem: { ...PREF_CONTROLES_PADRAO.posicoes.paisagem },
       },
+      botoes: { retrato: {}, paisagem: {} },
     };
     let modoMoverControles = false;
     let arrastoControles = null;
+    let arrastoBotao = null;
+    let ignorarCliquesAte = 0;
 
     function orientacaoDosControles() {
       return matchMedia("(orientation: landscape)").matches
@@ -2065,6 +2090,21 @@
             }
           }
         }
+        if (salvo.botoes && typeof salvo.botoes === "object") {
+          for (const orientacao of ["retrato", "paisagem"]) {
+            const mapa = salvo.botoes[orientacao];
+            if (!mapa || typeof mapa !== "object") continue;
+            for (const [chave, posicao] of Object.entries(mapa)) {
+              const x = Number(posicao?.x);
+              const y = Number(posicao?.y);
+              if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+              preferenciasControles.botoes[orientacao][chave] = {
+                x: Math.max(-LIMITE_POSICAO_X, Math.min(LIMITE_POSICAO_X, x)),
+                y: Math.max(-LIMITE_POSICAO_Y, Math.min(LIMITE_POSICAO_Y, y)),
+              };
+            }
+          }
+        }
       } catch {
         // Preferência inválida: fica no padrão.
       }
@@ -2094,6 +2134,7 @@
         String(preferenciasControles.escala / 100),
       );
       aplicarPosicaoControles();
+      aplicarPosicaoBotoes();
       controls.dataset.escala = String(preferenciasControles.escala);
       atualizarRotuloTamanhoControles();
       atualizarBotaoMoverControles();
@@ -2106,6 +2147,20 @@
       raiz.style.setProperty("--dpad-y", String(posicao.dpadY));
       raiz.style.setProperty("--acoes-x", String(posicao.acoesX));
       raiz.style.setProperty("--acoes-y", String(posicao.acoesY));
+      aplicarPosicaoBotoes();
+    }
+
+    function posicaoDosBotoesAtual() {
+      return preferenciasControles.botoes[orientacaoDosControles()];
+    }
+
+    function aplicarPosicaoBotoes() {
+      const mapa = posicaoDosBotoesAtual();
+      document.querySelectorAll("[data-move-key]").forEach((elemento) => {
+        const posicao = mapa[elemento.dataset.moveKey];
+        elemento.style.setProperty("--move-x", String(posicao?.x || 0));
+        elemento.style.setProperty("--move-y", String(posicao?.y || 0));
+      });
     }
 
     function atualizarBotaoMoverControles() {
@@ -2124,20 +2179,26 @@
       document.body.classList.toggle("movendo-controles", modoMoverControles);
       if (!modoMoverControles) {
         arrastoControles = null;
+        arrastoBotao = null;
         document
           .querySelectorAll(".gba-left.arrastando, .gba-actions.arrastando")
           .forEach((grupo) => grupo.classList.remove("arrastando"));
+        document
+          .querySelectorAll("[data-move-key].arrastando")
+          .forEach((botao) => botao.classList.remove("arrastando"));
       }
       atualizarBotaoMoverControles();
     }
 
     function centralizarControles() {
-      preferenciasControles.posicoes[orientacaoDosControles()] = {
+      const orientacao = orientacaoDosControles();
+      preferenciasControles.posicoes[orientacao] = {
         dpadX: 0,
         dpadY: 0,
         acoesX: 0,
         acoesY: 0,
       };
+      preferenciasControles.botoes[orientacao] = {};
       aplicarPosicaoControles();
       salvarPreferenciasControles();
     }
@@ -2216,6 +2277,108 @@
         grupo.addEventListener("pointerup", finalizar);
         grupo.addEventListener("pointercancel", finalizar);
       }
+    }
+
+    function configurarArrastoDeBotoes() {
+      document.addEventListener(
+        "pointerdown",
+        (event) => {
+          if (!modoMoverControles || event.button !== 0) return;
+          const elemento = event.target.closest("[data-move-key]");
+          if (!elemento) return;
+          event.preventDefault();
+          event.stopPropagation();
+          const mapa = posicaoDosBotoesAtual();
+          const chave = elemento.dataset.moveKey;
+          const atual = mapa[chave] || { x: 0, y: 0 };
+          arrastoBotao = {
+            pointerId: event.pointerId,
+            elemento,
+            chave,
+            inicioX: event.clientX,
+            inicioY: event.clientY,
+            inicioRect: elemento.getBoundingClientRect(),
+            baseX: atual.x,
+            baseY: atual.y,
+            moveu: false,
+          };
+          elemento.setPointerCapture?.(event.pointerId);
+          elemento.classList.add("arrastando");
+        },
+        { capture: true },
+      );
+
+      document.addEventListener(
+        "pointermove",
+        (event) => {
+          if (!arrastoBotao || arrastoBotao.pointerId !== event.pointerId) return;
+          event.preventDefault();
+          const rect = arrastoBotao.inicioRect;
+          const margem = 4;
+          const deltaPxX = Math.max(
+            margem - rect.left,
+            Math.min(
+              innerWidth - margem - rect.right,
+              event.clientX - arrastoBotao.inicioX,
+            ),
+          );
+          const deltaPxY = Math.max(
+            margem - rect.top,
+            Math.min(
+              innerHeight - margem - rect.bottom,
+              event.clientY - arrastoBotao.inicioY,
+            ),
+          );
+          if (Math.abs(deltaPxX) > 3 || Math.abs(deltaPxY) > 3) {
+            arrastoBotao.moveu = true;
+          }
+          const mapa = posicaoDosBotoesAtual();
+          mapa[arrastoBotao.chave] = {
+            x: Math.max(
+              -LIMITE_POSICAO_X,
+              Math.min(
+                LIMITE_POSICAO_X,
+                arrastoBotao.baseX + (deltaPxX / Math.max(innerWidth, 1)) * 100,
+              ),
+            ),
+            y: Math.max(
+              -LIMITE_POSICAO_Y,
+              Math.min(
+                LIMITE_POSICAO_Y,
+                arrastoBotao.baseY + (deltaPxY / Math.max(innerHeight, 1)) * 100,
+              ),
+            ),
+          };
+          aplicarPosicaoBotoes();
+        },
+        { capture: true },
+      );
+
+      const finalizar = (event) => {
+        if (!arrastoBotao || arrastoBotao.pointerId !== event.pointerId) return;
+        arrastoBotao.elemento.classList.remove("arrastando");
+        if (arrastoBotao.moveu) {
+          ignorarCliquesAte = performance.now() + 350;
+        }
+        arrastoBotao = null;
+        salvarPreferenciasControles();
+      };
+      document.addEventListener("pointerup", finalizar, { capture: true });
+      document.addEventListener("pointercancel", finalizar, { capture: true });
+
+      document.addEventListener(
+        "click",
+        (event) => {
+          if (!modoMoverControles || performance.now() > ignorarCliquesAte) {
+            return;
+          }
+          if (event.target.closest("[data-move-key]")) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+        },
+        { capture: true },
+      );
     }
 
     function atualizarRotuloTamanhoControles() {
@@ -2313,19 +2476,19 @@
         String(RATIOS[esquemaAtual] || RATIOS.default),
       );
 
-      document
-        .querySelector("#shoulders")
-        .replaceChildren(
-          ...layout.shoulders.map(([rotulo, input]) =>
-            criarBotao(rotulo, input, "gba-shoulder"),
-          ),
-        );
+      const shoulders = layout.shoulders.map(([rotulo, input]) => {
+        const botao = criarBotao(rotulo, input, "gba-shoulder");
+        botao.dataset.moveKey = `ombro-${input}`;
+        return botao;
+      });
+      document.querySelector("#shoulders").replaceChildren(...shoulders);
 
-      document
-        .querySelector("#system-buttons")
-        .replaceChildren(
-          ...layout.system.map(([rotulo, input]) => criarBotao(rotulo, input)),
-        );
+      const systemButtons = layout.system.map(([rotulo, input]) => {
+        const botao = criarBotao(rotulo, input);
+        botao.dataset.moveKey = `sistema-${input}`;
+        return botao;
+      });
+      document.querySelector("#system-buttons").replaceChildren(...systemButtons);
 
       const face = document.createElement("div");
       face.className = "action-face";
@@ -2349,6 +2512,7 @@
       nodes.push(face);
       document.querySelector("#actions").replaceChildren(...nodes);
 
+      aplicarPosicaoBotoes();
       atualizarControles(emulatorReady);
       atualizarBotaoDsRapido();
     }
@@ -4363,6 +4527,7 @@
     window.addEventListener("resize", aplicarPosicaoControles);
 
     configurarArrastoDosControles();
+    configurarArrastoDeBotoes();
     carregarPreferenciasControles();
     carregarRoms();
     connectToDiscord();

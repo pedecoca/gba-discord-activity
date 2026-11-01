@@ -40,8 +40,9 @@ combinações) e são habilitados quando o jogo inicia. O layout é recalculado
 quando a Activity é redimensionada ou volta a ficar visível. No menu
 **Controles**, o usuário pode escolher direcional ou bolinha analógica,
 ajustar o tamanho dos controles de 70% a 140% com o slider ou os botões
-**−**/**+** e usar **Mover controles** para arrastar o direcional e os botões
-para outra posição. As preferências ficam salvas no dispositivo.
+**−**/**+** e usar **Mover controles** para arrastar o direcional, A/B, L/R,
+SELECT/START, Fast, Cheat, Controles, Saves e Trocar jogo. As preferências
+ficam salvas no dispositivo, separadas entre retrato e paisagem.
 
 ## Saves na nuvem dentro do Discord
 
