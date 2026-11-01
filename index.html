@@ -1887,6 +1887,7 @@
     let identidadeDiscord = false;
     let inscricaoParticipantes = false;
     let tokenAcesso = null;
+    let idInstanciaActivity = null;
     let autenticadoWeb = false;
     const WEB_AUTH_KEY = "ggretro-discord-auth";
     const WEB_AUTH_STATE_KEY = "ggretro-discord-state";
@@ -2662,7 +2663,9 @@
     function cabecalhosNuvem(extras = {}) {
       const headers = { ...extras };
       if (tokenAcesso) headers.Authorization = `Bearer ${tokenAcesso}`;
-      if (jogadorId) headers["X-Discord-User-ID"] = String(jogadorId);
+      if (idInstanciaActivity) {
+        headers["X-Activity-Instance-ID"] = String(idInstanciaActivity);
+      }
       return headers;
     }
 
@@ -3831,6 +3834,9 @@
       // O bot grava no backend o par activity_instance_id ↔ usuário quando
       // alguém usa /jogar. O SDK expõe a mesma instância para a Activity.
       const instanceId = sdk?.instanceId;
+      if (instanceId) {
+        idInstanciaActivity = String(instanceId);
+      }
       if (!instanceId) return null;
       const fim = Date.now() + timeoutMs;
       while (Date.now() < fim) {
@@ -4584,6 +4590,8 @@
       // URLs externas absolutas são bloqueadas pela CSP. Use /api e o URL
       // Mapping /api -> api.pokedc.online configurado no Developer Portal.
       SAVE_API_URL = "";
+      idInstanciaActivity =
+        new URLSearchParams(window.location.search).get("instance_id") || null;
 
       atualizarStatusDaSelecao();
       atualizarBotao();
@@ -4591,6 +4599,10 @@
       try {
         const { DiscordSDK } = await import(DISCORD_SDK_MODULE_URL);
         discordSdk = new DiscordSDK(DISCORD_CLIENT_ID);
+        idInstanciaActivity =
+          discordSdk.instanceId ||
+          new URLSearchParams(window.location.search).get("instance_id") ||
+          null;
         // A UI não espera por isso; o jogo pode ser escolhido enquanto o
         // handshake termina. O save automático aguarda jogadorPronto abaixo.
         await esperarSdkPronto(discordSdk);
