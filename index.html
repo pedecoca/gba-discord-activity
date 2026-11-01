@@ -3484,6 +3484,40 @@
       return dadosToken;
     }
 
+    async function obterUsuarioDaAtividade(sdk, timeoutMs = 2500) {
+      // O bot grava no backend o par activity_instance_id ↔ usuário quando
+      // alguém usa /jogar. O SDK expõe a mesma instância para a Activity.
+      const instanceId = sdk?.instanceId;
+      if (!instanceId) return null;
+      const fim = Date.now() + timeoutMs;
+      while (Date.now() < fim) {
+        try {
+          const resposta = await fetch(
+            apiUrl(
+              `/api/emu/activity/user?instance_id=${encodeURIComponent(instanceId)}`,
+            ),
+            { cache: "no-store" },
+          );
+          if (resposta.ok) {
+            const dados = await resposta.json().catch(() => ({}));
+            if (dados.user_id) {
+              identidadeDiscord = true;
+              return String(dados.user_id);
+            }
+          } else if (resposta.status !== 404) {
+            console.debug(
+              "Consulta da instância da Activity falhou:",
+              resposta.status,
+            );
+          }
+        } catch (erro) {
+          console.debug("Consulta da instância da Activity indisponível:", erro);
+        }
+        await new Promise((resolve) => setTimeout(resolve, 300));
+      }
+      return null;
+    }
+
     async function obterUsuarioSemOauth(sdk) {
       // O cliente do Discord já entrega os participantes conectados à
       // instância da Activity. Para o jogo single-player, o primeiro é o
@@ -3578,6 +3612,11 @@
         // gera códigos inválidos e o backend recebe invalid_grant.
         await esperarSdkPronto(sdk);
         await observarParticipantesDaActivity(sdk);
+        const idDaAtividade = await obterUsuarioDaAtividade(sdk);
+        if (idDaAtividade) {
+          jogadorId = String(idDaAtividade);
+          return jogadorId;
+        }
         const idSemOauth = await obterUsuarioSemOauth(sdk);
         if (idSemOauth) {
           jogadorId = String(idSemOauth);

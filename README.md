@@ -72,14 +72,15 @@ estático como reserva.
 Para os saves aparecerem no PC e no celular, abra a Activity **pelo Discord**
 nos dois aparelhos e entre com a mesma conta.
 
-A identidade do save usa o token OAuth quando ele existe. Antes de abrir o
-popup de autorização, a Activity tenta `authenticate({})` e o
-`getActivityInstanceConnectedParticipants()` com algumas tentativas, porque a
-lista de participantes pode demorar a ser preenchida pelo cliente Discord.
-Se o ID vier da Activity, ele é usado diretamente pelo header
-`X-Discord-User-ID`, sem exigir popup de autorização. A prévia em
-`http://127.0.0.1:8081` ou em um navegador comum, fora do Discord, usa somente
-o IndexedDB local porque não há OAuth do Discord nesse modo.
+A identidade do save usa o token OAuth quando ele existe. Para quem usa
+`/jogar`, o bot recebe o `interaction.user.id` e o `activity_instance_id`
+devolvido pelo Discord, grava esse vínculo no backend e a Activity consulta
+`/api/emu/activity/user`; assim o ID chega sem popup de autorização. Se a
+Activity for aberta pelo App Launcher, o backend ainda tenta a API de
+instâncias com o token do bot; o SDK (`authenticate({})` e participantes) fica
+como reserva. A prévia em `http://127.0.0.1:8081` ou em um navegador comum,
+fora do Discord, usa somente o IndexedDB local porque não há Discord nesse
+modo.
 
 ## Publicar
 
