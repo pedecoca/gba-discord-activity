@@ -37,7 +37,11 @@ O core threaded só é usado quando o navegador expõe `SharedArrayBuffer`.
 O console mostra os controles de toque abaixo da tela. Eles usam os botões
 padrão do RetroPad, funcionam ao pressionar e segurar (inclusive em
 combinações) e são habilitados quando o jogo inicia. O layout é recalculado
-quando a Activity é redimensionada ou volta a ficar visível.
+quando a Activity é redimensionada ou volta a ficar visível. No menu
+**Controles**, o usuário pode escolher direcional ou bolinha analógica,
+ajustar o tamanho dos controles de 70% a 140% com o slider ou os botões
+**−**/**+** e usar **Mover controles** para arrastar o direcional e os botões
+para outra posição. As preferências ficam salvas no dispositivo.
 
 ## Saves na nuvem dentro do Discord
 
@@ -67,9 +71,12 @@ estático como reserva.
 Para os saves aparecerem no PC e no celular, abra a Activity **pelo Discord**
 nos dois aparelhos e entre com a mesma conta.
 
-A identidade do save usa o token OAuth quando ele existe; se o Discord já
-entrega o participante conectado pelo Embedded App SDK, a Activity usa esse
-ID diretamente, sem exigir popup de autorização. A prévia em
+A identidade do save usa o token OAuth quando ele existe. Antes de abrir o
+popup de autorização, a Activity tenta `authenticate({})` e o
+`getActivityInstanceConnectedParticipants()` com algumas tentativas, porque a
+lista de participantes pode demorar a ser preenchida pelo cliente Discord.
+Se o ID vier da Activity, ele é usado diretamente pelo header
+`X-Discord-User-ID`, sem exigir popup de autorização. A prévia em
 `http://127.0.0.1:8081` ou em um navegador comum, fora do Discord, usa somente
 o IndexedDB local porque não há OAuth do Discord nesse modo.
 

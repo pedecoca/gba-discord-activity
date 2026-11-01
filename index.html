@@ -18,6 +18,7 @@
       --accent: #a855f7;
       --accent-2: #fb7185;
       --cyan: #22d3ee;
+      --ctrl-scale: 1;
       font: 16px/1.45 "Segoe UI", system-ui, -apple-system, sans-serif;
       background: var(--bg);
       color: var(--text);
@@ -587,24 +588,33 @@
     .gba-controls {
       flex: 0 0 auto;
       display: grid;
-      grid-template-columns: minmax(84px, auto) minmax(64px, 1fr) minmax(116px, auto);
+      grid-template-columns:
+        minmax(calc(84px * var(--ctrl-scale)), auto)
+        minmax(calc(64px * var(--ctrl-scale)), 1fr)
+        minmax(calc(116px * var(--ctrl-scale)), auto);
       grid-template-areas:
         "shoulders shoulders shoulders"
         "dpad system actions"
         "extras extras extras";
       align-items: center;
-      gap: 4px 10px;
+      gap: calc(4px * var(--ctrl-scale)) calc(10px * var(--ctrl-scale));
       touch-action: none;
       user-select: none;
       -webkit-user-select: none;
     }
 
     .gba-controls.has-cpad {
-      grid-template-columns: minmax(80px, auto) minmax(52px, 0.5fr) minmax(148px, auto);
+      grid-template-columns:
+        minmax(calc(80px * var(--ctrl-scale)), auto)
+        minmax(calc(52px * var(--ctrl-scale)), 0.5fr)
+        minmax(calc(148px * var(--ctrl-scale)), auto);
     }
 
     .gba-controls.has-stick {
-      grid-template-columns: minmax(96px, auto) minmax(52px, 0.5fr) minmax(132px, auto);
+      grid-template-columns:
+        minmax(calc(96px * var(--ctrl-scale)), auto)
+        minmax(calc(52px * var(--ctrl-scale)), 0.5fr)
+        minmax(calc(132px * var(--ctrl-scale)), auto);
     }
 
     .gba-shoulders {
@@ -626,8 +636,8 @@
 
     .gba-stick {
       position: relative;
-      width: clamp(84px, 14vh, 108px);
-      height: clamp(84px, 14vh, 108px);
+      width: calc(clamp(84px, 14vh, 108px) * var(--ctrl-scale));
+      height: calc(clamp(84px, 14vh, 108px) * var(--ctrl-scale));
       flex: 0 0 auto;
       border: 1px solid #a58bed;
       border-radius: 50%;
@@ -655,9 +665,9 @@
 
     .gba-dpad {
       display: grid;
-      grid-template-columns: repeat(3, clamp(28px, 4.4vh, 44px));
-      grid-template-rows: repeat(3, clamp(28px, 4.4vh, 44px));
-      gap: 3px;
+      grid-template-columns: repeat(3, calc(clamp(28px, 4.4vh, 44px) * var(--ctrl-scale)));
+      grid-template-rows: repeat(3, calc(clamp(28px, 4.4vh, 44px) * var(--ctrl-scale)));
+      gap: calc(3px * var(--ctrl-scale));
       justify-content: center;
       touch-action: none;
     }
@@ -680,7 +690,7 @@
       background: linear-gradient(180deg, #5b48a0, #33276a);
       box-shadow: inset 0 1px 0 #ffffff38, 0 5px 10px -7px #000;
       color: var(--text);
-      font-size: 0.9rem;
+      font-size: calc(0.9rem * var(--ctrl-scale));
       font-weight: 750;
       line-height: 1;
       touch-action: none;
@@ -696,24 +706,24 @@
     }
 
     .gba-shoulder {
-      width: clamp(52px, 8vh, 66px);
-      height: clamp(24px, 3.6vh, 30px);
+      width: calc(clamp(52px, 8vh, 66px) * var(--ctrl-scale));
+      height: calc(clamp(24px, 3.6vh, 30px) * var(--ctrl-scale));
       border-radius: 999px;
-      font-size: 0.72rem;
+      font-size: calc(0.72rem * var(--ctrl-scale));
     }
 
     .gba-system {
       grid-area: system;
       display: flex;
       justify-content: center;
-      gap: 6px;
+      gap: calc(6px * var(--ctrl-scale));
     }
 
     .gba-system .gba-control {
-      width: clamp(52px, 8vh, 62px);
-      height: clamp(24px, 3.6vh, 30px);
+      width: calc(clamp(52px, 8vh, 62px) * var(--ctrl-scale));
+      height: calc(clamp(24px, 3.6vh, 30px) * var(--ctrl-scale));
       border-radius: 999px;
-      font-size: 0.56rem;
+      font-size: calc(0.56rem * var(--ctrl-scale));
       letter-spacing: 0.05em;
     }
 
@@ -727,16 +737,19 @@
 
     .action-face {
       display: grid;
-      grid-template-columns: repeat(var(--cols, 2), clamp(44px, 7vh, 58px));
-      gap: 8px;
+      grid-template-columns: repeat(
+        var(--cols, 2),
+        calc(clamp(44px, 7vh, 58px) * var(--ctrl-scale))
+      );
+      gap: calc(8px * var(--ctrl-scale));
       justify-content: end;
     }
 
     .action-face .gba-action {
-      width: clamp(44px, 7vh, 58px);
-      height: clamp(44px, 7vh, 58px);
+      width: calc(clamp(44px, 7vh, 58px) * var(--ctrl-scale));
+      height: calc(clamp(44px, 7vh, 58px) * var(--ctrl-scale));
       border-radius: 999px;
-      font-size: 1rem;
+      font-size: calc(1rem * var(--ctrl-scale));
     }
 
     .gba-action[data-input="8"] {
@@ -751,9 +764,9 @@
 
     .gba-cpad {
       display: grid;
-      grid-template-columns: repeat(3, clamp(24px, 3.6vh, 32px));
-      grid-template-rows: repeat(3, clamp(24px, 3.6vh, 32px));
-      gap: 2px;
+      grid-template-columns: repeat(3, calc(clamp(24px, 3.6vh, 32px) * var(--ctrl-scale)));
+      grid-template-rows: repeat(3, calc(clamp(24px, 3.6vh, 32px) * var(--ctrl-scale)));
+      gap: calc(2px * var(--ctrl-scale));
       justify-content: center;
     }
 
@@ -761,7 +774,7 @@
     .gba-cpad [data-input="21"] { grid-area: 2 / 1; }
     .gba-cpad [data-input="20"] { grid-area: 2 / 3; }
     .gba-cpad [data-input="22"] { grid-area: 3 / 2; }
-    .gba-cpad .gba-control { border-radius: 8px; font-size: 0.62rem; }
+    .gba-cpad .gba-control { border-radius: 8px; font-size: calc(0.62rem * var(--ctrl-scale)); }
 
     .control-hint {
       grid-area: extras;
@@ -1136,6 +1149,108 @@
 
     .option-row input { accent-color: var(--accent); }
 
+    .control-size-row {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr) 34px;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 8px 0;
+    }
+
+    .control-size-row button {
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      border-radius: 10px;
+      font-size: 1.15rem;
+      line-height: 1;
+    }
+
+    #control-size {
+      width: 100%;
+      min-width: 0;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .control-size-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 8px 2px;
+    }
+
+    #control-size-value {
+      color: #f4c8ff;
+      font-size: 0.78rem;
+      font-weight: 750;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .control-size-info button {
+      height: 30px;
+      padding: 0 10px;
+      font-size: 0.68rem;
+    }
+
+    .control-position-row {
+      display: flex;
+      gap: 8px;
+      padding: 5px 8px 0;
+    }
+
+    .control-position-row button {
+      flex: 1 1 0;
+      height: 34px;
+      font-size: 0.72rem;
+    }
+
+    .option-hint {
+      margin: 8px 8px 0;
+      color: var(--muted);
+      font-size: 0.68rem;
+      line-height: 1.35;
+    }
+
+    .gba-left,
+    .gba-actions {
+      position: relative;
+      z-index: 2;
+      transform: translate(
+        calc(var(--dpad-x, 0) * 1vw),
+        calc(var(--dpad-y, 0) * 1vh)
+      );
+    }
+
+    .gba-actions {
+      transform: translate(
+        calc(var(--acoes-x, 0) * 1vw),
+        calc(var(--acoes-y, 0) * 1vh)
+      );
+    }
+
+    body.movendo-controles .gba-left,
+    body.movendo-controles .gba-actions {
+      outline: 2px dashed #f472b6;
+      outline-offset: 4px;
+      border-radius: 16px;
+      cursor: grab;
+      touch-action: none;
+      pointer-events: auto;
+    }
+
+    body.movendo-controles .gba-left.arrastando,
+    body.movendo-controles .gba-actions.arrastando {
+      cursor: grabbing;
+      outline-style: solid;
+    }
+
+    body.movendo-controles .gba-left button,
+    body.movendo-controles .gba-actions button {
+      pointer-events: none;
+    }
+
     .cheat-textarea {
       width: 100%;
       min-height: 100px;
@@ -1177,16 +1292,16 @@
         width: 100%;
         aspect-ratio: var(--screen-aspect, 3 / 2);
       }
-      .gba-controls { gap: 4px 6px; }
+      .gba-controls { gap: calc(4px * var(--ctrl-scale)) calc(6px * var(--ctrl-scale)); }
       .gba-controls.has-cpad .gba-actions {
         flex-direction: column;
         align-items: center;
-        gap: 4px;
+        gap: calc(4px * var(--ctrl-scale));
       }
-      .gba-shoulder { width: clamp(46px, 13vw, 58px); }
+      .gba-shoulder { width: calc(clamp(46px, 13vw, 58px) * var(--ctrl-scale)); }
       .gba-stick {
-        width: clamp(78px, 13vh, 100px);
-        height: clamp(78px, 13vh, 100px);
+        width: calc(clamp(78px, 13vh, 100px) * var(--ctrl-scale));
+        height: calc(clamp(78px, 13vh, 100px) * var(--ctrl-scale));
       }
       body.jogando .game-tools {
         order: 2;
@@ -1283,7 +1398,7 @@
         bottom: auto;
         width: min(
           calc((100dvh - 112px) * var(--screen-ratio)),
-          calc(100vw - 16px - clamp(112px, 11vw, 150px) - clamp(106px, 12vw, 150px) - var(--discord-ui-gutter) - 24px)
+          calc(100vw - 16px - (clamp(112px, 11vw, 150px) * max(var(--ctrl-scale), 1)) - (clamp(106px, 12vw, 150px) * max(var(--ctrl-scale), 1)) - var(--discord-ui-gutter) - 24px)
         );
         height: auto;
         aspect-ratio: var(--screen-aspect, 3 / 2);
@@ -1309,16 +1424,22 @@
         position: absolute;
         left: calc(8px + env(safe-area-inset-left, 0px));
         top: 50%;
-        width: clamp(112px, 11vw, 150px);
-        transform: translateY(-50%);
+        width: calc(clamp(112px, 11vw, 150px) * max(var(--ctrl-scale), 1));
+        transform: translate(
+          calc(var(--dpad-x, 0) * 1vw),
+          calc(-50% + var(--dpad-y, 0) * 1vh)
+        );
       }
 
       body.jogando .gba-actions {
         position: absolute;
         right: calc(8px + env(safe-area-inset-right, 0px) + var(--discord-ui-gutter));
         top: 50%;
-        width: clamp(106px, 12vw, 150px);
-        transform: translateY(-50%);
+        width: calc(clamp(106px, 12vw, 150px) * max(var(--ctrl-scale), 1));
+        transform: translate(
+          calc(var(--acoes-x, 0) * 1vw),
+          calc(-50% + var(--acoes-y, 0) * 1vh)
+        );
         justify-content: center;
       }
 
@@ -1340,23 +1461,26 @@
       }
 
       body.jogando .gba-shoulder {
-        width: clamp(58px, 9vw, 74px);
-        height: 30px;
+        width: calc(clamp(58px, 9vw, 74px) * var(--ctrl-scale));
+        height: calc(30px * var(--ctrl-scale));
       }
 
       body.jogando .gba-dpad {
-        grid-template-columns: repeat(3, clamp(34px, 7vh, 48px));
-        grid-template-rows: repeat(3, clamp(34px, 7vh, 48px));
+        grid-template-columns: repeat(3, calc(clamp(34px, 7vh, 48px) * var(--ctrl-scale)));
+        grid-template-rows: repeat(3, calc(clamp(34px, 7vh, 48px) * var(--ctrl-scale)));
       }
 
       body.jogando .action-face {
-        grid-template-columns: repeat(var(--cols, 2), clamp(48px, 8vh, 64px));
-        gap: 10px;
+        grid-template-columns: repeat(
+          var(--cols, 2),
+          calc(clamp(48px, 8vh, 64px) * var(--ctrl-scale))
+        );
+        gap: calc(10px * var(--ctrl-scale));
       }
 
       body.jogando .action-face .gba-action {
-        width: clamp(48px, 8vh, 64px);
-        height: clamp(48px, 8vh, 64px);
+        width: calc(clamp(48px, 8vh, 64px) * var(--ctrl-scale));
+        height: calc(clamp(48px, 8vh, 64px) * var(--ctrl-scale));
       }
 
       body.jogando .console-actions {
@@ -1399,41 +1523,6 @@
 
       body.jogando .control-hint {
         display: none;
-      }
-    }
-
-    body.controles-grandes .gba-dpad {
-      grid-template-columns: repeat(3, clamp(34px, 5.6vh, 50px));
-      grid-template-rows: repeat(3, clamp(34px, 5.6vh, 50px));
-    }
-
-    body.controles-grandes .action-face {
-      grid-template-columns: repeat(var(--cols, 2), clamp(52px, 9vh, 66px));
-      gap: 10px;
-    }
-
-    body.controles-grandes .action-face .gba-action {
-      width: clamp(52px, 9vh, 66px);
-      height: clamp(52px, 9vh, 66px);
-    }
-
-    body.controles-grandes .gba-stick {
-      width: clamp(94px, 16vh, 126px);
-      height: clamp(94px, 16vh, 126px);
-    }
-
-    @media (orientation: landscape) {
-      body.jogando.controles-grandes .gba-left {
-        width: clamp(156px, 14vw, 180px);
-      }
-      body.jogando.controles-grandes .gba-actions {
-        width: clamp(116px, 13vw, 166px);
-      }
-      body.jogando.controles-grandes .gba-screen-frame {
-        width: min(
-          calc((100dvh - 112px) * var(--screen-ratio)),
-          calc(100vw - 16px - clamp(156px, 14vw, 180px) - clamp(116px, 13vw, 166px) - var(--discord-ui-gutter) - 24px)
-        );
       }
     }
 
@@ -1625,18 +1714,38 @@
           </label>
         </fieldset>
         <fieldset>
-          <legend>Tamanho</legend>
-          <label class="option-row">
-            <input type="radio" name="touch-size" value="normal">
-            Normal
-          </label>
-          <label class="option-row">
-            <input type="radio" name="touch-size" value="grande">
-            Grande
-          </label>
+          <legend>Tamanho dos controles</legend>
+          <div class="control-size-row">
+            <button id="controls-smaller" type="button" aria-label="Diminuir controles">−</button>
+            <input
+              id="control-size"
+              type="range"
+              min="70"
+              max="140"
+              step="10"
+              value="100"
+              aria-label="Tamanho dos controles em porcentagem"
+            >
+            <button id="controls-larger" type="button" aria-label="Aumentar controles">+</button>
+          </div>
+          <div class="control-size-info">
+            <output id="control-size-value" for="control-size">100%</output>
+            <button id="reset-control-size" class="secondary" type="button">Restaurar</button>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Posição</legend>
+          <div class="control-position-row">
+            <button id="toggle-move-controls" type="button">Mover controles</button>
+            <button id="reset-control-position" class="secondary" type="button">Centralizar</button>
+          </div>
+          <p class="option-hint">
+            Ative “Mover controles”, arraste o direcional e os botões para onde
+            preferir e abra Controles de novo para concluir.
+          </p>
         </fieldset>
       </div>
-      <p class="saves-note">A preferência fica salva neste dispositivo e vale para os próximos jogos.</p>
+      <p class="saves-note">Ajuste de 70% a 140%. A preferência fica salva neste dispositivo e vale para os próximos jogos.</p>
     </section>
   </div>
 
@@ -1703,6 +1812,13 @@
     const openControlsButton = document.querySelector("#open-controls");
     const controlsModal = document.querySelector("#controls-modal");
     const closeControlsButton = document.querySelector("#close-controls");
+    const controlSizeInput = document.querySelector("#control-size");
+    const controlSizeValue = document.querySelector("#control-size-value");
+    const controlsSmallerButton = document.querySelector("#controls-smaller");
+    const controlsLargerButton = document.querySelector("#controls-larger");
+    const resetControlSizeButton = document.querySelector("#reset-control-size");
+    const toggleMoveControlsButton = document.querySelector("#toggle-move-controls");
+    const resetControlPositionButton = document.querySelector("#reset-control-position");
     const cheatModal = document.querySelector("#cheat-modal");
     const closeCheatButton = document.querySelector("#close-cheat");
     const cheatCodeInput = document.querySelector("#cheat-code");
@@ -1719,7 +1835,10 @@
     let sessaoJogo = 0;
     let webglSuporte = null;
     let discordSdk = null;
+    let sdkProntoPromise = null;
     let jogadorId = null;
+    let identidadeDiscord = false;
+    let inscricaoParticipantes = false;
     let tokenAcesso = null;
     let jogadorProntoResolver = null;
     const jogadorPronto = new Promise((resolve) => {
@@ -1733,8 +1852,38 @@
     let ndsModoRapido = false;
     let stickComoDpad = false;
     const PREF_CONTROLES_KEY = "ggretro-controles";
-    const PREF_CONTROLES_PADRAO = { modo: "dpad", tamanho: "normal" };
-    const preferenciasControles = { ...PREF_CONTROLES_PADRAO };
+    const PREF_CONTROLES_PADRAO = {
+      modo: "dpad",
+      escala: 100,
+      posicoes: {
+        retrato: { dpadX: 0, dpadY: 0, acoesX: 0, acoesY: 0 },
+        paisagem: { dpadX: 0, dpadY: 0, acoesX: 0, acoesY: 0 },
+      },
+    };
+    const ESCALA_CONTROLES_MIN = 70;
+    const ESCALA_CONTROLES_MAX = 140;
+    const ESCALA_CONTROLES_PASSO = 10;
+    const LIMITE_POSICAO_X = 42;
+    const LIMITE_POSICAO_Y = 32;
+    const preferenciasControles = {
+      ...PREF_CONTROLES_PADRAO,
+      posicoes: {
+        retrato: { ...PREF_CONTROLES_PADRAO.posicoes.retrato },
+        paisagem: { ...PREF_CONTROLES_PADRAO.posicoes.paisagem },
+      },
+    };
+    let modoMoverControles = false;
+    let arrastoControles = null;
+
+    function orientacaoDosControles() {
+      return matchMedia("(orientation: landscape)").matches
+        ? "paisagem"
+        : "retrato";
+    }
+
+    function posicaoAtualDosControles() {
+      return preferenciasControles.posicoes[orientacaoDosControles()];
+    }
     const activePointers = new Map();
     const dpad = document.querySelector("#dpad");
     const stick = document.querySelector("#stick");
@@ -1879,8 +2028,42 @@
         if (salvo.modo === "dpad" || salvo.modo === "stick") {
           preferenciasControles.modo = salvo.modo;
         }
-        if (salvo.tamanho === "normal" || salvo.tamanho === "grande") {
-          preferenciasControles.tamanho = salvo.tamanho;
+        const escalaSalva = Number(salvo.escala);
+        if (Number.isFinite(escalaSalva) && escalaSalva >= ESCALA_CONTROLES_MIN && escalaSalva <= ESCALA_CONTROLES_MAX) {
+          preferenciasControles.escala = Math.round(escalaSalva / ESCALA_CONTROLES_PASSO) * ESCALA_CONTROLES_PASSO;
+        } else if (salvo.tamanho === "grande") {
+          // Migra a preferência antiga de dois tamanhos.
+          preferenciasControles.escala = 125;
+        } else if (salvo.tamanho === "normal") {
+          preferenciasControles.escala = 100;
+        }
+        if (salvo.posicoes && typeof salvo.posicoes === "object") {
+          for (const orientacao of ["retrato", "paisagem"]) {
+            const posicao = salvo.posicoes[orientacao];
+            if (!posicao || typeof posicao !== "object") continue;
+            for (const chave of ["dpadX", "dpadY", "acoesX", "acoesY"]) {
+              const valor = Number(posicao[chave]);
+              if (Number.isFinite(valor)) {
+                const limite = chave.endsWith("Y")
+                  ? LIMITE_POSICAO_Y
+                  : LIMITE_POSICAO_X;
+                preferenciasControles.posicoes[orientacao][chave] = Math.max(
+                  -limite,
+                  Math.min(limite, valor),
+                );
+              }
+            }
+          }
+        } else if (salvo.posicao && typeof salvo.posicao === "object") {
+          // Compatibilidade com a primeira versão do ajuste de posição.
+          for (const orientacao of ["retrato", "paisagem"]) {
+            for (const chave of ["dpadX", "dpadY", "acoesX", "acoesY"]) {
+              const valor = Number(salvo.posicao[chave]);
+              if (Number.isFinite(valor)) {
+                preferenciasControles.posicoes[orientacao][chave] = valor;
+              }
+            }
+          }
         }
       } catch {
         // Preferência inválida: fica no padrão.
@@ -1906,10 +2089,153 @@
       controls.classList.toggle("has-stick", usarStick);
       controls.classList.toggle("modo-analogico", modoStick);
       stick.hidden = !usarStick;
-      document.body.classList.toggle(
-        "controles-grandes",
-        preferenciasControles.tamanho === "grande",
+      document.documentElement.style.setProperty(
+        "--ctrl-scale",
+        String(preferenciasControles.escala / 100),
       );
+      aplicarPosicaoControles();
+      controls.dataset.escala = String(preferenciasControles.escala);
+      atualizarRotuloTamanhoControles();
+      atualizarBotaoMoverControles();
+    }
+
+    function aplicarPosicaoControles() {
+      const posicao = posicaoAtualDosControles();
+      const raiz = document.documentElement;
+      raiz.style.setProperty("--dpad-x", String(posicao.dpadX));
+      raiz.style.setProperty("--dpad-y", String(posicao.dpadY));
+      raiz.style.setProperty("--acoes-x", String(posicao.acoesX));
+      raiz.style.setProperty("--acoes-y", String(posicao.acoesY));
+    }
+
+    function atualizarBotaoMoverControles() {
+      if (!toggleMoveControlsButton) return;
+      toggleMoveControlsButton.textContent = modoMoverControles
+        ? "Concluir movimento"
+        : "Mover controles";
+      toggleMoveControlsButton.setAttribute(
+        "aria-pressed",
+        String(modoMoverControles),
+      );
+    }
+
+    function definirModoMoverControles(ativo) {
+      modoMoverControles = Boolean(ativo);
+      document.body.classList.toggle("movendo-controles", modoMoverControles);
+      if (!modoMoverControles) {
+        arrastoControles = null;
+        document
+          .querySelectorAll(".gba-left.arrastando, .gba-actions.arrastando")
+          .forEach((grupo) => grupo.classList.remove("arrastando"));
+      }
+      atualizarBotaoMoverControles();
+    }
+
+    function centralizarControles() {
+      preferenciasControles.posicoes[orientacaoDosControles()] = {
+        dpadX: 0,
+        dpadY: 0,
+        acoesX: 0,
+        acoesY: 0,
+      };
+      aplicarPosicaoControles();
+      salvarPreferenciasControles();
+    }
+
+    function configurarArrastoDosControles() {
+      const grupos = [
+        [document.querySelector(".gba-left"), "dpad"],
+        [document.querySelector(".gba-actions"), "acoes"],
+      ];
+      for (const [grupo, prefixo] of grupos) {
+        if (!grupo) continue;
+        grupo.addEventListener(
+          "pointerdown",
+          (event) => {
+            if (!modoMoverControles || event.button !== 0) return;
+            event.preventDefault();
+            event.stopPropagation();
+            const posicao = posicaoAtualDosControles();
+            arrastoControles = {
+              pointerId: event.pointerId,
+              grupo,
+              prefixo,
+              inicioX: event.clientX,
+              inicioY: event.clientY,
+              inicioRect: grupo.getBoundingClientRect(),
+              baseX: posicao[`${prefixo}X`],
+              baseY: posicao[`${prefixo}Y`],
+            };
+            grupo.setPointerCapture?.(event.pointerId);
+            grupo.classList.add("arrastando");
+          },
+          { capture: true },
+        );
+        grupo.addEventListener("pointermove", (event) => {
+          if (!arrastoControles || arrastoControles.pointerId !== event.pointerId) {
+            return;
+          }
+          event.preventDefault();
+          const posicao = posicaoAtualDosControles();
+          const rect = arrastoControles.inicioRect;
+          const margem = 4;
+          const deltaPxX = Math.max(
+            margem - rect.left,
+            Math.min(
+              innerWidth - margem - rect.right,
+              event.clientX - arrastoControles.inicioX,
+            ),
+          );
+          const deltaPxY = Math.max(
+            margem - rect.top,
+            Math.min(
+              innerHeight - margem - rect.bottom,
+              event.clientY - arrastoControles.inicioY,
+            ),
+          );
+          const deltaX = (deltaPxX / Math.max(innerWidth, 1)) * 100;
+          const deltaY = (deltaPxY / Math.max(innerHeight, 1)) * 100;
+          posicao[`${arrastoControles.prefixo}X`] = Math.max(
+            -LIMITE_POSICAO_X,
+            Math.min(LIMITE_POSICAO_X, arrastoControles.baseX + deltaX),
+          );
+          posicao[`${arrastoControles.prefixo}Y`] = Math.max(
+            -LIMITE_POSICAO_Y,
+            Math.min(LIMITE_POSICAO_Y, arrastoControles.baseY + deltaY),
+          );
+          aplicarPosicaoControles();
+        });
+        const finalizar = (event) => {
+          if (!arrastoControles || arrastoControles.pointerId !== event.pointerId) {
+            return;
+          }
+          grupo.classList.remove("arrastando");
+          arrastoControles = null;
+          salvarPreferenciasControles();
+        };
+        grupo.addEventListener("pointerup", finalizar);
+        grupo.addEventListener("pointercancel", finalizar);
+      }
+    }
+
+    function atualizarRotuloTamanhoControles() {
+      if (!controlSizeValue) return;
+      controlSizeValue.textContent = `${preferenciasControles.escala}%`;
+      if (controlSizeInput) {
+        controlSizeInput.value = String(preferenciasControles.escala);
+      }
+    }
+
+    function definirEscalaControles(valor) {
+      const numero = Number(valor);
+      if (!Number.isFinite(numero)) return;
+      const limitado = Math.min(
+        ESCALA_CONTROLES_MAX,
+        Math.max(ESCALA_CONTROLES_MIN, Math.round(numero / ESCALA_CONTROLES_PASSO) * ESCALA_CONTROLES_PASSO),
+      );
+      preferenciasControles.escala = limitado;
+      aplicarPreferenciasControles();
+      salvarPreferenciasControles();
     }
 
     function esquemaDoCore(core) {
@@ -2443,6 +2769,8 @@
     async function renderBiblioteca() {
       if (bibliotecaCarregando) return;
       bibliotecaCarregando = true;
+      libraryStatus.textContent = "Verificando sua conta Discord…";
+      await esperarIdentidade(6000);
       libraryStatus.textContent = "Carregando seus jogos salvos…";
       libraryList.replaceChildren();
 
@@ -2567,12 +2895,14 @@
 
       if (!jogadorId) {
         libraryStatus.textContent =
-          "Saves deste dispositivo. Entre pela Activity do Discord para sincronizar.";
+          "Saves deste dispositivo. Não foi possível confirmar sua conta Discord agora.";
       } else if (nuvemIndisponivel) {
         libraryStatus.textContent =
           "Nuvem indisponível agora; mostrando os saves deste dispositivo.";
       } else {
-        libraryStatus.textContent = `${entradas.length} jogo(s) com save.`;
+        libraryStatus.textContent = identidadeDiscord
+          ? `${entradas.length} jogo(s) com save.`
+          : `${entradas.length} jogo(s) com save neste dispositivo.`;
       }
       bibliotecaCarregando = false;
     }
@@ -2589,8 +2919,11 @@
     async function renderSaves() {
       if (!jogoAtual || savesCarregando) return;
       savesCarregando = true;
-      savesStatus.textContent = "Carregando saves…";
+      savesStatus.textContent = "Verificando sua conta Discord…";
       try {
+        await esperarIdentidade(8000);
+        if (!jogoAtual) return;
+        savesStatus.textContent = "Carregando saves…";
         const { mapa, nuvemIndisponivel } = await listarSavesDoJogo(
           jogoAtual.chave,
         );
@@ -2680,12 +3013,14 @@
 
         if (!jogadorId) {
           savesStatus.textContent =
-            "Sem usuário da Activity: os saves ficam neste dispositivo.";
+            "Não foi possível confirmar sua conta Discord agora; os saves ficam neste dispositivo.";
         } else if (nuvemIndisponivel) {
           savesStatus.textContent =
             "Nuvem indisponível agora; usando os saves locais.";
         } else {
-          savesStatus.textContent = "Sincronizado com sua conta Discord.";
+          savesStatus.textContent = identidadeDiscord
+            ? "Sincronizado com sua conta Discord."
+            : "Sincronizado com a nuvem deste dispositivo.";
         }
       } finally {
         savesCarregando = false;
@@ -2919,11 +3254,8 @@
         .forEach((radio) => {
           radio.checked = radio.value === preferenciasControles.modo;
         });
-      document
-        .querySelectorAll('input[name="touch-size"]')
-        .forEach((radio) => {
-          radio.checked = radio.value === preferenciasControles.tamanho;
-        });
+      atualizarRotuloTamanhoControles();
+      atualizarBotaoMoverControles();
       controlsModal.hidden = false;
     }
 
@@ -2939,6 +3271,7 @@
       fecharSaves();
       fecharCheat();
       fecharControles();
+      definirModoMoverControles(false);
       gameTools.hidden = true;
     }
 
@@ -2950,15 +3283,20 @@
     }
 
     function esperarSdkPronto(sdk, timeoutMs = 15000) {
-      return Promise.race([
-        sdk.ready(),
-        new Promise((_, reject) => {
-          setTimeout(
-            () => reject(new Error(`Discord SDK não ficou pronto em ${timeoutMs}ms`)),
-            timeoutMs,
-          );
-        }),
-      ]);
+      // ready() só precisa ser chamado uma vez. Chamar de novo depois do
+      // READY podia criar uma promise que nunca resolvia e atrasava o save.
+      if (!sdkProntoPromise) {
+        sdkProntoPromise = Promise.race([
+          sdk.ready(),
+          new Promise((_, reject) => {
+            setTimeout(
+              () => reject(new Error(`Discord SDK não ficou pronto em ${timeoutMs}ms`)),
+              timeoutMs,
+            );
+          }),
+        ]);
+      }
+      return sdkProntoPromise;
     }
 
     async function trocarCodigoPorToken(code) {
@@ -2986,24 +3324,87 @@
       // O cliente do Discord já entrega os participantes conectados à
       // instância da Activity. Para o jogo single-player, o primeiro é o
       // usuário que abriu a Activity; não há popup de OAuth nesse caminho.
+      // Antes de esperar os participantes, tenta o authenticate sem token:
+      // o cliente pode devolver o usuário atual sem pedir nova autorização.
       try {
-        const { participants } =
-          await sdk.commands.getActivityInstanceConnectedParticipants();
-        if (Array.isArray(participants) && participants.length) {
-          const ids = new Set(participants.map((item) => String(item.id)));
-          try {
-            const auth = await sdk.commands.authenticate({});
-            if (auth?.user?.id && ids.has(String(auth.user.id))) {
-              if (auth.access_token) tokenAcesso = auth.access_token;
-              return auth.user.id;
-            }
-          } catch {}
-          return participants[0].id;
+        const auth = await sdk.commands.authenticate({});
+        if (auth?.user?.id) {
+          if (auth.access_token) tokenAcesso = auth.access_token;
+          identidadeDiscord = true;
+          return String(auth.user.id);
         }
       } catch (erro) {
-        console.warn("Participantes da Activity indisponíveis:", erro);
+        console.debug("authenticate sem token indisponível:", erro);
+      }
+
+      const participantes = await esperarParticipantesDaActivity(sdk);
+      if (participantes.length) {
+        identidadeDiscord = true;
+        return String(participantes[0].id);
       }
       return null;
+    }
+
+    function participantesDaResposta(resposta) {
+      const lista = Array.isArray(resposta) ? resposta : resposta?.participants;
+      if (!Array.isArray(lista)) return [];
+      return lista.filter((item) => item && item.id);
+    }
+
+    async function esperarParticipantesDaActivity(sdk, timeoutMs = 8000) {
+      // O primeiro getActivityInstanceConnectedParticipants pode chegar
+      // antes de o cliente preencher a lista. Tentamos por alguns segundos
+      // em vez de mostrar “sem usuário” imediatamente.
+      const limite = Date.now() + timeoutMs;
+      let ultimoErro = null;
+      while (Date.now() < limite) {
+        try {
+          const resposta =
+            await sdk.commands.getActivityInstanceConnectedParticipants();
+          const participantes = participantesDaResposta(resposta);
+          if (participantes.length) return participantes;
+        } catch (erro) {
+          ultimoErro = erro;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 350));
+      }
+      if (ultimoErro) {
+        console.warn("Participantes da Activity indisponíveis:", ultimoErro);
+      }
+      return [];
+    }
+
+    async function observarParticipantesDaActivity(sdk) {
+      if (inscricaoParticipantes || !sdk?.subscribe) return;
+      inscricaoParticipantes = true;
+      try {
+        await sdk.subscribe(
+          "ACTIVITY_INSTANCE_PARTICIPANTS_UPDATE",
+          (evento) => {
+            const participantes = participantesDaResposta(evento);
+            // Não escolhe um usuário aleatório quando há mais de um
+            // participante; nesse caso o authenticate acima é a fonte segura.
+            if (participantes.length === 1 && !jogadorId) {
+              jogadorId = String(participantes[0].id);
+              identidadeDiscord = true;
+              jogadorProntoResolver?.(jogadorId);
+              jogadorProntoResolver = null;
+              if (!savesModal.hidden) renderSaves();
+            }
+          },
+        );
+      } catch (erro) {
+        console.debug("Não foi possível ouvir participantes da Activity:", erro);
+      }
+    }
+
+    async function esperarIdentidade(timeoutMs = 8000) {
+      if (jogadorId) return jogadorId;
+      await Promise.race([
+        jogadorPronto,
+        new Promise((resolve) => setTimeout(resolve, timeoutMs)),
+      ]);
+      return jogadorId;
     }
 
     async function autenticarDiscord(sdk) {
@@ -3012,6 +3413,7 @@
         // authorize() depende do handshake ready(); chamá-lo antes disso
         // gera códigos inválidos e o backend recebe invalid_grant.
         await esperarSdkPronto(sdk);
+        await observarParticipantesDaActivity(sdk);
         const idSemOauth = await obterUsuarioSemOauth(sdk);
         if (idSemOauth) {
           jogadorId = String(idSemOauth);
@@ -3035,12 +3437,18 @@
             // Guarda o token antes do authenticate: se o comando do SDK
             // falhar, os saves na nuvem ainda podem funcionar com ele.
             tokenAcesso = accessToken;
-            if (dadosToken.user_id) jogadorId = String(dadosToken.user_id);
+            if (dadosToken.user_id) {
+              jogadorId = String(dadosToken.user_id);
+              identidadeDiscord = true;
+            }
             try {
               const auth = await sdk.commands.authenticate({
                 access_token: accessToken,
               });
-              if (auth?.user?.id) jogadorId = auth.user.id;
+              if (auth?.user?.id) {
+                jogadorId = auth.user.id;
+                identidadeDiscord = true;
+              }
             } catch (erroAuth) {
               console.warn(
                 "authenticate do Discord falhou; usando token OAuth:",
@@ -3059,13 +3467,11 @@
         throw ultimoErro || new Error("OAuth sem código");
       } catch (erro) {
         console.warn("OAuth do save na nuvem falhou:", erro);
-        try {
-          const { participants } =
-            await sdk.commands.getActivityInstanceConnectedParticipants();
-          if (Array.isArray(participants) && participants.length) {
-            jogadorId = participants[0].id;
-          }
-        } catch {}
+        const participantes = await esperarParticipantesDaActivity(sdk, 2500);
+        if (participantes.length) {
+          jogadorId = String(participantes[0].id);
+          identidadeDiscord = true;
+        }
         return jogadorId;
       }
     }
@@ -3685,13 +4091,35 @@
         aplicarPreferenciasControles();
       });
     });
-    document.querySelectorAll('input[name="touch-size"]').forEach((radio) => {
-      radio.addEventListener("change", () => {
-        if (!radio.checked) return;
-        preferenciasControles.tamanho = radio.value;
-        salvarPreferenciasControles();
-        aplicarPreferenciasControles();
-      });
+    controlSizeInput?.addEventListener("input", () => {
+      definirEscalaControles(controlSizeInput.value);
+    });
+    controlsSmallerButton?.addEventListener("click", () => {
+      definirEscalaControles(
+        preferenciasControles.escala - ESCALA_CONTROLES_PASSO,
+      );
+    });
+    controlsLargerButton?.addEventListener("click", () => {
+      definirEscalaControles(
+        preferenciasControles.escala + ESCALA_CONTROLES_PASSO,
+      );
+    });
+    resetControlSizeButton?.addEventListener("click", () => {
+      definirEscalaControles(100);
+    });
+    toggleMoveControlsButton?.addEventListener("click", () => {
+      const ativar = !modoMoverControles;
+      definirModoMoverControles(ativar);
+      if (ativar) {
+        fecharControles();
+        mostrarAvisoSave(
+          "Arraste o direcional e os botões; abra Controles para concluir.",
+        );
+      }
+    });
+    resetControlPositionButton?.addEventListener("click", () => {
+      centralizarControles();
+      mostrarAvisoSave("Controles centralizados");
     });
     document.addEventListener("keydown", (event) => {
       if (event.key !== "Escape") return;
@@ -3703,6 +4131,9 @@
       if (!libraryModal.hidden) fecharBiblioteca();
       if (!cheatModal.hidden) fecharCheat();
       if (!controlsModal.hidden) fecharControles();
+      if (modoMoverControles && controlsModal.hidden) {
+        definirModoMoverControles(false);
+      }
     });
 
     function trocarJogo() {
@@ -3928,7 +4359,10 @@
     });
     document.addEventListener("fullscreenchange", atualizarTamanhoEmulador);
     window.addEventListener("pageshow", atualizarTamanhoEmulador);
+    window.addEventListener("orientationchange", aplicarPosicaoControles);
+    window.addEventListener("resize", aplicarPosicaoControles);
 
+    configurarArrastoDosControles();
     carregarPreferenciasControles();
     carregarRoms();
     connectToDiscord();
