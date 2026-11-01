@@ -28,6 +28,12 @@ de DS são procuradas no Libretro durante o deploy e salvas em
 `asset/covers/`; a primeira publicação com uma ROM nova pode demorar um pouco
 mais para baixar a capa.
 
+No Nintendo DS, a Activity ativa o renderizador threaded do melonDS, desliga
+o VSync e usa áudio de 10 bits sem interpolação por padrão. O botão
+**DS: 1 tela** troca para o layout de tela superior e reduz o trabalho de
+vídeo quando o jogo estiver lento; toque novamente para voltar às duas telas.
+O core threaded só é usado quando o navegador expõe `SharedArrayBuffer`.
+
 O console mostra os controles de toque abaixo da tela. Eles usam os botões
 padrão do RetroPad, funcionam ao pressionar e segurar (inclusive em
 combinações) e são habilitados quando o jogo inicia. O layout é recalculado

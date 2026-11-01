@@ -1504,6 +1504,7 @@
       </div>
       <div class="game-tools" id="game-tools" hidden>
         <button id="fast-forward" type="button">Fast</button>
+        <button id="nds-fast" type="button" hidden>DS rápido</button>
         <button id="open-cheat" type="button">Cheat</button>
         <button id="open-controls" type="button">Controles</button>
       </div>
@@ -1677,6 +1678,7 @@
     const confirmDeleteSaveButton = document.querySelector("#confirm-delete-save");
     const gameTools = document.querySelector("#game-tools");
     const fastForwardButton = document.querySelector("#fast-forward");
+    const ndsFastButton = document.querySelector("#nds-fast");
     const openCheatButton = document.querySelector("#open-cheat");
     const openControlsButton = document.querySelector("#open-controls");
     const controlsModal = document.querySelector("#controls-modal");
@@ -1708,6 +1710,7 @@
     let slotParaExcluir = null;
     let avisoSaveTimer = null;
     let fastForwardAtivo = false;
+    let ndsModoRapido = false;
     let stickComoDpad = false;
     const PREF_CONTROLES_KEY = "ggretro-controles";
     const PREF_CONTROLES_PADRAO = { modo: "dpad", tamanho: "normal" };
@@ -1814,7 +1817,7 @@
       snes: "A/B/X/Y e L/R ativos.",
       segaMD: "A/B/C e X/Y/Z ativos.",
       segaMS: "Botões 1/2 e PAUSE ativos.",
-      nds: "A/B/X/Y, L/R e Start/Select ativos; toque na tela para o stylus.",
+      nds: "A/B/X/Y, L/R e Start/Select ativos; toque na tela para o stylus. Use DS: 1 tela se estiver lagado.",
       default: "Toque ou segure os botões para jogar.",
     };
 
@@ -1981,6 +1984,7 @@
       document.querySelector("#actions").replaceChildren(...nodes);
 
       atualizarControles(emulatorReady);
+      atualizarBotaoDsRapido();
     }
 
     function enviarValor(input, value) {
@@ -2721,6 +2725,41 @@
         : "Fast";
     }
 
+    function atualizarBotaoDsRapido() {
+      if (!ndsFastButton) return;
+      ndsFastButton.hidden = esquemaAtual !== "nds";
+      ndsFastButton.classList.toggle("is-active", ndsModoRapido);
+      ndsFastButton.setAttribute("aria-pressed", String(ndsModoRapido));
+      ndsFastButton.textContent = ndsModoRapido ? "DS: 2 telas" : "DS: 1 tela";
+    }
+
+    function alternarModoDsRapido() {
+      if (!jogoAtual || esquemaAtual !== "nds") return;
+      ndsModoRapido = !ndsModoRapido;
+      const emulator = window.EJS_emulator;
+      const layout = ndsModoRapido ? "Top Only" : "Top/Bottom";
+      try {
+        emulator?.menuOptionChanged?.("melonds_screen_layout", layout);
+        emulator?.menuOptionChanged?.(
+          "melonds_threaded_renderer",
+          ndsModoRapido ? "enabled" : "disabled",
+        );
+      } catch (erro) {
+        console.warn("Não foi possível alterar o modo de vídeo do DS:", erro);
+      }
+      const frame = game.parentElement;
+      frame?.style.setProperty(
+        "--screen-aspect",
+        ndsModoRapido ? "4 / 3" : ASPECTOS.nds || "2 / 3",
+      );
+      atualizarBotaoDsRapido();
+      mostrarAvisoSave(
+        ndsModoRapido
+          ? "DS rápido: apenas a tela superior"
+          : "DS normal: as duas telas",
+      );
+    }
+
     function alternarFastForward() {
       if (!emulatorReady) return;
       const gameManager = window.EJS_emulator?.gameManager;
@@ -2846,7 +2885,9 @@
 
     function resetarFerramentasJogo() {
       fastForwardAtivo = false;
+      ndsModoRapido = false;
       atualizarBotaoFast();
+      atualizarBotaoDsRapido();
       fecharSaves();
       fecharCheat();
       fecharControles();
@@ -3543,6 +3584,7 @@
       if (event.target === deleteSaveModal) fecharConfirmacaoExclusao();
     });
     fastForwardButton.addEventListener("click", alternarFastForward);
+    ndsFastButton?.addEventListener("click", alternarModoDsRapido);
     openCheatButton.addEventListener("click", abrirCheat);
     closeCheatButton.addEventListener("click", fecharCheat);
     applyCheatButton.addEventListener("click", ativarCheats);
@@ -3671,7 +3713,27 @@
       openSavesButton.hidden = false;
       gameTools.hidden = false;
       fastForwardAtivo = false;
+      ndsModoRapido = false;
       atualizarBotaoFast();
+      atualizarBotaoDsRapido();
+
+      // O melonDS em WebAssembly é pesado. Ativa as opções que reduzem
+      // trabalho de vídeo/áudio sem mudar a jogabilidade normal.
+      const dsOtimizado = rom.core === "melonds";
+      // O core threaded falha em alguns WebViews/iframes sem o contexto
+      // WebGL compartilhado; mantém o core normal, que é mais compatível.
+      window.EJS_threads = false;
+      window.EJS_defaultOptions = dsOtimizado
+        ? {
+            vsync: "disabled",
+            melonds_threaded_renderer: "enabled",
+            melonds_opengl_renderer: "disabled",
+            melonds_opengl_resolution: "1x native (256x192)",
+            melonds_audio_bitrate: "10-bit",
+            melonds_audio_interpolation: "None",
+            melonds_screen_gap: "0",
+          }
+        : {};
 
       window.EJS_player = "#game";
       window.EJS_gameName = rom.name;
