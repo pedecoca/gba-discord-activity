@@ -157,6 +157,20 @@
       border-color: #c4a6ff;
     }
 
+    button.login-button {
+      border-color: #5865f2aa;
+      background: #5865f2cc;
+    }
+
+    button.login-button.is-conectado {
+      border-color: #22d3ee77;
+      background: #0e4b5ccc;
+    }
+
+    button.login-button:hover:not(:disabled) {
+      border-color: #93c5fd;
+    }
+
     .panel {
       flex: 0 0 auto;
       display: grid;
@@ -1583,6 +1597,10 @@
           <span aria-hidden="true">📚</span>
           <span class="library-button-text">Biblioteca</span>
         </button>
+        <button id="discord-login" class="library-button login-button" type="button" hidden>
+          <span aria-hidden="true">☁️</span>
+          <span id="discord-login-label" class="library-button-text">Entrar</span>
+        </button>
         <span class="badge" id="game-count">Carregando…</span>
       </div>
     </header>
@@ -1790,7 +1808,14 @@
   <script type="module">
     const DISCORD_CLIENT_ID = __DISCORD_CLIENT_ID_JSON__;
     let SAVE_API_URL = __SAVE_API_URL_JSON__;
-    const EJS_DATA_PATH = __EJS_DATA_PATH_JSON__;
+    const EJS_DATA_PATH = (() => {
+      const caminho = __EJS_DATA_PATH_JSON__;
+      try {
+        return new URL(caminho, window.location.href).href;
+      } catch {
+        return caminho;
+      }
+    })();
     const DISCORD_SDK_MODULE_URL = __DISCORD_SDK_MODULE_URL_JSON__;
     const systemInput = document.querySelector("#system");
     const romInput = document.querySelector("#rom");
@@ -1814,6 +1839,8 @@
     const saveSlotsContainer = document.querySelector("#save-slots");
     const savesStatus = document.querySelector("#saves-status");
     const openLibraryButton = document.querySelector("#open-library");
+    const discordLoginButton = document.querySelector("#discord-login");
+    const discordLoginLabel = document.querySelector("#discord-login-label");
     const libraryModal = document.querySelector("#library-modal");
     const closeLibraryButton = document.querySelector("#close-library");
     const libraryList = document.querySelector("#library-list");
@@ -1860,6 +1887,9 @@
     let identidadeDiscord = false;
     let inscricaoParticipantes = false;
     let tokenAcesso = null;
+    let autenticadoWeb = false;
+    const WEB_AUTH_KEY = "ggretro-discord-auth";
+    const WEB_AUTH_STATE_KEY = "ggretro-discord-state";
     let jogadorProntoResolver = null;
     const jogadorPronto = new Promise((resolve) => {
       jogadorProntoResolver = resolve;
@@ -3149,7 +3179,7 @@
 
       if (!jogadorId) {
         libraryStatus.textContent =
-          "Saves deste dispositivo. Não foi possível confirmar sua conta Discord agora.";
+          "Saves deste dispositivo. Entre com Discord para carregar seus saves da nuvem.";
       } else if (nuvemIndisponivel) {
         libraryStatus.textContent =
           "Nuvem indisponível agora; mostrando os saves deste dispositivo.";
@@ -3267,7 +3297,7 @@
 
         if (!jogadorId) {
           savesStatus.textContent =
-            "Não foi possível confirmar sua conta Discord agora; os saves ficam neste dispositivo.";
+            "Saves deste dispositivo. Entre com Discord para carregar seus saves da nuvem.";
         } else if (nuvemIndisponivel) {
           savesStatus.textContent =
             "Nuvem indisponível agora; usando os saves locais.";
@@ -3593,9 +3623,17 @@
     }
 
     function emActivityDiscord() {
+      // Não basta estar em um iframe: links abertos dentro de navegadores
+      // embutidos também têm parent diferente. Só trate como Activity quando
+      // o host for o proxy do Discord ou houver os parâmetros da instância.
+      const host = window.location.hostname;
+      if (host.endsWith("discordsays.com")) return true;
+      if (window.parent === window) return false;
+      const params = new URLSearchParams(window.location.search);
       return (
-        window.parent !== window ||
-        window.location.hostname.endsWith("discordsays.com")
+        params.has("frame_id") ||
+        params.has("instance_id") ||
+        params.has("guild_id")
       );
     }
 
@@ -3616,11 +3654,13 @@
       return sdkProntoPromise;
     }
 
-    async function trocarCodigoPorToken(code) {
+    async function trocarCodigoPorToken(code, redirectUri = "") {
+      const corpo = { code };
+      if (redirectUri) corpo.redirect_uri = redirectUri;
       const resposta = await fetch(apiUrl("/api/emu/token"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify(corpo),
       });
       const dadosToken = await resposta.json().catch(() => ({}));
       if (!resposta.ok) {
@@ -3635,6 +3675,156 @@
       }
       if (!dadosToken.access_token) throw new Error("Token vazio");
       return dadosToken;
+    }
+
+    function urlDeLoginWeb() {
+      return `${window.location.origin}${window.location.pathname}`;
+    }
+
+    function limparQueryOauth() {
+      const url = `${window.location.pathname}${window.location.hash}`;
+      window.history.replaceState(null, "", url);
+    }
+
+    function salvarAuthWeb(dados) {
+      const expiraEm = Number(dados.expires_in) || 0;
+      const registro = {
+        access_token: String(dados.access_token || ""),
+        user_id: String(dados.user_id || ""),
+        expires_at: expiraEm ? Date.now() + expiraEm * 1000 : 0,
+      };
+      try {
+        localStorage.setItem(WEB_AUTH_KEY, JSON.stringify(registro));
+      } catch {}
+    }
+
+    function limparAuthWeb() {
+      tokenAcesso = null;
+      jogadorId = null;
+      autenticadoWeb = false;
+      identidadeDiscord = false;
+      try {
+        localStorage.removeItem(WEB_AUTH_KEY);
+      } catch {}
+    }
+
+    function carregarAuthWeb() {
+      let registro = null;
+      try {
+        registro = JSON.parse(localStorage.getItem(WEB_AUTH_KEY) || "null");
+      } catch {
+        registro = null;
+      }
+      if (!registro?.access_token || !registro?.user_id) return false;
+      if (registro.expires_at && registro.expires_at <= Date.now()) {
+        limparAuthWeb();
+        return false;
+      }
+      tokenAcesso = String(registro.access_token);
+      jogadorId = String(registro.user_id);
+      autenticadoWeb = true;
+      identidadeDiscord = true;
+      return true;
+    }
+
+    function atualizarBotaoLogin() {
+      if (!discordLoginButton) return;
+      const dentroDoDiscord = emActivityDiscord();
+      discordLoginButton.hidden = dentroDoDiscord;
+      if (dentroDoDiscord) return;
+      discordLoginButton.classList.toggle("is-conectado", autenticadoWeb);
+      discordLoginButton.title = autenticadoWeb
+        ? "Conta Discord conectada; clique para desconectar"
+        : "Entrar com Discord para carregar seus saves da nuvem";
+      if (discordLoginLabel) {
+        discordLoginLabel.textContent = autenticadoWeb ? "Sair" : "Entrar";
+      }
+    }
+
+    async function processarCallbackOauth() {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code") || "";
+      const erroOauth = params.get("error") || "";
+      if (!code && !erroOauth) return false;
+
+      const stateRecebido = params.get("state") || "";
+      let stateEsperado = "";
+      try {
+        stateEsperado = sessionStorage.getItem(WEB_AUTH_STATE_KEY) || "";
+        sessionStorage.removeItem(WEB_AUTH_STATE_KEY);
+      } catch {}
+      limparQueryOauth();
+
+      if (erroOauth) {
+        throw new Error(
+          `Login cancelado ou recusado pelo Discord (${erroOauth}).`,
+        );
+      }
+      if (stateEsperado && stateRecebido !== stateEsperado) {
+        throw new Error("O state do login não confere; tente entrar novamente.");
+      }
+
+      status.textContent = "Confirmando login com o Discord…";
+      const dadosToken = await trocarCodigoPorToken(
+        code,
+        urlDeLoginWeb(),
+      );
+      if (!dadosToken.user_id) {
+        throw new Error("O Discord não devolveu o ID da conta.");
+      }
+      tokenAcesso = String(dadosToken.access_token);
+      jogadorId = String(dadosToken.user_id);
+      autenticadoWeb = true;
+      identidadeDiscord = true;
+      salvarAuthWeb(dadosToken);
+      atualizarBotaoLogin();
+      mostrarAvisoSave("☁️ Conta Discord conectada");
+      return true;
+    }
+
+    async function conectarWeb() {
+      try {
+        const processouCallback = await processarCallbackOauth();
+        if (!processouCallback) carregarAuthWeb();
+      } catch (erro) {
+        console.warn("Login web do Discord falhou:", erro);
+        limparAuthWeb();
+        mostrarAvisoSave("Não foi possível entrar com o Discord", true);
+      }
+      atualizarBotaoLogin();
+      return autenticadoWeb ? jogadorId : null;
+    }
+
+    function iniciarLoginDiscord() {
+      if (autenticadoWeb) {
+        limparAuthWeb();
+        atualizarBotaoLogin();
+        atualizarStatusDaSelecao();
+        mostrarAvisoSave("Conta Discord desconectada");
+        if (!savesModal.hidden) renderSaves();
+        return;
+      }
+      if (!DISCORD_CLIENT_ID) {
+        mostrarAvisoSave("Login do Discord não configurado", true);
+        return;
+      }
+      const state =
+        globalThis.crypto?.randomUUID?.() || String(Date.now());
+      try {
+        sessionStorage.setItem(WEB_AUTH_STATE_KEY, state);
+      } catch {}
+      const params = new URLSearchParams({
+        client_id: DISCORD_CLIENT_ID,
+        response_type: "code",
+        redirect_uri: urlDeLoginWeb(),
+        scope: "identify",
+        state,
+        prompt: "consent",
+      });
+      status.textContent = "Redirecionando para o login do Discord…";
+      window.location.assign(
+        `https://discord.com/oauth2/authorize?${params.toString()}`,
+      );
     }
 
     async function obterUsuarioDaAtividade(sdk, timeoutMs = 2500) {
@@ -4176,7 +4366,9 @@
       const system = systems.find((item) => item.id === systemInput.value);
       if (!system) {
         status.textContent = previewMode
-          ? "Prévia no navegador. Escolha um sistema."
+          ? autenticadoWeb
+            ? "Conta Discord conectada. Escolha um sistema."
+            : "Escolha um sistema ou entre com Discord para usar a nuvem."
           : "Conectado. Escolha um sistema.";
         return;
       }
@@ -4190,7 +4382,9 @@
       }
 
       status.textContent = previewMode
-        ? "Prévia no navegador. Escolha um jogo para iniciar."
+        ? autenticadoWeb
+          ? "Conta Discord conectada. Escolha um jogo para iniciar."
+          : "Escolha um jogo ou entre com Discord para usar a nuvem."
         : "Conectado. Escolha um jogo para iniciar.";
     }
 
@@ -4249,9 +4443,18 @@
 
     function ajustarCaminhoDoCatalogo(valor, base) {
       // O proxy do Discord remove /api; o servidor local serve ./roms e
-      // ./asset. Assim os caminhos locais também funcionam no Discord.
+      // ./asset. No navegador comum, converta para absoluto: o EmulatorJS
+      // também carrega arquivos a partir de workers/blobs, onde um caminho
+      // ./roms/... pode ser resolvido no lugar errado.
       if (base === "/api" && typeof valor === "string" && valor.startsWith("./")) {
         return `/api/${valor.slice(2)}`;
+      }
+      if (base === "." && typeof valor === "string" && valor.startsWith("./")) {
+        try {
+          return new URL(valor, window.location.href).href;
+        } catch {
+          return valor;
+        }
       }
       return valor;
     }
@@ -4369,7 +4572,8 @@
       const activityDiscord = emActivityDiscord();
       if (!activityDiscord) {
         previewMode = true;
-        jogadorProntoResolver?.(null);
+        await conectarWeb();
+        jogadorProntoResolver?.(jogadorId);
         jogadorProntoResolver = null;
         atualizarStatusDaSelecao();
         atualizarBotao();
@@ -4410,6 +4614,7 @@
     restartGameButton.addEventListener("click", trocarJogo);
     openSavesButton.addEventListener("click", abrirSaves);
     openLibraryButton.addEventListener("click", abrirBiblioteca);
+    discordLoginButton?.addEventListener("click", iniciarLoginDiscord);
     closeLibraryButton.addEventListener("click", fecharBiblioteca);
     libraryModal.addEventListener("click", (event) => {
       if (event.target === libraryModal) fecharBiblioteca();

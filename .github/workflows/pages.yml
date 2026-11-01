@@ -114,7 +114,7 @@ jobs:
           page = page.replace("__DISCORD_CLIENT_ID_JSON__", json.dumps(client_id))
           save_api_url = (
               os.environ.get("SAVE_API_URL", "").strip().rstrip("/")
-              or "https://pokedc.online"
+              or "https://api.pokedc.online"
           )
           page = page.replace("__SAVE_API_URL_JSON__", json.dumps(save_api_url))
           page = page.replace(

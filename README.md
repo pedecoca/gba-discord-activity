@@ -53,7 +53,7 @@ ajustar o tamanho dos controles de 70% a 140% com o slider ou os botões
 SELECT/START, Fast, Cheat, Controles, Saves e Trocar jogo. As preferências
 ficam salvas no dispositivo, separadas entre retrato e paisagem.
 
-## Saves na nuvem dentro do Discord
+## Saves na nuvem (Discord e navegador)
 
 A API de saves fica em `api.pokedc.online`. Como Activities são executadas
 atrás do proxy `*.discordsays.com`, requisições absolutas para domínios
@@ -68,6 +68,23 @@ Com esse mapping, a Activity usa `/api/emu/...` e o Discord encaminha para a
 API. O servidor também aceita o caminho `/emu/...` para o caso de o proxy
 remover o prefixo `/api`.
 
+A página também pode ser aberta diretamente em `https://api.pokedc.online/`
+para jogar no navegador, sem Discord. Para carregar os saves da nuvem nesse
+modo, use o botão **☁️ Entrar** no topo e autorize com a conta do Discord.
+O login usa OAuth2 com o escopo `identify`; o token fica somente no
+`localStorage` deste navegador e é enviado como `Authorization: Bearer` para
+a API. O botão muda para **Sair** quando a conta está conectada.
+
+Para o login web funcionar, adicione a URL de retorno em **Developer Portal →
+OAuth2 → Redirects**:
+
+- `https://api.pokedc.online/`
+- se também usar o GitHub Pages: `https://pedecoca.github.io/gba-discord-activity/`
+
+O `redirect_uri` usado pelo botão é exatamente a origem e o caminho da página
+atual (`window.location.origin + window.location.pathname`). Se você publicar
+em outro domínio, cadastre também essa URL.
+
 Dentro do Discord, o catálogo também tenta `/api/roms.json`, `/api/systems.json`
 e `/api/covers.json` antes de usar os arquivos estáticos do GitHub Pages.
 
@@ -78,18 +95,15 @@ permite jogar ROMs grandes que estão apenas no servidor local, sem publicá-las
 no repositório do Pages; se a API estiver fora, a Activity usa o catálogo
 estático como reserva.
 
-Para os saves aparecerem no PC e no celular, abra a Activity **pelo Discord**
-nos dois aparelhos e entre com a mesma conta.
-
-A identidade do save usa o token OAuth quando ele existe. Para quem usa
-`/jogar`, o bot recebe o `interaction.user.id` e o `activity_instance_id`
-devolvido pelo Discord, grava esse vínculo no backend e a Activity consulta
-`/api/emu/activity/user`; assim o ID chega sem popup de autorização. Se a
-Activity for aberta pelo App Launcher, o backend ainda tenta a API de
-instâncias com o token do bot; o SDK (`authenticate({})` e participantes) fica
-como reserva. A prévia em `http://127.0.0.1:8081` ou em um navegador comum,
-fora do Discord, usa somente o IndexedDB local porque não há Discord nesse
-modo.
+Para os saves aparecerem no PC e no celular, entre com a mesma conta do
+Discord pelo botão **☁️ Entrar** nos dois aparelhos. A identidade do save usa
+o token OAuth quando ele existe. Para quem usa `/jogar`, o bot recebe o
+`interaction.user.id` e o `activity_instance_id` devolvido pelo Discord, grava
+esse vínculo no backend e a Activity consulta `/api/emu/activity/user`; assim
+o ID chega sem popup de autorização. Se a Activity for aberta pelo App
+Launcher, o backend ainda tenta a API de instâncias com o token do bot; o SDK
+(`authenticate({})` e participantes) fica como reserva. Sem login, o jogo
+continua funcionando e os saves ficam somente no IndexedDB local.
 
 ## Publicar
 
