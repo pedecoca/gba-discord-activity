@@ -23,7 +23,9 @@ O Nintendo DS usa o core `melonds` por padrão e aparece no seletor mesmo antes
 de haver ROMs `.nds`. Coloque as ROMs em `rom/melonds/`; o BIOS do DS não é
 incluído pelo EmulatorJS e, se o jogo exigir, deve ser fornecido separadamente.
 Os dois botões L/R, ABXY e Start/Select ficam nos controles de toque; a tela
-inferior aceita toque/stylus no canvas quando o core permite ponteiro. As capas
+inferior aceita toque/stylus no canvas quando o core permite ponteiro. Em
+navegadores móveis, a Activity converte os toques do canvas em eventos de
+mouse para o melonDS reconhecer o dedo/caneta como stylus. As capas
 de DS são procuradas no Libretro durante o deploy e salvas em
 `asset/covers/`; a primeira publicação com uma ROM nova pode demorar um pouco
 mais para baixar a capa.

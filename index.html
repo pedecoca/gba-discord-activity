@@ -2449,6 +2449,90 @@
       return botao;
     }
 
+    function instalarToqueStylusDs(canvas) {
+      if (!canvas || canvas.dataset.stylusTouch === "1") return;
+      canvas.dataset.stylusTouch = "1";
+      let toqueAtivo = null;
+      let ultimoToque = null;
+
+      const dispararMouse = (tipo, toque, buttons) => {
+        const evento = new MouseEvent(tipo, {
+          bubbles: true,
+          cancelable: true,
+          composed: true,
+          view: window,
+          button: 0,
+          buttons,
+          clientX: toque.clientX,
+          clientY: toque.clientY,
+          screenX: toque.screenX ?? toque.clientX,
+          screenY: toque.screenY ?? toque.clientY,
+        });
+        canvas.dispatchEvent(evento);
+      };
+
+      const toqueDoEvento = (evento) => {
+        const lista = evento.changedTouches || evento.touches;
+        if (!lista || !lista.length) {
+          return evento.type === "touchend" || evento.type === "touchcancel"
+            ? ultimoToque
+            : null;
+        }
+        if (toqueAtivo === null) return lista[0];
+        return (
+          [...lista].find((toque) => toque.identifier === toqueAtivo) ||
+          (evento.type === "touchend" || evento.type === "touchcancel"
+            ? ultimoToque
+            : null)
+        );
+      };
+
+      canvas.addEventListener(
+        "touchstart",
+        (evento) => {
+          if (toqueAtivo !== null) return;
+          const toque = toqueDoEvento(evento);
+          if (!toque) return;
+          evento.preventDefault();
+          toqueAtivo = toque.identifier;
+          ultimoToque = toque;
+          dispararMouse("mousemove", toque, 1);
+          dispararMouse("mousedown", toque, 1);
+        },
+        { passive: false },
+      );
+
+      canvas.addEventListener(
+        "touchmove",
+        (evento) => {
+          if (toqueAtivo === null) return;
+          const toque = toqueDoEvento(evento);
+          if (!toque) return;
+          evento.preventDefault();
+          ultimoToque = toque;
+          dispararMouse("mousemove", toque, 1);
+        },
+        { passive: false },
+      );
+
+      const finalizar = (evento) => {
+        if (toqueAtivo === null) return;
+        const toque = toqueDoEvento(evento);
+        if (!toque) return;
+        evento.preventDefault();
+        dispararMouse("mousemove", toque, 0);
+        dispararMouse("mouseup", toque, 0);
+        toqueAtivo = null;
+        ultimoToque = null;
+      };
+      canvas.addEventListener("touchend", finalizar, { passive: false });
+      canvas.addEventListener("touchcancel", finalizar, { passive: false });
+
+      canvas.style.touchAction = "none";
+      canvas.style.webkitUserSelect = "none";
+      canvas.style.userSelect = "none";
+    }
+
     function atualizarControles(disponiveis) {
       emulatorReady = disponiveis;
       controls.setAttribute("aria-disabled", String(!disponiveis));
@@ -4462,10 +4546,13 @@
         clearTimeout(falhaTimer);
         if (esquema === "nds") {
           // O melonDS usa mouse/touch como stylus. No mobile o EmulatorJS
-          // desativa o ponteiro do canvas por padrão; reativamos só no DS.
-          const canvas = window.EJS_emulator?.frontend?.canvas;
+          // não encaminha o toque para o mouse; convertemos o toque do
+          // canvas em eventos de mouse para a caneta funcionar.
+          const canvas =
+            window.EJS_emulator?.frontend?.canvas ||
+            document.querySelector("#game canvas");
           canvas?.classList.remove("ejs-canvas-no-pointer");
-          if (canvas) canvas.style.touchAction = "none";
+          if (canvas) instalarToqueStylusDs(canvas);
         }
         atualizarControles(true);
         status.textContent = "Jogo iniciado. Use os controles abaixo.";
