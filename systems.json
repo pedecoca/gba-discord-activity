@@ -135,6 +135,11 @@
     "extensions": [".md", ".gen", ".smd", ".bin", ".cue", ".chd"]
   },
   {
+    "id": "pcsx_rearmed",
+    "name": "Sony PlayStation",
+    "extensions": [".cue", ".chd", ".iso", ".img", ".pbp", ".m3u"]
+  },
+  {
     "id": "ppsspp",
     "name": "Sony PlayStation Portable",
     "extensions": [".iso", ".cso", ".pbp"]
