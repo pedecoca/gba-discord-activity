@@ -2068,22 +2068,33 @@
     async function carregarLocal(chave, slot) {
       const db = await abrirSavesDb();
       if (!db) return null;
-      const chaveAtual = chaveSaveLocal(chave, slot);
-      const chaveAntiga = `${jogadorId || "convidado"}:${chave}`;
+      const chaves = [chaveSaveLocal(chave, slot)];
+      // Saves feitos antes do login/da Activity ficam sob "convidado".
+      // Também aceita o prefixo antigo, que não tinha número de slot.
+      if (jogadorId) chaves.push(`convidado:${chave}:${slot}`);
+      if (slot === 1) {
+        chaves.push(`${jogadorId || "convidado"}:${chave}`);
+        if (jogadorId) chaves.push(`convidado:${chave}`);
+      }
       return new Promise((resolve, reject) => {
         const transacao = db.transaction("saves", "readonly");
         const store = transacao.objectStore("saves");
-        const requisicao = store.get(chaveAtual);
-        requisicao.onsuccess = () => {
-          if (requisicao.result || slot !== 1) {
-            resolve(requisicao.result || null);
+        const tentar = (indice) => {
+          if (indice >= chaves.length) {
+            resolve(null);
             return;
           }
-          const legado = store.get(chaveAntiga);
-          legado.onsuccess = () => resolve(legado.result || null);
-          legado.onerror = () => reject(legado.error);
+          const requisicao = store.get(chaves[indice]);
+          requisicao.onsuccess = () => {
+            if (requisicao.result) {
+              resolve(requisicao.result);
+            } else {
+              tentar(indice + 1);
+            }
+          };
+          requisicao.onerror = () => reject(requisicao.error);
         };
-        requisicao.onerror = () => reject(requisicao.error);
+        tentar(0);
       });
     }
 
@@ -2187,8 +2198,9 @@
     }
 
     async function carregarSave(chave, slot) {
-      let dados = null;
-      let origem = null;
+      let nuvem = null;
+      let local = null;
+      let nuvemIndisponivel = false;
       if (jogadorId && tokenAcesso) {
         try {
           const resposta = await fetch(
@@ -2199,28 +2211,57 @@
             },
           );
           if (resposta.ok) {
-            dados = await resposta.json();
-            origem = "nuvem";
+            const candidato = await resposta.json();
+            if (candidato.state || candidato.sram) nuvem = candidato;
           } else if (resposta.status !== 404) {
             throw new Error(`HTTP ${resposta.status}`);
           }
         } catch (erro) {
+          nuvemIndisponivel = true;
           console.warn("Save na nuvem indisponível, usando o local:", erro);
         }
       }
-      if (!dados) {
-        try {
-          dados = await carregarLocal(chave, slot);
-          if (dados) origem = "local";
-        } catch (erro) {
-          console.warn("Save local indisponível:", erro);
+      try {
+        local = await carregarLocal(chave, slot);
+      } catch (erro) {
+        console.warn("Save local indisponível:", erro);
+      }
+
+      let dados = null;
+      let origem = null;
+      if (nuvem && local) {
+        const tempoNuvem = new Date(nuvem.updated_at || 0).getTime() || 0;
+        const tempoLocal =
+          Number(local.updatedAt) || new Date(local.updatedAt || 0).getTime() || 0;
+        // Não deixa um save antigo da nuvem apagar um save local mais novo
+        // (por exemplo, quando o upload falhou no aparelho anterior).
+        if (tempoLocal > tempoNuvem) {
+          dados = local;
+          origem = "local";
+        } else {
+          dados = nuvem;
+          origem = "nuvem";
         }
+      } else if (nuvem) {
+        dados = nuvem;
+        origem = "nuvem";
+      } else if (local) {
+        dados = local;
+        origem = "local";
       }
       if (!dados) return null;
-      // Se o save existia só neste dispositivo, envia para a nuvem ao
-      // abrir o jogo autenticado, para o outro aparelho encontrá-lo.
-      if (origem === "local" && jogadorId && tokenAcesso) {
+
+      if (origem === "local" && jogadorId && tokenAcesso && !nuvemIndisponivel) {
+        // Só envia automaticamente se a nuvem respondeu (vazia ou mais antiga).
         await enviarSaveNuvem(chave, slot, dados);
+      }
+      if (origem === "nuvem") {
+        // Mantém uma cópia local para abrir o jogo mesmo se a nuvem cair.
+        try {
+          await salvarLocal(chave, slot, dados);
+        } catch (erro) {
+          console.warn("Não foi possível guardar a cópia local do save:", erro);
+        }
       }
       return aplicarSave(dados) ? origem : null;
     }
@@ -2819,38 +2860,85 @@
       );
     }
 
+    function esperarSdkPronto(sdk, timeoutMs = 15000) {
+      return Promise.race([
+        sdk.ready(),
+        new Promise((_, reject) => {
+          setTimeout(
+            () => reject(new Error(`Discord SDK não ficou pronto em ${timeoutMs}ms`)),
+            timeoutMs,
+          );
+        }),
+      ]);
+    }
+
+    async function trocarCodigoPorToken(code) {
+      const resposta = await fetch(apiUrl("/api/emu/token"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+      const dadosToken = await resposta.json().catch(() => ({}));
+      if (!resposta.ok) {
+        const erro = new Error(
+          `Token HTTP ${resposta.status}${
+            dadosToken.error ? ` (${dadosToken.error})` : ""
+          }`,
+        );
+        erro.status = resposta.status;
+        erro.codigo = dadosToken.error || "";
+        throw erro;
+      }
+      if (!dadosToken.access_token) throw new Error("Token vazio");
+      return dadosToken;
+    }
+
     async function autenticarDiscord(sdk) {
       if (!SAVE_API_URL && !emActivityDiscord()) return null;
       try {
-        const { code } = await sdk.commands.authorize({
-          client_id: DISCORD_CLIENT_ID,
-          response_type: "code",
-          state: "",
-          prompt: "none",
-          scope: ["identify"],
-        });
-        const resposta = await fetch(apiUrl("/api/emu/token"), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code }),
-        });
-        if (!resposta.ok) throw new Error(`Token HTTP ${resposta.status}`);
-        const dadosToken = await resposta.json();
-        const accessToken = dadosToken.access_token;
-        if (!accessToken) throw new Error("Token vazio");
-        // Guarda o token antes do authenticate: se o comando do SDK falhar,
-        // os saves na nuvem ainda podem funcionar com o token OAuth.
-        tokenAcesso = accessToken;
-        if (dadosToken.user_id) jogadorId = String(dadosToken.user_id);
-        try {
-          const auth = await sdk.commands.authenticate({
-            access_token: accessToken,
+        // authorize() depende do handshake ready(); chamá-lo antes disso
+        // gera códigos inválidos e o backend recebe invalid_grant.
+        await esperarSdkPronto(sdk);
+        let ultimoErro = null;
+        for (let tentativa = 0; tentativa < 2; tentativa += 1) {
+          // Um state novo evita reutilizar um código/cache da tentativa anterior.
+          const state =
+            globalThis.crypto?.randomUUID?.() || String(Date.now());
+          const { code } = await sdk.commands.authorize({
+            client_id: DISCORD_CLIENT_ID,
+            response_type: "code",
+            state,
+            prompt: "none",
+            scope: ["identify"],
           });
-          if (auth?.user?.id) jogadorId = auth.user.id;
-        } catch (erroAuth) {
-          console.warn("authenticate do Discord falhou; usando token OAuth:", erroAuth);
+          try {
+            const dadosToken = await trocarCodigoPorToken(code);
+            const accessToken = dadosToken.access_token;
+            // Guarda o token antes do authenticate: se o comando do SDK
+            // falhar, os saves na nuvem ainda podem funcionar com ele.
+            tokenAcesso = accessToken;
+            if (dadosToken.user_id) jogadorId = String(dadosToken.user_id);
+            try {
+              const auth = await sdk.commands.authenticate({
+                access_token: accessToken,
+              });
+              if (auth?.user?.id) jogadorId = auth.user.id;
+            } catch (erroAuth) {
+              console.warn(
+                "authenticate do Discord falhou; usando token OAuth:",
+                erroAuth,
+              );
+            }
+            return jogadorId;
+          } catch (erro) {
+            ultimoErro = erro;
+            const codigoInvalido = erro.codigo === "invalid_grant";
+            if (!codigoInvalido || tentativa === 1) throw erro;
+            // O código pode ter expirado durante o handshake. Pede outro.
+            await new Promise((resolve) => setTimeout(resolve, 600));
+          }
         }
-        return jogadorId;
+        throw ultimoErro || new Error("OAuth sem código");
       } catch (erro) {
         console.warn("OAuth do save na nuvem falhou:", erro);
         try {
@@ -3369,10 +3457,9 @@
       try {
         const { DiscordSDK } = await import(DISCORD_SDK_MODULE_URL);
         discordSdk = new DiscordSDK(DISCORD_CLIENT_ID);
-        await Promise.race([
-          discordSdk.ready(),
-          new Promise((resolve) => setTimeout(resolve, 2500)),
-        ]);
+        // A UI não espera por isso; o jogo pode ser escolhido enquanto o
+        // handshake termina. O save automático aguarda jogadorPronto abaixo.
+        await esperarSdkPronto(discordSdk);
         await autenticarDiscord(discordSdk);
       } catch (error) {
         console.error("Discord Activity SDK failed to initialize:", error);
@@ -3558,9 +3645,11 @@
         atualizarControles(true);
         status.textContent = "Jogo iniciado. Use os controles abaixo.";
 
+        // Espera o OAuth terminar para não carregar só o save local e
+        // ignorar a nuvem quando o handshake do Discord é mais lento.
         await Promise.race([
           jogadorPronto,
-          new Promise((resolve) => setTimeout(resolve, 2500)),
+          new Promise((resolve) => setTimeout(resolve, 12000)),
         ]);
         if (sessaoAtual !== sessaoJogo || !jogoAtual) return;
         const carregou = await carregarSave(jogoAtual.chave, 1);
