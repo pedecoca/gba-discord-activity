@@ -48,6 +48,11 @@ Com esse mapping, a Activity usa `/api/emu/...` e o Discord encaminha para a
 API. O servidor também aceita o caminho `/emu/...` para o caso de o proxy
 remover o prefixo `/api`.
 
+Para os saves aparecerem no PC e no celular, abra a Activity **pelo Discord**
+nos dois aparelhos e entre com a mesma conta. A prévia em
+`http://127.0.0.1:8081` ou em um navegador comum, fora do Discord, usa somente
+o IndexedDB local porque não há OAuth do Discord nesse modo.
+
 ## Publicar
 
 1. Crie um repositório **público** no GitHub para a Activity.
