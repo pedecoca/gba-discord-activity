@@ -1157,7 +1157,11 @@
 
     [hidden] { display: none !important; }
 
-    @media (max-width: 700px) and (orientation: portrait) {
+    /* 720x1604 e tablets estreitos também precisam do layout de celular. */
+    @media (max-width: 820px) and (orientation: portrait) {
+      :root { --discord-ui-gutter: 44px; }
+      body.jogando .gba-actions { margin-right: var(--discord-ui-gutter); }
+      body.jogando .gba-shoulders { padding-right: var(--discord-ui-gutter); }
       body.jogando main {
         justify-content: center;
         padding: 4px 0;
@@ -1196,7 +1200,7 @@
       .control-hint { display: none; }
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 820px) {
       main { width: min(100% - 14px, 900px); padding: 9px 0; gap: 8px; }
       .panel { grid-template-columns: 1fr 1fr; padding: 8px; }
       .panel-actions { grid-column: 1 / -1; }
@@ -1251,6 +1255,8 @@
 
     /* Modo PSP: em paisagem, tela no centro e controles nas laterais. */
     @media (orientation: landscape) {
+      :root { --discord-ui-gutter: 54px; }
+
       body.jogando main {
         width: 100%;
         height: 100dvh;
@@ -1269,13 +1275,19 @@
       }
 
       body.jogando .gba-screen-frame {
+        --screen-ratio: 1.5;
         position: absolute;
-        inset:
-          calc(38px + env(safe-area-inset-top, 0px))
-          clamp(108px, 15vw, 190px)
-          calc(74px + env(safe-area-inset-bottom, 0px));
-        width: auto;
+        top: 50%;
+        left: calc(50% - (var(--discord-ui-gutter) / 2));
+        right: auto;
+        bottom: auto;
+        width: min(
+          calc((100dvh - 112px) * var(--screen-ratio)),
+          calc(100vw - 16px - clamp(112px, 11vw, 150px) - clamp(106px, 12vw, 150px) - var(--discord-ui-gutter) - 24px)
+        );
         height: auto;
+        aspect-ratio: var(--screen-aspect, 3 / 2);
+        transform: translate(-50%, -50%);
         flex: none;
         padding: 5px;
         border-radius: 10px;
@@ -1297,15 +1309,15 @@
         position: absolute;
         left: calc(8px + env(safe-area-inset-left, 0px));
         top: 50%;
-        width: clamp(86px, 11vw, 140px);
+        width: clamp(112px, 11vw, 150px);
         transform: translateY(-50%);
       }
 
       body.jogando .gba-actions {
         position: absolute;
-        right: calc(8px + env(safe-area-inset-right, 0px));
+        right: calc(8px + env(safe-area-inset-right, 0px) + var(--discord-ui-gutter));
         top: 50%;
-        width: clamp(100px, 12vw, 150px);
+        width: clamp(106px, 12vw, 150px);
         transform: translateY(-50%);
         justify-content: center;
       }
@@ -1321,7 +1333,7 @@
       body.jogando .gba-shoulders {
         position: absolute;
         top: auto;
-        right: calc(8px + env(safe-area-inset-right, 0px));
+        right: calc(8px + env(safe-area-inset-right, 0px) + var(--discord-ui-gutter));
         bottom: 18%;
         left: calc(8px + env(safe-area-inset-left, 0px));
         z-index: 2;
@@ -1369,7 +1381,7 @@
         left: calc(8px + env(safe-area-inset-left, 0px));
       }
       body.jogando #restart-game {
-        right: calc(8px + env(safe-area-inset-right, 0px));
+        right: calc(8px + env(safe-area-inset-right, 0px) + var(--discord-ui-gutter));
       }
 
       body.jogando .game-tools {
@@ -1411,17 +1423,17 @@
     }
 
     @media (orientation: landscape) {
-      body.jogando.controles-grandes .gba-screen-frame {
-        inset:
-          calc(38px + env(safe-area-inset-top, 0px))
-          clamp(120px, 16vw, 205px)
-          calc(74px + env(safe-area-inset-bottom, 0px));
-      }
       body.jogando.controles-grandes .gba-left {
-        width: clamp(108px, 12vw, 156px);
+        width: clamp(156px, 14vw, 180px);
       }
       body.jogando.controles-grandes .gba-actions {
         width: clamp(116px, 13vw, 166px);
+      }
+      body.jogando.controles-grandes .gba-screen-frame {
+        width: min(
+          calc((100dvh - 112px) * var(--screen-ratio)),
+          calc(100vw - 16px - clamp(156px, 14vw, 180px) - clamp(116px, 13vw, 166px) - var(--discord-ui-gutter) - 24px)
+        );
       }
     }
 
@@ -1844,6 +1856,21 @@
       default: "4 / 3",
     };
 
+    const RATIOS = {
+      gba: 3 / 2,
+      gb: 10 / 9,
+      nes: 4 / 3,
+      snes: 4 / 3,
+      n64: 4 / 3,
+      psx: 4 / 3,
+      segaMD: 4 / 3,
+      segaMS: 4 / 3,
+      segaSaturn: 4 / 3,
+      nds: 2 / 3,
+      pce: 4 / 3,
+      default: 4 / 3,
+    };
+
     function carregarPreferenciasControles() {
       try {
         const salvo = JSON.parse(
@@ -1950,9 +1977,14 @@
       const layout = LAYOUTS[esquemaAtual];
       controls.classList.toggle("has-cpad", Boolean(layout.cpad));
       aplicarPreferenciasControles();
-      game.parentElement.style.setProperty(
+      const frame = game.parentElement;
+      frame.style.setProperty(
         "--screen-aspect",
         ASPECTOS[esquemaAtual] || ASPECTOS.default,
+      );
+      frame.style.setProperty(
+        "--screen-ratio",
+        String(RATIOS[esquemaAtual] || RATIOS.default),
       );
 
       document
@@ -2763,6 +2795,10 @@
       frame?.style.setProperty(
         "--screen-aspect",
         ndsModoRapido ? "4 / 3" : ASPECTOS.nds || "2 / 3",
+      );
+      frame?.style.setProperty(
+        "--screen-ratio",
+        String(ndsModoRapido ? 4 / 3 : RATIOS.nds || 2 / 3),
       );
       atualizarBotaoDsRapido();
       mostrarAvisoSave(
