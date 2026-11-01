@@ -40,6 +40,14 @@
       animation: fundoVivo 34s ease-in-out infinite;
     }
 
+    body.jogando.modo-ds {
+      animation: none;
+    }
+
+    body.jogando.modo-ds .gba-screen-frame::before {
+      animation: none;
+    }
+
     @keyframes fundoVivo {
       0%, 100% { background-position: 0 0, 0 0, 0 0, 0% 50%; }
       50% { background-position: 0 0, 0 0, 0 0, 100% 50%; }
@@ -3660,6 +3668,7 @@
         .forEach((script) => script.remove());
 
       document.body.classList.remove("jogando");
+      document.body.classList.remove("modo-ds");
       document.querySelector(".screen-label").hidden = false;
       gbaConsole.hidden = true;
       romInput.value = "";
@@ -3708,7 +3717,11 @@
         rom,
       };
 
+      // O melonDS em WebAssembly é pesado. Ativa as opções que reduzem
+      // trabalho de vídeo/áudio sem mudar a jogabilidade normal.
+      const dsOtimizado = rom.core === "melonds";
       document.body.classList.add("jogando");
+      document.body.classList.toggle("modo-ds", dsOtimizado);
       restartGameButton.hidden = false;
       openSavesButton.hidden = false;
       gameTools.hidden = false;
@@ -3717,9 +3730,6 @@
       atualizarBotaoFast();
       atualizarBotaoDsRapido();
 
-      // O melonDS em WebAssembly é pesado. Ativa as opções que reduzem
-      // trabalho de vídeo/áudio sem mudar a jogabilidade normal.
-      const dsOtimizado = rom.core === "melonds";
       // O core threaded falha em alguns WebViews/iframes sem o contexto
       // WebGL compartilhado; mantém o core normal, que é mais compatível.
       window.EJS_threads = false;
