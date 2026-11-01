@@ -1,0 +1,823 @@
+{
+  "repo": "pedecoca/EmulatorJS",
+  "tag": "nds-roms-v1",
+  "download_base": "https://github.com/pedecoca/EmulatorJS/releases/download/nds-roms-v1",
+  "files": [
+    {
+      "name": " Emma in the Mountains (Europe) (En,Fr,De,Es,It,Nl,Pt)",
+      "path": "rom/ Emma in the Mountains (Europe) (En,Fr,De,Es,It,Nl,Pt).nds",
+      "asset": "Emma.in.the.Mountains.Europe.En.Fr.De.Es.It.Nl.Pt.nds",
+      "size": 16777216
+    },
+    {
+      "name": "Apollo Justice - Ace Attorney",
+      "path": "rom/Apollo Justice - Ace Attorney.nds",
+      "asset": "Apollo.Justice.-.Ace.Attorney.nds",
+      "size": 60064556
+    },
+    {
+      "name": "Aqua Panic!",
+      "path": "rom/Aqua Panic!.nds",
+      "asset": "Aqua.Panic.nds",
+      "size": 16777216
+    },
+    {
+      "name": "Barbie - Groom and Glam Pups (Brazil) (En,Es,Pt)",
+      "path": "rom/Barbie - Groom and Glam Pups (Brazil) (En,Es,Pt).nds",
+      "asset": "Barbie.-.Groom.and.Glam.Pups.Brazil.En.Es.Pt.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Barnyard Blast - Swine of the Night",
+      "path": "rom/Barnyard Blast - Swine of the Night.nds",
+      "asset": "Barnyard.Blast.-.Swine.of.the.Night.nds",
+      "size": 8388608
+    },
+    {
+      "name": "Ben 10 - Alien Force",
+      "path": "rom/Ben 10 - Alien Force.nds",
+      "asset": "Ben.10.-.Alien.Force.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Best of Board Games DS (Europe) (En,Fr,De,Es,It,Pt)",
+      "path": "rom/Best of Board Games DS (Europe) (En,Fr,De,Es,It,Pt).nds",
+      "asset": "Best.of.Board.Games.DS.Europe.En.Fr.De.Es.It.Pt.nds",
+      "size": 8388608
+    },
+    {
+      "name": "Best of Tests DS (Europe) (En,Fr,De,Es,It,Pt)",
+      "path": "rom/Best of Tests DS (Europe) (En,Fr,De,Es,It,Pt).nds",
+      "asset": "Best.of.Tests.DS.Europe.En.Fr.De.Es.It.Pt.nds",
+      "size": 8388608
+    },
+    {
+      "name": "Bob the Builder - Festival of Fun (Europe) (En,Pt,No,Da,Fi)",
+      "path": "rom/Bob the Builder - Festival of Fun (Europe) (En,Pt,No,Da,Fi).nds",
+      "asset": "Bob.the.Builder.-.Festival.of.Fun.Europe.En.Pt.No.Da.Fi.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Boogie",
+      "path": "rom/Boogie.nds",
+      "asset": "Boogie.nds",
+      "size": 134217728
+    },
+    {
+      "name": "Broken Sword - Shadow of the Templars - The Director's Cut",
+      "path": "rom/Broken Sword - Shadow of the Templars - The Director's Cut.nds",
+      "asset": "Broken.Sword.-.Shadow.of.the.Templars.-.The.Directors.Cut.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Cars (Europe) (Es,Pt)",
+      "path": "rom/Cars (Europe) (Es,Pt).nds",
+      "asset": "Cars.Europe.Es.Pt.nds",
+      "size": 16777216
+    },
+    {
+      "name": "Casper's Scare School - Classroom Capers (Europe) (En,Fr,De,Es,It,Nl,Pt,Sv,No,Da,Fi)",
+      "path": "rom/Casper's Scare School - Classroom Capers (Europe) (En,Fr,De,Es,It,Nl,Pt,Sv,No,Da,Fi).nds",
+      "asset": "Caspers.Scare.School.-.Classroom.Capers.Europe.En.Fr.De.Es.It.Nl.Pt.Sv.No.Da.Fi.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Casper's Scare School - Spooky Sports Day (Europe) (En,Fr,De,Es,It,Nl,Pt,Sv,No,Da)",
+      "path": "rom/Casper's Scare School - Spooky Sports Day (Europe) (En,Fr,De,Es,It,Nl,Pt,Sv,No,Da).nds",
+      "asset": "Caspers.Scare.School.-.Spooky.Sports.Day.Europe.En.Fr.De.Es.It.Nl.Pt.Sv.No.Da.nds",
+      "size": 16777216
+    },
+    {
+      "name": "Castlevania - Dawn of Sorrow",
+      "path": "rom/Castlevania - Dawn of Sorrow.nds",
+      "asset": "Castlevania.-.Dawn.of.Sorrow.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Castlevania - Order of Ecclesia",
+      "path": "rom/Castlevania - Order of Ecclesia.nds",
+      "asset": "Castlevania.-.Order.of.Ecclesia.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Castlevania - Portrait of Ruin",
+      "path": "rom/Castlevania - Portrait of Ruin.nds",
+      "asset": "Castlevania.-.Portrait.of.Ruin.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Chrono Trigger",
+      "path": "rom/Chrono Trigger.nds",
+      "asset": "Chrono.Trigger.nds",
+      "size": 134217728
+    },
+    {
+      "name": "Clever Kids - Dino Land",
+      "path": "rom/Clever Kids - Dino Land.nds",
+      "asset": "Clever.Kids.-.Dino.Land.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Clever Kids - Pony World",
+      "path": "rom/Clever Kids - Pony World.nds",
+      "asset": "Clever.Kids.-.Pony.World.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Crime Scene",
+      "path": "rom/Crime Scene.nds",
+      "asset": "Crime.Scene.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Dance Floor",
+      "path": "rom/Dance Floor.nds",
+      "asset": "Dance.Floor.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Dementium - The Ward",
+      "path": "rom/Dementium - The Ward.nds",
+      "asset": "Dementium.-.The.Ward.nds",
+      "size": 44313924
+    },
+    {
+      "name": "Digimon World - Dawn",
+      "path": "rom/Digimon World - Dawn.nds",
+      "asset": "Digimon.World.-.Dawn.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Digimon World Championship",
+      "path": "rom/Digimon World Championship.nds",
+      "asset": "Digimon.World.Championship.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Disney Violetta - Rhythm & Music (Europe) (En,Fr,De,Es,It,Pt)",
+      "path": "rom/Disney Violetta - Rhythm & Music (Europe) (En,Fr,De,Es,It,Pt).nds",
+      "asset": "Disney.Violetta.-.Rhythm.Music.Europe.En.Fr.De.Es.It.Pt.nds",
+      "size": 16777216
+    },
+    {
+      "name": "Dolphin Trainer",
+      "path": "rom/Dolphin Trainer.nds",
+      "asset": "Dolphin.Trainer.nds",
+      "size": 16777216
+    },
+    {
+      "name": "Dragon Ball - Origins",
+      "path": "rom/Dragon Ball - Origins.nds",
+      "asset": "Dragon.Ball.-.Origins.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Dragon Quest VI - Realms of Revelation",
+      "path": "rom/Dragon Quest VI - Realms of Revelation.nds",
+      "asset": "Dragon.Quest.VI.-.Realms.of.Revelation.nds",
+      "size": 134217728
+    },
+    {
+      "name": "Emma at the Farm (Europe) (En,Fr,De,Es,It,Nl,Pt)",
+      "path": "rom/Emma at the Farm (Europe) (En,Fr,De,Es,It,Nl,Pt).nds",
+      "asset": "Emma.at.the.Farm.Europe.En.Fr.De.Es.It.Nl.Pt.nds",
+      "size": 16777216
+    },
+    {
+      "name": "Ferrari Challenge - Trofeo Pirelli",
+      "path": "rom/Ferrari Challenge - Trofeo Pirelli.nds",
+      "asset": "Ferrari.Challenge.-.Trofeo.Pirelli.nds",
+      "size": 13178588
+    },
+    {
+      "name": "Final Fantasy III",
+      "path": "rom/Final Fantasy III.nds",
+      "asset": "Final.Fantasy.III.nds",
+      "size": 101258492
+    },
+    {
+      "name": "Final Fantasy IV",
+      "path": "rom/Final Fantasy IV.nds",
+      "asset": "Final.Fantasy.IV.nds",
+      "size": 134217728
+    },
+    {
+      "name": "Franklin's Great Adventures",
+      "path": "rom/Franklin's Great Adventures.nds",
+      "asset": "Franklins.Great.Adventures.nds",
+      "size": 8388608
+    },
+    {
+      "name": "Fritz Chess",
+      "path": "rom/Fritz Chess.nds",
+      "asset": "Fritz.Chess.nds",
+      "size": 8388608
+    },
+    {
+      "name": "Galactic Taz Ball",
+      "path": "rom/Galactic Taz Ball.nds",
+      "asset": "Galactic.Taz.Ball.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Garfield 2 (Europe) (En,Fr,De,Es,It,Nl,Pt,Sv,No,Da,Fi)",
+      "path": "rom/Garfield 2 (Europe) (En,Fr,De,Es,It,Nl,Pt,Sv,No,Da,Fi).nds",
+      "asset": "Garfield.2.Europe.En.Fr.De.Es.It.Nl.Pt.Sv.No.Da.Fi.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Garfield's Nightmare",
+      "path": "rom/Garfield's Nightmare.nds",
+      "asset": "Garfields.Nightmare.nds",
+      "size": 16777216
+    },
+    {
+      "name": "Ghost Trick - Phantom Detective",
+      "path": "rom/Ghost Trick - Phantom Detective.nds",
+      "asset": "Ghost.Trick.-.Phantom.Detective.nds",
+      "size": 126824956
+    },
+    {
+      "name": "Gremlins - Gizmo (USA) (En,Fr,Es,Pt)",
+      "path": "rom/Gremlins - Gizmo (USA) (En,Fr,Es,Pt).nds",
+      "asset": "Gremlins.-.Gizmo.USA.En.Fr.Es.Pt.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Harvest moon ds",
+      "path": "rom/Harvest moon ds.nds",
+      "asset": "Harvest.moon.ds.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Hello Kitty - Big City Dreams",
+      "path": "rom/Hello Kitty - Big City Dreams.nds",
+      "asset": "Hello.Kitty.-.Big.City.Dreams.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Henry Hatsworth in the Puzzling Adventure",
+      "path": "rom/Henry Hatsworth in the Puzzling Adventure.nds",
+      "asset": "Henry.Hatsworth.in.the.Puzzling.Adventure.nds",
+      "size": 66356793
+    },
+    {
+      "name": "Hot Wheels - Track Attack (Brazil) (En,Es,Pt) (NDSi Enhanced)",
+      "path": "rom/Hot Wheels - Track Attack (Brazil) (En,Es,Pt) (NDSi Enhanced).nds",
+      "asset": "Hot.Wheels.-.Track.Attack.Brazil.En.Es.Pt.NDSi.Enhanced.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Hugo - Zauberei im Trollwald",
+      "path": "rom/Hugo - Zauberei im Trollwald.nds",
+      "asset": "Hugo.-.Zauberei.im.Trollwald.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Imagine - Baby Club (Europe) (En,Fr,De,Es,It,Nl,Pt,Sv,No,Da)",
+      "path": "rom/Imagine - Baby Club (Europe) (En,Fr,De,Es,It,Nl,Pt,Sv,No,Da).nds",
+      "asset": "Imagine.-.Baby.Club.Europe.En.Fr.De.Es.It.Nl.Pt.Sv.No.Da.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Imagine - Babysitters",
+      "path": "rom/Imagine - Babysitters.nds",
+      "asset": "Imagine.-.Babysitters.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Imagine - Dream Weddings (Europe) (En,Fr,De,Es,It,Nl,Pt,Sv,No,Da) [b]",
+      "path": "rom/Imagine - Dream Weddings (Europe) (En,Fr,De,Es,It,Nl,Pt,Sv,No,Da) [b].nds",
+      "asset": "Imagine.-.Dream.Weddings.Europe.En.Fr.De.Es.It.Nl.Pt.Sv.No.Da.b.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Imagine - Fashion Designer - New York",
+      "path": "rom/Imagine - Fashion Designer - New York.nds",
+      "asset": "Imagine.-.Fashion.Designer.-.New.York.nds",
+      "size": 134217728
+    },
+    {
+      "name": "Imagine - Fashion Model (Europe) (En,Fr,De,Es,It,Nl,Pt,Sv,No,Da) [b]",
+      "path": "rom/Imagine - Fashion Model (Europe) (En,Fr,De,Es,It,Nl,Pt,Sv,No,Da) [b].nds",
+      "asset": "Imagine.-.Fashion.Model.Europe.En.Fr.De.Es.It.Nl.Pt.Sv.No.Da.b.nds",
+      "size": 134217728
+    },
+    {
+      "name": "Imagine - Fashion Paradise (Europe) (En,Fr,De,Es,It,Pt) (NDSi Enhanced)",
+      "path": "rom/Imagine - Fashion Paradise (Europe) (En,Fr,De,Es,It,Pt) (NDSi Enhanced).nds",
+      "asset": "Imagine.-.Fashion.Paradise.Europe.En.Fr.De.Es.It.Pt.NDSi.Enhanced.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Imagine - Teacher",
+      "path": "rom/Imagine - Teacher.nds",
+      "asset": "Imagine.-.Teacher.nds",
+      "size": 16777216
+    },
+    {
+      "name": "Imagine - Wedding Designer",
+      "path": "rom/Imagine - Wedding Designer.nds",
+      "asset": "Imagine.-.Wedding.Designer.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Inazuma Eleven 3 - Sekai e no Chousen The Ogre",
+      "path": "rom/Inazuma Eleven 3 - Sekai e no Chousen The Ogre.nds",
+      "asset": "Inazuma.Eleven.3.-.Sekai.e.no.Chousen.The.Ogre.nds",
+      "size": 536870912
+    },
+    {
+      "name": "Inazuma Eleven",
+      "path": "rom/Inazuma Eleven.nds",
+      "asset": "Inazuma.Eleven.nds",
+      "size": 268435456
+    },
+    {
+      "name": "Legend of the Guardians - The Owls of Ga'Hoole",
+      "path": "rom/Legend of the Guardians - The Owls of Ga'Hoole.nds",
+      "asset": "Legend.of.the.Guardians.-.The.Owls.of.GaHoole.nds",
+      "size": 67108864
+    },
+    {
+      "name": "LEGO Batman 2 - DC Super Heroes",
+      "path": "rom/LEGO Batman 2 - DC Super Heroes.nds",
+      "asset": "LEGO.Batman.2.-.DC.Super.Heroes.nds",
+      "size": 134217728
+    },
+    {
+      "name": "LEGO Friends (USA) (En,Fr,Es,Pt)",
+      "path": "rom/LEGO Friends (USA) (En,Fr,Es,Pt).nds",
+      "asset": "LEGO.Friends.USA.En.Fr.Es.Pt.nds",
+      "size": 134217728
+    },
+    {
+      "name": "LEGO Legends of Chima Laval's Journey",
+      "path": "rom/LEGO Legends of Chima Laval's Journey.nds",
+      "asset": "LEGO.Legends.of.Chima.Lavals.Journey.nds",
+      "size": 134217728
+    },
+    {
+      "name": "LEGO Marvel Super Heroes - Universe in Peril",
+      "path": "rom/LEGO Marvel Super Heroes - Universe in Peril.nds",
+      "asset": "LEGO.Marvel.Super.Heroes.-.Universe.in.Peril.nds",
+      "size": 134217728
+    },
+    {
+      "name": "LEGO The Lord of the Rings (PT)",
+      "path": "rom/LEGO The Lord of the Rings (PT).nds",
+      "asset": "LEGO.The.Lord.of.the.Rings.PT.nds",
+      "size": 43454464
+    },
+    {
+      "name": "Littlest Pet Shop - Beach Friends (Europe) (En,Fr,De,Es,Nl,Pt,Sv,No,Da,Fi) [b]",
+      "path": "rom/Littlest Pet Shop - Beach Friends (Europe) (En,Fr,De,Es,Nl,Pt,Sv,No,Da,Fi) [b].nds",
+      "asset": "Littlest.Pet.Shop.-.Beach.Friends.Europe.En.Fr.De.Es.Nl.Pt.Sv.No.Da.Fi.b.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Littlest Pet Shop - City Friends (Europe) (En,Fr,De,Es,Nl,Pt,Sv,No,Da,Fi) [b]",
+      "path": "rom/Littlest Pet Shop - City Friends (Europe) (En,Fr,De,Es,Nl,Pt,Sv,No,Da,Fi) [b].nds",
+      "asset": "Littlest.Pet.Shop.-.City.Friends.Europe.En.Fr.De.Es.Nl.Pt.Sv.No.Da.Fi.b.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Littlest Pet Shop - Country Friends (Europe) (En,Fr,De,Es,Nl,Pt,Sv,No,Da,Fi) [b]",
+      "path": "rom/Littlest Pet Shop - Country Friends (Europe) (En,Fr,De,Es,Nl,Pt,Sv,No,Da,Fi) [b].nds",
+      "asset": "Littlest.Pet.Shop.-.Country.Friends.Europe.En.Fr.De.Es.Nl.Pt.Sv.No.Da.Fi.b.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Littlest Pet Shop 3 - Biggest Stars - Blue Team (Europe) (En,Pt,Sv,No,Da,Fi)",
+      "path": "rom/Littlest Pet Shop 3 - Biggest Stars - Blue Team (Europe) (En,Pt,Sv,No,Da,Fi).nds",
+      "asset": "Littlest.Pet.Shop.3.-.Biggest.Stars.-.Blue.Team.Europe.En.Pt.Sv.No.Da.Fi.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Littlest Pet Shop 3 - Biggest Stars - Pink Team (Europe) (En,Pt,Sv,No,Da,Fi)",
+      "path": "rom/Littlest Pet Shop 3 - Biggest Stars - Pink Team (Europe) (En,Pt,Sv,No,Da,Fi).nds",
+      "asset": "Littlest.Pet.Shop.3.-.Biggest.Stars.-.Pink.Team.Europe.En.Pt.Sv.No.Da.Fi.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Littlest Pet Shop 3 - Biggest Stars - Purple Team (Europe) (En,Pt,Sv,No,Da,Fi)",
+      "path": "rom/Littlest Pet Shop 3 - Biggest Stars - Purple Team (Europe) (En,Pt,Sv,No,Da,Fi).nds",
+      "asset": "Littlest.Pet.Shop.3.-.Biggest.Stars.-.Purple.Team.Europe.En.Pt.Sv.No.Da.Fi.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Lola & Virginia",
+      "path": "rom/Lola & Virginia.nds",
+      "asset": "Lola.Virginia.nds",
+      "size": 16777216
+    },
+    {
+      "name": "Lord of the Rings, The - Aragorn's Quest",
+      "path": "rom/Lord of the Rings, The - Aragorn's Quest.nds",
+      "asset": "Lord.of.the.Rings.The.-.Aragorns.Quest.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Maestro! - Jump in Music",
+      "path": "rom/Maestro! - Jump in Music.nds",
+      "asset": "Maestro.-.Jump.in.Music.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Mario & Luigi - Bowser's Inside Story",
+      "path": "rom/Mario & Luigi - Bowser's Inside Story.nds",
+      "asset": "Mario.Luigi.-.Bowsers.Inside.Story.nds",
+      "size": 134217728
+    },
+    {
+      "name": "Mario & Luigi Partners in Time",
+      "path": "rom/Mario & Luigi Partners in Time.nds",
+      "asset": "Mario.Luigi.Partners.in.Time.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Mario Kart DS",
+      "path": "rom/Mario Kart DS.nds",
+      "asset": "Mario.Kart.DS.nds",
+      "size": 23168080
+    },
+    {
+      "name": "Mega Man ZX - Advent",
+      "path": "rom/Mega Man ZX - Advent.nds",
+      "asset": "Mega.Man.ZX.-.Advent.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Mega Man ZX",
+      "path": "rom/Mega Man ZX.nds",
+      "asset": "Mega.Man.ZX.nds",
+      "size": 67124916
+    },
+    {
+      "name": "Metroid Prime - Hunters",
+      "path": "rom/Metroid Prime - Hunters.nds",
+      "asset": "Metroid.Prime.-.Hunters.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Miffy's World",
+      "path": "rom/Miffy's World.nds",
+      "asset": "Miffys.World.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Mind Your Language - Learn English! (Europe) (En,Fr,De,Es,It,Pt)",
+      "path": "rom/Mind Your Language - Learn English! (Europe) (En,Fr,De,Es,It,Pt).nds",
+      "asset": "Mind.Your.Language.-.Learn.English.Europe.En.Fr.De.Es.It.Pt.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Monster Tale",
+      "path": "rom/Monster Tale.nds",
+      "asset": "Monster.Tale.nds",
+      "size": 38250576
+    },
+    {
+      "name": "Mr Bean",
+      "path": "rom/Mr Bean.nds",
+      "asset": "Mr.Bean.nds",
+      "size": 16777216
+    },
+    {
+      "name": "My Baby - Boy (Europe) (En,Fr,De,Es,It,Nl,Pt)",
+      "path": "rom/My Baby - Boy (Europe) (En,Fr,De,Es,It,Nl,Pt).nds",
+      "asset": "My.Baby.-.Boy.Europe.En.Fr.De.Es.It.Nl.Pt.nds",
+      "size": 33554432
+    },
+    {
+      "name": "My Baby - Girl (Europe) (En,Fr,De,Es,It,Nl,Pt)",
+      "path": "rom/My Baby - Girl (Europe) (En,Fr,De,Es,It,Nl,Pt).nds",
+      "asset": "My.Baby.-.Girl.Europe.En.Fr.De.Es.It.Nl.Pt.nds",
+      "size": 33554432
+    },
+    {
+      "name": "My Baby 3 & Friends (Europe) (En,Fr,De,Es,It,Nl,Pt)",
+      "path": "rom/My Baby 3 & Friends (Europe) (En,Fr,De,Es,It,Nl,Pt).nds",
+      "asset": "My.Baby.3.Friends.Europe.En.Fr.De.Es.It.Nl.Pt.nds",
+      "size": 67108864
+    },
+    {
+      "name": "My Farm Around the World",
+      "path": "rom/My Farm Around the World.nds",
+      "asset": "My.Farm.Around.the.World.nds",
+      "size": 8388608
+    },
+    {
+      "name": "My Secret World by Imagine",
+      "path": "rom/My Secret World by Imagine.nds",
+      "asset": "My.Secret.World.by.Imagine.nds",
+      "size": 33554432
+    },
+    {
+      "name": "MySims - Agents",
+      "path": "rom/MySims - Agents.nds",
+      "asset": "MySims.-.Agents.nds",
+      "size": 67108864
+    },
+    {
+      "name": "MySims - Kingdom",
+      "path": "rom/MySims - Kingdom.nds",
+      "asset": "MySims.-.Kingdom.nds",
+      "size": 58269696
+    },
+    {
+      "name": "MySims - Party",
+      "path": "rom/MySims - Party.nds",
+      "asset": "MySims.-.Party.nds",
+      "size": 33554432
+    },
+    {
+      "name": "New Super Mario Bros.",
+      "path": "rom/New Super Mario Bros..nds",
+      "asset": "New.Super.Mario.Bros.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Petz Rescue - Wildlife Vet",
+      "path": "rom/Petz Rescue - Wildlife Vet.nds",
+      "asset": "Petz.Rescue.-.Wildlife.Vet.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Phoenix Wright - Ace Attorney - Justice for All",
+      "path": "rom/Phoenix Wright - Ace Attorney - Justice for All.nds",
+      "asset": "Phoenix.Wright.-.Ace.Attorney.-.Justice.for.All.nds",
+      "size": 24208209
+    },
+    {
+      "name": "Phoenix Wright - Ace Attorney - Trials and Tribulations",
+      "path": "rom/Phoenix Wright - Ace Attorney - Trials and Tribulations.nds",
+      "asset": "Phoenix.Wright.-.Ace.Attorney.-.Trials.and.Tribulations.nds",
+      "size": 25163904
+    },
+    {
+      "name": "Phoenix Wright - Ace Attorney",
+      "path": "rom/Phoenix Wright - Ace Attorney.nds",
+      "asset": "Phoenix.Wright.-.Ace.Attorney.nds",
+      "size": 58325276
+    },
+    {
+      "name": "Picross",
+      "path": "rom/Picross.nds",
+      "asset": "Picross.nds",
+      "size": 33415549
+    },
+    {
+      "name": "Planet Rescue - Animal Emergency (Europe) (En,Fr,De,Es,It,Nl,Pt,Sv,No,Da)",
+      "path": "rom/Planet Rescue - Animal Emergency (Europe) (En,Fr,De,Es,It,Nl,Pt,Sv,No,Da).nds",
+      "asset": "Planet.Rescue.-.Animal.Emergency.Europe.En.Fr.De.Es.It.Nl.Pt.Sv.No.Da.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Pokemon - Black Version 2",
+      "path": "rom/Pokemon - Black Version 2.nds",
+      "asset": "Pokemon.-.Black.Version.2.nds",
+      "size": 288226393
+    },
+    {
+      "name": "Pokemon - Black Version",
+      "path": "rom/Pokemon - Black Version.nds",
+      "asset": "Pokemon.-.Black.Version.nds",
+      "size": 268435456
+    },
+    {
+      "name": "Pokemon - Diamond Version",
+      "path": "rom/Pokemon - Diamond Version.nds",
+      "asset": "Pokemon.-.Diamond.Version.nds",
+      "size": 61105608
+    },
+    {
+      "name": "Pokemon - HeartGold Version",
+      "path": "rom/Pokemon - HeartGold Version.nds",
+      "asset": "Pokemon.-.HeartGold.Version.nds",
+      "size": 134217728
+    },
+    {
+      "name": "Pokemon - Pearl Version",
+      "path": "rom/Pokemon - Pearl Version.nds",
+      "asset": "Pokemon.-.Pearl.Version.nds",
+      "size": 61105608
+    },
+    {
+      "name": "Pokemon - SoulSilver Version",
+      "path": "rom/Pokemon - SoulSilver Version.nds",
+      "asset": "Pokemon.-.SoulSilver.Version.nds",
+      "size": 134217728
+    },
+    {
+      "name": "Pokemon - White Version 2",
+      "path": "rom/Pokemon - White Version 2.nds",
+      "asset": "Pokemon.-.White.Version.2.nds",
+      "size": 293260377
+    },
+    {
+      "name": "Pokemon - White Version",
+      "path": "rom/Pokemon - White Version.nds",
+      "asset": "Pokemon.-.White.Version.nds",
+      "size": 268435456
+    },
+    {
+      "name": "Pokemon Platinum",
+      "path": "rom/Pokemon Platinum.nds",
+      "asset": "Pokemon.Platinum.nds",
+      "size": 134217728
+    },
+    {
+      "name": "Polar Rampage (Europe) (En,Fr,De,Es,It,Pt) [b]",
+      "path": "rom/Polar Rampage (Europe) (En,Fr,De,Es,It,Pt) [b].nds",
+      "asset": "Polar.Rampage.Europe.En.Fr.De.Es.It.Pt.b.nds",
+      "size": 16777216
+    },
+    {
+      "name": "Postman Pat (Europe) (En,Fr,De,Es,It,Nl,Pt,Sv,No,Da,Fi)",
+      "path": "rom/Postman Pat (Europe) (En,Fr,De,Es,It,Nl,Pt,Sv,No,Da,Fi).nds",
+      "asset": "Postman.Pat.Europe.En.Fr.De.Es.It.Nl.Pt.Sv.No.Da.Fi.nds",
+      "size": 16777216
+    },
+    {
+      "name": "Prince of Persia - The Fallen King",
+      "path": "rom/Prince of Persia - The Fallen King.nds",
+      "asset": "Prince.of.Persia.-.The.Fallen.King.nds",
+      "size": 31147600
+    },
+    {
+      "name": "Prince of Persia - The Forgotten Sands",
+      "path": "rom/Prince of Persia - The Forgotten Sands.nds",
+      "asset": "Prince.of.Persia.-.The.Forgotten.Sands.nds",
+      "size": 30021000
+    },
+    {
+      "name": "Professor Layton and Pandora's Box",
+      "path": "rom/Professor Layton and Pandora's Box.nds",
+      "asset": "Professor.Layton.and.Pandoras.Box.nds",
+      "size": 112721632
+    },
+    {
+      "name": "Professor Layton and the Curious Village",
+      "path": "rom/Professor Layton and the Curious Village.nds",
+      "asset": "Professor.Layton.and.the.Curious.Village.nds",
+      "size": 134217728
+    },
+    {
+      "name": "Ratatouille",
+      "path": "rom/Ratatouille.nds",
+      "asset": "Ratatouille.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Resident Evil - Deadly Silence",
+      "path": "rom/Resident Evil - Deadly Silence.nds",
+      "asset": "Resident.Evil.-.Deadly.Silence.nds",
+      "size": 128542728
+    },
+    {
+      "name": "Scribblenauts (USA) (En,Fr,Es,Pt)",
+      "path": "rom/Scribblenauts (USA) (En,Fr,Es,Pt).nds",
+      "asset": "Scribblenauts.USA.En.Fr.Es.Pt.nds",
+      "size": 33554432
+    },
+    {
+      "name": "SimAnimals - Africa",
+      "path": "rom/SimAnimals - Africa.nds",
+      "asset": "SimAnimals.-.Africa.nds",
+      "size": 134217728
+    },
+    {
+      "name": "SimAnimals",
+      "path": "rom/SimAnimals.nds",
+      "asset": "SimAnimals.nds",
+      "size": 134217728
+    },
+    {
+      "name": "Speed Racer - The Videogame",
+      "path": "rom/Speed Racer - The Videogame.nds",
+      "asset": "Speed.Racer.-.The.Videogame.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Super Mario 64 DS",
+      "path": "rom/Super Mario 64 DS.nds",
+      "asset": "Super.Mario.64.DS.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Super Scribblenauts",
+      "path": "rom/Super Scribblenauts.nds",
+      "asset": "Super.Scribblenauts.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Tennis Elbow",
+      "path": "rom/Tennis Elbow.nds",
+      "asset": "Tennis.Elbow.nds",
+      "size": 8388608
+    },
+    {
+      "name": "The Legend of Zelda Molblins Magic Spear",
+      "path": "rom/The Legend of Zelda Molblins Magic Spear.nds",
+      "asset": "The.Legend.of.Zelda.Molblins.Magic.Spear.nds",
+      "size": 7189340
+    },
+    {
+      "name": "The Legend of Zelda Phantom Hourglass",
+      "path": "rom/The Legend of Zelda Phantom Hourglass.nds",
+      "asset": "The.Legend.of.Zelda.Phantom.Hourglass.nds",
+      "size": 64603620
+    },
+    {
+      "name": "The Legend of Zelda Spirit tracks",
+      "path": "rom/The Legend of Zelda Spirit tracks.nds",
+      "asset": "The.Legend.of.Zelda.Spirit.tracks.nds",
+      "size": 134217728
+    },
+    {
+      "name": "the Sims 2, The - Castaway (PT)",
+      "path": "rom/the Sims 2, The - Castaway (PT).nds",
+      "asset": "the.Sims.2.The.-.Castaway.PT.nds",
+      "size": 67108864
+    },
+    {
+      "name": "Thor - God of Thunder",
+      "path": "rom/Thor - God of Thunder.nds",
+      "asset": "Thor.-.God.of.Thunder.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Toy Shop",
+      "path": "rom/Toy Shop.nds",
+      "asset": "Toy.Shop.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Trauma Center Under The Knife",
+      "path": "rom/Trauma Center Under The Knife.nds",
+      "asset": "Trauma.Center.Under.The.Knife.nds",
+      "size": 16777216
+    },
+    {
+      "name": "WALL-E (Europe) (Es,Pt)",
+      "path": "rom/WALL-E (Europe) (Es,Pt).nds",
+      "asset": "WALL-E.Europe.Es.Pt.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Warhammer 40,000 - Squad Command",
+      "path": "rom/Warhammer 40,000 - Squad Command.nds",
+      "asset": "Warhammer.40.000.-.Squad.Command.nds",
+      "size": 30421280
+    },
+    {
+      "name": "Water Horse, The - Legend of the Deep",
+      "path": "rom/Water Horse, The - Legend of the Deep.nds",
+      "asset": "Water.Horse.The.-.Legend.of.the.Deep.nds",
+      "size": 16777216
+    },
+    {
+      "name": "Whitaker Family Presents, The - Horse Life (Europe) (En,Fr,De,Es,It,Nl,Pt)",
+      "path": "rom/Whitaker Family Presents, The - Horse Life (Europe) (En,Fr,De,Es,It,Nl,Pt).nds",
+      "asset": "Whitaker.Family.Presents.The.-.Horse.Life.Europe.En.Fr.De.Es.It.Nl.Pt.nds",
+      "size": 16777216
+    },
+    {
+      "name": "Winx Club - Saving Alfea (Europe) (En,Fr,De,Es,It,Pt)",
+      "path": "rom/Winx Club - Saving Alfea (Europe) (En,Fr,De,Es,It,Pt).nds",
+      "asset": "Winx.Club.-.Saving.Alfea.Europe.En.Fr.De.Es.It.Pt.nds",
+      "size": 33554432
+    },
+    {
+      "name": "Yu-Gi-Oh! 5D's World Championship 2009 Stardust Accelerator",
+      "path": "rom/Yu-Gi-Oh! 5D's World Championship 2009 Stardust Accelerator.nds",
+      "asset": "Yu-Gi-Oh.5Ds.World.Championship.2009.Stardust.Accelerator.nds",
+      "size": 242405368
+    },
+    {
+      "name": "Yu-Gi-Oh! GX World Championship 2008",
+      "path": "rom/Yu-Gi-Oh! GX World Championship 2008.nds",
+      "asset": "Yu-Gi-Oh.GX.World.Championship.2008.nds",
+      "size": 130295084
+    },
+    {
+      "name": "Yu-Gi-Oh! Nightmare Troubadour",
+      "path": "rom/Yu-Gi-Oh! Nightmare Troubadour.nds",
+      "asset": "Yu-Gi-Oh.Nightmare.Troubadour.nds",
+      "size": 63858780
+    },
+    {
+      "name": "Yu-Gi-Oh! World Championship 2007",
+      "path": "rom/Yu-Gi-Oh! World Championship 2007.nds",
+      "asset": "Yu-Gi-Oh.World.Championship.2007.nds",
+      "size": 115017908
+    },
+    {
+      "name": "Zombiez Seeker",
+      "path": "rom/Zombiez Seeker.nds",
+      "asset": "Zombiez.Seeker.nds",
+      "size": 8085372
+    }
+  ]
+}

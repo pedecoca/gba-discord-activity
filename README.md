@@ -49,7 +49,11 @@ API. O servidor também aceita o caminho `/emu/...` para o caso de o proxy
 remover o prefixo `/api`.
 
 Dentro do Discord, o catálogo também tenta `/api/roms.json`, `/api/systems.json`
-e `/api/covers.json` antes de usar os arquivos estáticos do GitHub Pages. Isso
+e `/api/covers.json` antes de usar os arquivos estáticos do GitHub Pages.
+
+As ROMs de Nintendo DS são servidas pelo GitHub Release `nds-roms-v1`
+(manifesto `nds_release.json`); a API faz o proxy com suporte a `Range` para
+o Discord não precisar carregar os arquivos do repositório de ROMs. Isso
 permite jogar ROMs grandes que estão apenas no servidor local, sem publicá-las
 no repositório do Pages; se a API estiver fora, a Activity usa o catálogo
 estático como reserva.
