@@ -126,6 +126,36 @@ Os arquivos `robots.txt` e `sitemap.xml` contêm o marcador `__SITE_URL__`; o
 servidor e o workflow substituem esse valor na publicação. O build do Pages
 copia os três arquivos para `dist/`.
 
+## Doações LiveTip
+
+O webhook fica em:
+
+```text
+https://api.pokedc.online/api/webhooks/livetip
+```
+
+Configure no `.env` do bot:
+
+```env
+LIVETIP_WEBHOOK_SECRET=token_gerado_pelo_livetip
+LIVETIP_DISCORD_CHANNEL_ID=1566883882974842920
+```
+
+O endpoint valida o header `X-LiveTip-Webhook-Secret-Token` e também aceita a
+assinatura HMAC `X-LiveTip-Signature`. Os eventos são registrados em
+`logs/livetip_webhooks.jsonl` e enviados como embed para o canal de doações.
+Eventos repetidos são ignorados por `event_id`.
+
+Depois de reiniciar o servidor e o bot, o owner pode testar o fluxo completo
+com o comando de prefixo:
+
+```text
+!doc
+```
+
+Ele envia uma doação fictícia marcada como teste e mostra no canal se o embed
+chegou corretamente.
+
 ## Publicar
 
 1. Crie um repositório **público** no GitHub para a Activity.
