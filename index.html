@@ -3452,7 +3452,7 @@
     function abrirDoacao() {
       donationModal.hidden = false;
       const card = donationModal.querySelector(".donation-card");
-      requestAnimationFrame(() => card?.classList.add("is-lit"));
+      card?.classList.add("is-lit");
       closeDonationButton?.focus();
     }
 
