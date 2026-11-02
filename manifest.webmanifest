@@ -1,0 +1,28 @@
+{
+  "name": "GG Retro — Emulador de clássicos",
+  "short_name": "GG Retro",
+  "description": "Jogue clássicos de GBA, SNES, Mega Drive, Nintendo DS e PlayStation no navegador ou pelo Discord.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1b1240",
+  "theme_color": "#1b1240",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "./asset/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./asset/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

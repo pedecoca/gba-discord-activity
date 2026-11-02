@@ -67,6 +67,9 @@ jobs:
           cp privacy.html dist/privacy.html
           cp systems.json dist/systems.json
           cp covers.json dist/covers.json
+          cp robots.txt dist/robots.txt
+          cp sitemap.xml dist/sitemap.xml
+          cp manifest.webmanifest dist/manifest.webmanifest
           cp -R brand dist/brand
           cp -R asset dist/asset
 
@@ -112,6 +115,11 @@ jobs:
           page_path = Path("dist/index.html")
           page = page_path.read_text(encoding="utf-8")
           page = page.replace("__DISCORD_CLIENT_ID_JSON__", json.dumps(client_id))
+          site_url = (
+              os.environ.get("SITE_URL", "").strip().rstrip("/")
+              or "https://pedecoca.github.io/gba-discord-activity"
+          )
+          page = page.replace("__SITE_URL__", site_url)
           save_api_url = (
               os.environ.get("SAVE_API_URL", "").strip().rstrip("/")
               or "https://api.pokedc.online"
@@ -132,10 +140,20 @@ jobs:
                   "__SAVE_API_URL_JSON__",
                   "__EJS_DATA_PATH_JSON__",
                   "__DISCORD_SDK_MODULE_URL_JSON__",
+                  "__SITE_URL__",
               )
           ):
               raise SystemExit("A required site configuration value was not replaced.")
           page_path.write_text(page, encoding="utf-8")
+
+          for seo_name in ("robots.txt", "sitemap.xml"):
+              seo_path = Path("dist") / seo_name
+              seo_path.write_text(
+                  seo_path.read_text(encoding="utf-8").replace(
+                      "__SITE_URL__", site_url
+                  ),
+                  encoding="utf-8",
+              )
 
           runtime_data = Path("dist/emulatorjs/data")
           runtime_headers = {

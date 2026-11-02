@@ -107,6 +107,25 @@ Launcher, o backend ainda tenta a API de instâncias com o token do bot; o SDK
 (`authenticate({})` e participantes) fica como reserva. Sem login, o jogo
 continua funcionando e os saves ficam somente no IndexedDB local.
 
+## SEO e compartilhamento
+
+A página raiz inclui `title`, meta description, canonical, Open Graph, Twitter
+Card e dados estruturados Schema.org (`WebApplication` e `WebSite`). Também são
+publicados:
+
+- `robots.txt`
+- `sitemap.xml`
+- `manifest.webmanifest`
+
+No servidor da Activity, defina a URL pública em `SITE_URL` para o canonical,
+Open Graph, robots e sitemap. Sem a variável, o padrão é
+`https://api.pokedc.online`. No GitHub Pages, o workflow usa `SITE_URL`
+(Actions variable) ou o endereço padrão do Pages.
+
+Os arquivos `robots.txt` e `sitemap.xml` contêm o marcador `__SITE_URL__`; o
+servidor e o workflow substituem esse valor na publicação. O build do Pages
+copia os três arquivos para `dist/`.
+
 ## Publicar
 
 1. Crie um repositório **público** no GitHub para a Activity.
