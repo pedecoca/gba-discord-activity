@@ -1350,6 +1350,13 @@
       box-shadow: 0 8px 18px -10px #3bd89acc, inset 0 1px 0 #ffffff33;
     }
 
+    .game-tools button.support-tool {
+      background: linear-gradient(180deg, #fbbf24, #f59e0b);
+      color: #2a154e;
+      font-weight: 800;
+      box-shadow: 0 8px 18px -10px #fbbf24cc, inset 0 1px 0 #ffffff55;
+    }
+
     .control-options { display: grid; gap: 10px; }
 
     .control-options fieldset {
@@ -1876,6 +1883,7 @@
         <button id="nds-boost" type="button" data-move-key="nds-core" hidden>NDS: melonDS</button>
         <button id="open-cheat" type="button" data-move-key="cheat">Cheat</button>
         <button id="open-controls" type="button" data-move-key="controles">Controles</button>
+        <button id="open-donation-game" class="support-tool" type="button" data-move-key="apoio" aria-label="Apoiar o GG Retro">☕ Apoiar</button>
       </div>
       <div class="gba-screen-frame">
         <p class="screen-label">Tela do jogo</p>
@@ -2084,6 +2092,7 @@
     const openLibraryButton = document.querySelector("#open-library");
     const donationModal = document.querySelector("#donation-modal");
     const openDonationButton = document.querySelector("#open-donation");
+    const openDonationGameButton = document.querySelector("#open-donation-game");
     const closeDonationButton = document.querySelector("#close-donation");
     const discordLoginButton = document.querySelector("#discord-login");
     const discordLoginLabel = document.querySelector("#discord-login-label");
@@ -4885,6 +4894,7 @@
     openSavesButton.addEventListener("click", abrirSaves);
     openLibraryButton.addEventListener("click", abrirBiblioteca);
     openDonationButton?.addEventListener("click", abrirDoacao);
+    openDonationGameButton?.addEventListener("click", abrirDoacao);
     closeDonationButton?.addEventListener("click", fecharDoacao);
     donationModal?.addEventListener("click", (event) => {
       if (event.target === donationModal) fecharDoacao();
