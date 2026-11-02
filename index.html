@@ -244,6 +244,37 @@
       border-color: #93c5fd;
     }
 
+    button.donate-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-color: #fbbf2455;
+      background: #3b2b7dcc;
+      color: #ffe8b0;
+    }
+
+    button.donate-button svg {
+      width: 14px;
+      height: 14px;
+      flex: 0 0 auto;
+    }
+
+    button.donate-button:hover:not(:disabled) {
+      border-color: #fbbf24;
+      background: #4a358fdd;
+    }
+
+    @media (max-width: 560px) {
+      button.donate-button {
+        width: 30px;
+        padding: 0;
+        justify-content: center;
+      }
+      button.donate-button .donate-button-text {
+        display: none;
+      }
+    }
+
     .panel {
       flex: 0 0 auto;
       display: grid;
@@ -958,6 +989,109 @@
       letter-spacing: -0.02em;
     }
 
+    .donation-card {
+      width: min(100%, 390px);
+      overflow: auto;
+      text-align: center;
+      background:
+        radial-gradient(360px 180px at 100% 0, #fb71853d, transparent 65%),
+        radial-gradient(300px 180px at 0 100%, #22d3ee2e, transparent 65%),
+        #2f2363;
+    }
+
+    .donation-card header {
+      text-align: left;
+    }
+
+    .donation-eyebrow {
+      margin: 0 0 3px;
+      color: #fbbf24;
+      font-size: 0.66rem;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .donation-copy {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+
+    .donation-qr-wrap {
+      position: relative;
+      width: fit-content;
+      max-width: 100%;
+      margin: 16px auto;
+      padding: 8px;
+      border-radius: 18px;
+      background: #1b1240;
+      isolation: isolate;
+    }
+
+    .donation-qr-wrap::before {
+      content: "";
+      position: absolute;
+      inset: -4px;
+      z-index: -1;
+      border-radius: 22px;
+      background: conic-gradient(
+        from 0deg,
+        #fb7185,
+        #fbbf24,
+        #22d3ee,
+        #a855f7,
+        #fb7185
+      );
+      opacity: 0;
+      filter: blur(7px);
+      transition: opacity 0.25s ease;
+      animation: girarAroDoacao 5s linear infinite;
+    }
+
+    .donation-card.is-lit .donation-qr-wrap::before {
+      opacity: 0.9;
+    }
+
+    .donation-qr-wrap img {
+      display: block;
+      width: auto;
+      max-width: 100%;
+      max-height: min(42dvh, 300px);
+      height: auto;
+      border-radius: 12px;
+    }
+
+    @keyframes girarAroDoacao {
+      to { transform: rotate(360deg); }
+    }
+
+    .donation-link {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #fbbf24, #f59e0b);
+      color: #27144b;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .donation-link:hover { filter: brightness(1.08); }
+
+    .donation-note {
+      margin: 10px 0 0;
+      color: #a99fd4;
+      font-size: 0.66rem;
+      line-height: 1.45;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .donation-qr-wrap::before { animation: none; }
+    }
+
     .saves-card .save-status {
       margin: 3px 0 0;
       color: var(--muted);
@@ -1663,9 +1797,16 @@
           <img class="brand-logo" src="./asset/logo-gg-retro-192.png" alt="GG Retro">
           <span class="brand-name">GG <em>Retro</em></span>
         </h1>
-        <p class="subtitle">Jogue GBA, SNES, Mega Drive, Nintendo DS e PlayStation no navegador — no PC ou celular.</p>
+        <p class="subtitle">Jogue GBA, SNES, Mega Drive, Nintendo DS e PlayStation no navegador no PC ou celular.</p>
       </div>
       <div class="header-actions">
+        <button id="open-donation" class="library-button donate-button" type="button" aria-label="Apoiar o GG Retro">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M5 8h11v5.2A4.8 4.8 0 0 1 11.2 18H9.8A4.8 4.8 0 0 1 5 13.2V8Z"/>
+            <path d="M16 9h1.5a2.5 2.5 0 0 1 0 5H16M7 4c0 .8.8 1 .8 1.8S7 7 7 7.8M10.5 4c0 .8.8 1 .8 1.8S10.5 7 10.5 7.8"/>
+          </svg>
+          <span class="donate-button-text">Apoiar</span>
+        </button>
         <button id="open-library" class="library-button" type="button" aria-label="Abrir minha biblioteca">
           <span aria-hidden="true">📚</span>
           <span class="library-button-text">Biblioteca</span>
@@ -1749,6 +1890,25 @@
       </div>
     </section>
   </main>
+
+  <div id="donation-modal" class="saves-modal" hidden>
+    <section class="saves-card donation-card" role="dialog" aria-modal="true" aria-labelledby="donation-title">
+      <header>
+        <div>
+          <p class="donation-eyebrow">Apoie o projeto</p>
+          <h2 id="donation-title">O GG Retro roda com café.</h2>
+        </div>
+        <button id="close-donation" class="icon-button" type="button" aria-label="Fechar doação">×</button>
+      </header>
+      <div class="donation-qr-wrap">
+        <img id="donation-qr" src="./asset/pix.png" alt="QR code do LiveTip para apoiar o GG Retro" loading="lazy">
+      </div>
+      <p class="donation-copy">Se o emulador já te salvou de instalar três programas suspeitos, um café é um bom agradecimento.</p>
+      <p class="donation-copy">Cada cafezinho ajuda a pagar o próximo bug que decide aparecer só no mobile.</p>
+      <a class="donation-link" href="https://livetip.gg/pedecoca" target="_blank" rel="noopener">Abrir o LiveTip</a>
+      <p class="donation-note">Doação única via LiveTip. Sem assinatura e sem cobrança automática.</p>
+    </section>
+  </div>
 
   <div id="saves-modal" class="saves-modal" hidden>
     <section class="saves-card" role="dialog" aria-modal="true" aria-labelledby="saves-title">
@@ -1912,6 +2072,9 @@
     const saveSlotsContainer = document.querySelector("#save-slots");
     const savesStatus = document.querySelector("#saves-status");
     const openLibraryButton = document.querySelector("#open-library");
+    const donationModal = document.querySelector("#donation-modal");
+    const openDonationButton = document.querySelector("#open-donation");
+    const closeDonationButton = document.querySelector("#close-donation");
     const discordLoginButton = document.querySelector("#discord-login");
     const discordLoginLabel = document.querySelector("#discord-login-label");
     const libraryModal = document.querySelector("#library-modal");
@@ -3274,6 +3437,18 @@
 
     function fecharBiblioteca() {
       libraryModal.hidden = true;
+    }
+
+    function abrirDoacao() {
+      donationModal.hidden = false;
+      const card = donationModal.querySelector(".donation-card");
+      requestAnimationFrame(() => card?.classList.add("is-lit"));
+      closeDonationButton?.focus();
+    }
+
+    function fecharDoacao() {
+      donationModal.hidden = true;
+      donationModal.querySelector(".donation-card")?.classList.remove("is-lit");
     }
 
     async function renderSaves() {
@@ -4699,6 +4874,11 @@
     restartGameButton.addEventListener("click", trocarJogo);
     openSavesButton.addEventListener("click", abrirSaves);
     openLibraryButton.addEventListener("click", abrirBiblioteca);
+    openDonationButton?.addEventListener("click", abrirDoacao);
+    closeDonationButton?.addEventListener("click", fecharDoacao);
+    donationModal?.addEventListener("click", (event) => {
+      if (event.target === donationModal) fecharDoacao();
+    });
     discordLoginButton?.addEventListener("click", iniciarLoginDiscord);
     closeLibraryButton.addEventListener("click", fecharBiblioteca);
     libraryModal.addEventListener("click", (event) => {
@@ -4774,6 +4954,7 @@
         fecharConfirmacaoExclusao();
         return;
       }
+      if (!donationModal.hidden) fecharDoacao();
       if (!savesModal.hidden) fecharSaves();
       if (!libraryModal.hidden) fecharBiblioteca();
       if (!cheatModal.hidden) fecharCheat();
