@@ -942,6 +942,23 @@
       box-shadow: 0 8px 18px -10px #f472b6cc, inset 0 1px 0 #ffffff44;
     }
 
+    .console-actions button.support-fab {
+      width: 30px;
+      padding: 0;
+      font-size: 0.82rem;
+      line-height: 1;
+      background: linear-gradient(180deg, #fbbf24, #f59e0b);
+      color: #2a154e;
+      box-shadow: 0 8px 18px -10px #fbbf24cc, inset 0 1px 0 #ffffff55;
+    }
+
+    .console-actions button.support-fab svg {
+      width: 14px;
+      height: 14px;
+      display: block;
+      margin: 0 auto;
+    }
+
     body.jogando .app-header,
     body.jogando .panel,
     body.jogando #status { display: none; }
@@ -1350,13 +1367,6 @@
       box-shadow: 0 8px 18px -10px #3bd89acc, inset 0 1px 0 #ffffff33;
     }
 
-    .game-tools button.support-tool {
-      background: linear-gradient(180deg, #fbbf24, #f59e0b);
-      color: #2a154e;
-      font-weight: 800;
-      box-shadow: 0 8px 18px -10px #fbbf24cc, inset 0 1px 0 #ffffff55;
-    }
-
     .control-options { display: grid; gap: 10px; }
 
     .control-options fieldset {
@@ -1756,8 +1766,15 @@
         pointer-events: auto;
       }
 
-      body.jogando #open-saves {
+      body.jogando .console-actions button.support-fab {
         left: calc(8px + env(safe-area-inset-left, 0px));
+        width: 30px;
+        height: 28px;
+        padding: 0;
+      }
+
+      body.jogando #open-saves {
+        left: calc(42px + env(safe-area-inset-left, 0px));
       }
       body.jogando #restart-game {
         right: calc(8px + env(safe-area-inset-right, 0px) + var(--discord-ui-gutter));
@@ -1874,6 +1891,12 @@
     <div id="save-indicator" class="save-indicator" role="status" hidden></div>
     <section class="gba-console" aria-label="Console retro" hidden>
       <div class="console-actions">
+        <button id="open-donation-game" class="support-fab" type="button" aria-label="Apoiar o GG Retro" title="Apoiar o GG Retro">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M5 8h11v5.2A4.8 4.8 0 0 1 11.2 18H9.8A4.8 4.8 0 0 1 5 13.2V8Z"/>
+            <path d="M16 9h1.5a2.5 2.5 0 0 1 0 5H16M7 4c0 .8.8 1 .8 1.8S7 7 7 7.8M10.5 4c0 .8.8 1 .8 1.8S10.5 7 10.5 7.8"/>
+          </svg>
+        </button>
         <button id="open-saves" class="saves-button" type="button" data-move-key="saves" hidden>Saves</button>
         <button id="restart-game" class="floating-restart" type="button" data-move-key="trocar" hidden>Trocar jogo</button>
       </div>
@@ -1883,7 +1906,6 @@
         <button id="nds-boost" type="button" data-move-key="nds-core" hidden>NDS: melonDS</button>
         <button id="open-cheat" type="button" data-move-key="cheat">Cheat</button>
         <button id="open-controls" type="button" data-move-key="controles">Controles</button>
-        <button id="open-donation-game" class="support-tool" type="button" data-move-key="apoio" aria-label="Apoiar o GG Retro">☕ Apoiar</button>
       </div>
       <div class="gba-screen-frame">
         <p class="screen-label">Tela do jogo</p>
