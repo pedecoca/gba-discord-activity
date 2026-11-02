@@ -265,6 +265,23 @@
     }
 
     @media (max-width: 560px) {
+      .app-header {
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .app-header > div:first-child {
+        flex: 1 1 100%;
+      }
+      .header-actions {
+        flex: 1 1 100%;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+      }
+      .subtitle {
+        font-size: 0.72rem;
+        line-height: 1.35;
+      }
       button.donate-button {
         width: 30px;
         padding: 0;
@@ -1047,7 +1064,6 @@
       opacity: 0;
       filter: blur(7px);
       transition: opacity 0.25s ease;
-      animation: girarAroDoacao 5s linear infinite;
     }
 
     .donation-card.is-lit .donation-qr-wrap::before {
@@ -1063,9 +1079,7 @@
       border-radius: 12px;
     }
 
-    @keyframes girarAroDoacao {
-      to { transform: rotate(360deg); }
-    }
+    .donation-card.is-lit .donation-qr-wrap img { box-shadow: 0 0 24px #a855f74d; }
 
     .donation-link {
       display: inline-block;
@@ -1086,10 +1100,6 @@
       color: #a99fd4;
       font-size: 0.66rem;
       line-height: 1.45;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .donation-qr-wrap::before { animation: none; }
     }
 
     .saves-card .save-status {
@@ -1797,7 +1807,7 @@
           <img class="brand-logo" src="./asset/logo-gg-retro-192.png" alt="GG Retro">
           <span class="brand-name">GG <em>Retro</em></span>
         </h1>
-        <p class="subtitle">Jogue GBA, SNES, Mega Drive, Nintendo DS e PlayStation no navegador no PC ou celular.</p>
+        <p class="subtitle">Jogue GBA, SNES, Mega Drive, Nintendo DS e PlayStation no navegador, no PC ou no celular.</p>
       </div>
       <div class="header-actions">
         <button id="open-donation" class="library-button donate-button" type="button" aria-label="Apoiar o GG Retro">
