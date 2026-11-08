@@ -5247,6 +5247,40 @@
     window.addEventListener("orientationchange", aplicarPosicaoControles);
     window.addEventListener("resize", aplicarPosicaoControles);
 
+    const PRESENCE_ID = (() => {
+      try {
+        const chave = "gg-retro-presence-id";
+        const existente = sessionStorage.getItem(chave);
+        if (existente) return existente;
+        const novoId =
+          crypto.randomUUID?.() ||
+          `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        sessionStorage.setItem(chave, novoId);
+        return novoId;
+      } catch {
+        return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      }
+    })();
+
+    async function enviarPresenca() {
+      try {
+        await fetch(apiUrl("/api/presence"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: PRESENCE_ID }),
+          keepalive: true,
+        });
+      } catch {
+        // O contador é apenas informativo; não atrapalha o emulador.
+      }
+    }
+
+    enviarPresenca();
+    setInterval(enviarPresenca, 20000);
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) enviarPresenca();
+    });
+
     configurarArrastoDosControles();
     configurarArrastoDeBotoes();
     carregarPreferenciaCoreNds();
